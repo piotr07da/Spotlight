@@ -12,9 +12,10 @@ Inputs: 0. start
 Settings:
 
 ```
- - positionTime:     float (default = 1)
- - positionActivity: { On, Off, Ramp_01, Ramp_10, Bell_010 }
- - travelToTime:     float (default = .2)
+ - position:         int
+ - spotTime:         int (default = 1000)
+ - spotActivity:     { On, Off, Ramp_01, Ramp_10, Bell_010 }
+ - travelToTime:     int (default = 200)
  - travelToActivity: { Off, On, Ramp_10, Ramp_01, Bell_101 }
 ```
 
