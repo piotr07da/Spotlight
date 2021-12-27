@@ -1,5 +1,7 @@
 #include "InputController.h"
 
+#include "Particle.h"
+
 InputController::InputController(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, int settingValueSensitivityPin, SpotManager *spotManager)
 {
 	_previousSpotBtn = Button(previousSpotPin);
