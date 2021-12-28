@@ -1,7 +1,8 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-#include "../lib/sh1106/src/sh1106.h"
+#include <Adafruit_GFX.h>
+#include <Adafruit_SH1106.h>
 #include "Spot.h"
 #include "SpotSetting.h"
 #include "LightActivity.h"
@@ -9,14 +10,13 @@
 class Display
 {
 private:
-	sh1106_lcd *_glcd;
+	Adafruit_SH1106 *_oled;
 
-	void Print(String s);
-	void PrintLine(String s);
+	void ShowSpotSetting(int spotIndex, const char *label, String value);
 	String FormatLightActivity(LightActivity activity);
 
 public:
-	Display(sh1106_lcd *glcd);
+	Display(Adafruit_SH1106 *oled);
 
 	void ShowWelcome();
 	void ShowDiag(String diag);
