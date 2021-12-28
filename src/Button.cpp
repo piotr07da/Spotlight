@@ -2,10 +2,6 @@
 
 #include "Particle.h"
 
-Button::Button()
-{
-}
-
 Button::Button(int pin)
 {
 	_pin = pin;
@@ -13,6 +9,9 @@ Button::Button(int pin)
 	_state = LOW;
 	_lastReading = LOW;
 	_lastDebounceTime = -Button_DebounceDelay - 1;
+
+	_tmpFlag0 = 0;
+	_tmpFlag1 = 0;
 }
 
 void Button::Setup()
@@ -34,7 +33,12 @@ void Button::Loop()
 	}
 }
 
-bool Button::GetState()
+bool Button::GetState(bool clear)
 {
-	return _state;
+	int state = _state;
+	if (state && clear)
+	{
+		_state = LOW;
+	}
+	return state;
 }
