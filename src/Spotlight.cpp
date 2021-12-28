@@ -11,16 +11,15 @@
  * Date: 2021-12-27
  */
 
-#include <Adafruit_GFX.h>
-#include <Adafruit_SH1106.h>
 #include <AccelStepper.h>
+#include "Adafruit_SH1106_headers.h"
 #include "SpotManager.h"
 #include "Controller.h"
 #include "Button.h"
 
 void setup();
 void loop();
-#line 15 "c:/_git/Spotlight/src/Spotlight.ino"
+#line 14 "c:/_git/Spotlight/src/Spotlight.ino"
 #define OLED_RESET 4
 Adafruit_SH1106 _oled(OLED_RESET);
 Display *_display;

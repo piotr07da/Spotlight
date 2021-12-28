@@ -1,8 +1,7 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-#include <Adafruit_GFX.h>
-#include <Adafruit_SH1106.h>
+#include "Adafruit_SH1106_headers.h"
 #include "Spot.h"
 #include "SpotSetting.h"
 #include "LightActivity.h"

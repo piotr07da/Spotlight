@@ -5,9 +5,8 @@
  * Date: 2021-12-27
  */
 
-#include <Adafruit_GFX.h>
-#include <Adafruit_SH1106.h>
 #include <AccelStepper.h>
+#include "Adafruit_SH1106_headers.h"
 #include "SpotManager.h"
 #include "Controller.h"
 #include "Button.h"
