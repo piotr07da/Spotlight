@@ -65,11 +65,12 @@ void Display::ShowSpotSetting(int spotIndex, Spot spot, SpotSetting setting)
 void Display::ShowSpotSetting(int spotIndex, const char *label, String value)
 {
 	int sl = value.length();
-	char buff[sl];
+	char buff[sl + 1];
 	for (int i = 0; i < sl; ++i)
 	{
 		buff[i] = value.charAt(i);
 	}
+	buff[sl] = NULL;
 
 	_oled->clearDisplay();
 	_oled->setTextColor(WHITE);

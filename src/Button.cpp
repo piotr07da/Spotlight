@@ -1,14 +1,15 @@
 #include "Button.h"
 
-#include "Particle.h"
+#include <Particle.h>
 
-Button::Button(int pin)
+Button::Button(int pin, int debounceDelay)
 {
 	_pin = pin;
+	_debounceDelay = debounceDelay;
 
 	_state = LOW;
 	_lastReading = LOW;
-	_lastDebounceTime = -Button_DebounceDelay - 1;
+	_lastDebounceTime = -debounceDelay - 1;
 
 	_tmpFlag0 = 0;
 	_tmpFlag1 = 0;
@@ -21,7 +22,7 @@ void Button::Setup()
 
 void Button::Loop()
 {
-	if (millis() - _lastDebounceTime > Button_DebounceDelay)
+	if (millis() - _lastDebounceTime > _debounceDelay)
 	{
 		int reading = digitalRead(_pin);
 
@@ -41,4 +42,9 @@ bool Button::GetState(bool clear)
 		_state = LOW;
 	}
 	return state;
+}
+
+void Button::ChangeDebounceDelay(int debounceDelay)
+{
+	_debounceDelay = debounceDelay;
 }

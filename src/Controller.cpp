@@ -4,12 +4,12 @@
 
 Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, int settingValueSensitivityPin, Display *display, SpotManager *spotManager)
 {
-	_previousSpotBtn = new Button(previousSpotPin);
-	_nextSpotBtn = new Button(nextSpotPin);
-	_previousSettingBtn = new Button(previousSettingPin);
-	_nextSettingBtn = new Button(nextSettingPin);
-	_decreaseSettingValueBtn = new Button(decreaseSettingValuePin);
-	_increaseSettingValueBtn = new Button(increaseSettingValuePin);
+	_previousSpotBtn = new Button(previousSpotPin, Button_DebounceDelay_SlowButton);
+	_nextSpotBtn = new Button(nextSpotPin, Button_DebounceDelay_SlowButton);
+	_previousSettingBtn = new Button(previousSettingPin, Button_DebounceDelay_SlowButton);
+	_nextSettingBtn = new Button(nextSettingPin, Button_DebounceDelay_SlowButton);
+	_decreaseSettingValueBtn = new Button(decreaseSettingValuePin, Button_DebounceDelay_SlowButton);
+	_increaseSettingValueBtn = new Button(increaseSettingValuePin, Button_DebounceDelay_SlowButton);
 	_settingValueSensitivityPin = settingValueSensitivityPin;
 	_display = display;
 	_spotManager = spotManager;
@@ -39,7 +39,7 @@ void Controller::Loop()
 	_decreaseSettingValueBtn->Loop();
 	_increaseSettingValueBtn->Loop();
 
-	bool refreshDisplay = false;
+	bool stateChanged = false;
 
 	switch (_mode)
 	{
@@ -53,19 +53,19 @@ void Controller::Loop()
 				_mode = ControllerMode::SpotSettings;
 			}
 
-			refreshDisplay = true;
+			stateChanged = true;
 		}
 		else if (_decreaseSettingValueBtn->GetState(true) && _spotManager->GetActiveSpotCount() > 0)
 		{
 			_spotManager->DecreaseActiveSpotCount();
 
-			refreshDisplay = true;
+			stateChanged = true;
 		}
 		else if (_increaseSettingValueBtn->GetState(true) && _spotManager->GetActiveSpotCount() < SpotManager_MaxSpotCount - 1)
 		{
 			_spotManager->IncreaseActiveSpotCount();
 
-			refreshDisplay = true;
+			stateChanged = true;
 		}
 		break;
 
@@ -79,43 +79,67 @@ void Controller::Loop()
 				_mode = ControllerMode::GlobalSettings;
 			}
 
-			refreshDisplay = true;
+			stateChanged = true;
 		}
 		else if (_nextSpotBtn->GetState(true))
 		{
 			_spotManager->NextSpot();
 
-			refreshDisplay = true;
+			stateChanged = true;
 		}
 		else if (_previousSettingBtn->GetState(true))
 		{
 			_spotManager->PreviousSetting();
 
-			refreshDisplay = true;
+			stateChanged = true;
 		}
 		else if (_nextSettingBtn->GetState(true))
 		{
 			_spotManager->NextSetting();
 
-			refreshDisplay = true;
+			stateChanged = true;
 		}
 		else if (_decreaseSettingValueBtn->GetState(true))
 		{
 			_spotManager->DecreaseSettingValue(1);
 
-			refreshDisplay = true;
+			stateChanged = true;
 		}
 		else if (_increaseSettingValueBtn->GetState(true))
 		{
 			_spotManager->IncreaseSettingValue(1);
 
-			refreshDisplay = true;
+			stateChanged = true;
 		}
 		break;
 	}
 
-	if (refreshDisplay)
+	if (stateChanged)
 	{
+		switch (_mode)
+		{
+		case ControllerMode::GlobalSettings:
+			_decreaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
+			_increaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
+			break;
+		case ControllerMode::SpotSettings:
+			SpotSetting setting = _spotManager->GetCurrentSetting();
+			switch (setting)
+			{
+			case SpotSetting::Position:
+			case SpotSetting::SpotTime:
+			case SpotSetting::TravelTime:
+				_decreaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_FastButton);
+				_increaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_FastButton);
+				break;
+			default:
+				_decreaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
+				_increaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
+				break;
+			}
+			break;
+		}
+
 		switch (_mode)
 		{
 		case ControllerMode::GlobalSettings:
