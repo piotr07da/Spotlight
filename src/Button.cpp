@@ -7,7 +7,8 @@ Button::Button(int pin, int debounceDelay)
 	_pin = pin;
 	_debounceDelay = debounceDelay;
 
-	_state = LOW;
+	_isPressed = LOW;
+	_isClicked = LOW;
 	_lastReading = LOW;
 	_lastDebounceTime = -debounceDelay - 1;
 
@@ -25,23 +26,25 @@ void Button::Loop()
 	if (millis() - _lastDebounceTime > _debounceDelay)
 	{
 		int reading = digitalRead(_pin);
-
-		if (reading != _state)
-		{
-			_lastDebounceTime = millis();
-			_state = reading;
-		}
+		_isPressed = reading;
+		_isClicked = reading;
+		_lastDebounceTime = millis();
 	}
 }
 
-bool Button::GetState(bool clear)
+bool Button::IsPressed()
 {
-	int state = _state;
-	if (state && clear)
+	return _isPressed;
+}
+
+bool Button::IsClicked(bool reset)
+{
+	int isClicked = _isClicked;
+	if (_isClicked && reset)
 	{
-		_state = LOW;
+		_isClicked = false;
 	}
-	return state;
+	return isClicked;
 }
 
 void Button::ChangeDebounceDelay(int debounceDelay)

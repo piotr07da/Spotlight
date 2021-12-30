@@ -2,24 +2,26 @@
 
 #include "Particle.h"
 
-LightActivity SpotManager::_spotActivites[6] = {
+LightActivity SpotManager::_spotActivites[7] = {
 	LightActivity::A_1,
 	LightActivity::A_010,
 	LightActivity::A_01,
 	LightActivity::A_10,
 	LightActivity::A_0,
 	LightActivity::A_101,
+	LightActivity::A_Strobe,
 };
-int SpotManager::_spotActivitiesCount = 6;
-LightActivity SpotManager::_travelActivites[6] = {
+int SpotManager::_spotActivitiesCount = 7;
+LightActivity SpotManager::_travelActivites[7] = {
 	LightActivity::A_0,
 	LightActivity::A_101,
 	LightActivity::A_10,
 	LightActivity::A_01,
 	LightActivity::A_1,
 	LightActivity::A_010,
+	LightActivity::A_Strobe,
 };
-int SpotManager::_travelActivitiesCount = 6;
+int SpotManager::_travelActivitiesCount = 7;
 
 SpotManager::SpotManager()
 {
@@ -54,8 +56,6 @@ void SpotManager::DecreaseActiveSpotCount()
 	{
 		--_activeSpotCount;
 	}
-
-	Particle.publish("diag", "Active spot count: " + String(_activeSpotCount));
 }
 
 void SpotManager::IncreaseActiveSpotCount()
@@ -70,8 +70,6 @@ void SpotManager::IncreaseActiveSpotCount()
 		addedSpot->TravelTime = 200;
 		addedSpot->TravelActivity = LightActivity::A_0;
 	}
-
-	Particle.publish("diag", "Active spot count: " + String(_activeSpotCount));
 }
 
 void SpotManager::PreviousSpot()
@@ -79,9 +77,8 @@ void SpotManager::PreviousSpot()
 	if (_currentSpotIndex >= 0)
 	{
 		--_currentSpotIndex;
+		_currentSetting = SpotSetting::Position;
 	}
-
-	Particle.publish("diag", "Current spot index: " + String(_currentSpotIndex));
 }
 
 void SpotManager::NextSpot()
@@ -89,9 +86,8 @@ void SpotManager::NextSpot()
 	if (_currentSpotIndex < _activeSpotCount - 1)
 	{
 		++_currentSpotIndex;
+		_currentSetting = SpotSetting::Position;
 	}
-
-	Particle.publish("diag", "Current spot index: " + String(_currentSpotIndex));
 }
 
 void SpotManager::PreviousSetting()
@@ -118,12 +114,7 @@ void SpotManager::NextSetting()
 	}
 }
 
-void SpotManager::DecreaseSettingValue(int value)
-{
-	IncreaseSettingValue(-value);
-}
-
-void SpotManager::IncreaseSettingValue(int value)
+void SpotManager::ChangeSettingValue(int delta)
 {
 	Spot *spot = GetCurrentSpot();
 
@@ -131,33 +122,33 @@ void SpotManager::IncreaseSettingValue(int value)
 	{
 	case SpotSetting::Position:
 	{
-		spot->Position += value;
+		spot->Position += delta;
 		break;
 	}
 
 	case SpotSetting::SpotTime:
 	{
-		spot->SpotTime += value;
+		spot->SpotTime += delta;
 		break;
 	}
 
 	case SpotSetting::SpotActivity:
 	{
 		int spotActivityIndex = GetCurrentSpotActivityIndex();
-		spot->SpotActivity = FindActivity(SpotManager::_spotActivites, SpotManager::_spotActivitiesCount, spotActivityIndex, value);
+		spot->SpotActivity = FindActivity(SpotManager::_spotActivites, SpotManager::_spotActivitiesCount, spotActivityIndex, delta);
 		break;
 	}
 
 	case SpotSetting::TravelTime:
 	{
-		spot->TravelTime += value;
+		spot->TravelTime += delta;
 		break;
 	}
 
 	case SpotSetting::TravelActivity:
 	{
 		int travelActivityIndex = GetCurrentTravelActivityIndex();
-		spot->TravelActivity = FindActivity(SpotManager::_travelActivites, SpotManager::_travelActivitiesCount, travelActivityIndex, value);
+		spot->TravelActivity = FindActivity(SpotManager::_travelActivites, SpotManager::_travelActivitiesCount, travelActivityIndex, delta);
 		break;
 	}
 	}

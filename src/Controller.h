@@ -26,6 +26,10 @@ private:
 	int _settingValueSensitivityPin;
 	Display *_display;
 	SpotManager *_spotManager;
+	int _settingValueDelta;
+	int _settingValueChangeCounter;
+
+	void ChangeSettingValue(int sign);
 
 public:
 	Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, int settingValueSensitivityPin, Display *display, SpotManager *spotManager);

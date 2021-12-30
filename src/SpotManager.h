@@ -10,9 +10,9 @@ const int SpotManager_MaxSpotCount = 32;
 class SpotManager
 {
 private:
-	static LightActivity _spotActivites[6];
+	static LightActivity _spotActivites[7];
 	static int _spotActivitiesCount;
-	static LightActivity _travelActivites[6];
+	static LightActivity _travelActivites[7];
 	static int _travelActivitiesCount;
 
 	Spot _spots[SpotManager_MaxSpotCount];
@@ -36,8 +36,7 @@ public:
 	void NextSpot();
 	void PreviousSetting();
 	void NextSetting();
-	void DecreaseSettingValue(int value);
-	void IncreaseSettingValue(int value);
+	void ChangeSettingValue(int delta);
 };
 
 #endif // SPOT_MANAGER_H

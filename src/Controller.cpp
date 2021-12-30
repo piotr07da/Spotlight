@@ -28,6 +28,8 @@ void Controller::Setup()
 	pinMode(_settingValueSensitivityPin, PinMode::INPUT);
 
 	_display->ShowWelcome();
+
+	_settingValueDelta = 0;
 }
 
 void Controller::Loop()
@@ -44,24 +46,19 @@ void Controller::Loop()
 	switch (_mode)
 	{
 	case ControllerMode::GlobalSettings:
-		if (_nextSpotBtn->GetState(true))
+		if (_nextSpotBtn->IsClicked() && _spotManager->GetActiveSpotCount() > 0)
 		{
 			_spotManager->NextSpot();
-
-			if (_spotManager->GetCurrentSpotIndex() > -1)
-			{
-				_mode = ControllerMode::SpotSettings;
-			}
-
+			_mode = ControllerMode::SpotSettings;
 			stateChanged = true;
 		}
-		else if (_decreaseSettingValueBtn->GetState(true) && _spotManager->GetActiveSpotCount() > 0)
+		else if (_decreaseSettingValueBtn->IsClicked() && _spotManager->GetActiveSpotCount() > 0)
 		{
 			_spotManager->DecreaseActiveSpotCount();
 
 			stateChanged = true;
 		}
-		else if (_increaseSettingValueBtn->GetState(true) && _spotManager->GetActiveSpotCount() < SpotManager_MaxSpotCount - 1)
+		else if (_increaseSettingValueBtn->IsClicked() && _spotManager->GetActiveSpotCount() < SpotManager_MaxSpotCount - 1)
 		{
 			_spotManager->IncreaseActiveSpotCount();
 
@@ -70,7 +67,7 @@ void Controller::Loop()
 		break;
 
 	case ControllerMode::SpotSettings:
-		if (_previousSpotBtn->GetState(true))
+		if (_previousSpotBtn->IsClicked())
 		{
 			_spotManager->PreviousSpot();
 
@@ -81,35 +78,38 @@ void Controller::Loop()
 
 			stateChanged = true;
 		}
-		else if (_nextSpotBtn->GetState(true))
+		else if (_nextSpotBtn->IsClicked())
 		{
 			_spotManager->NextSpot();
 
 			stateChanged = true;
 		}
-		else if (_previousSettingBtn->GetState(true))
+		else if (_previousSettingBtn->IsClicked())
 		{
 			_spotManager->PreviousSetting();
 
 			stateChanged = true;
 		}
-		else if (_nextSettingBtn->GetState(true))
+		else if (_nextSettingBtn->IsClicked())
 		{
 			_spotManager->NextSetting();
 
 			stateChanged = true;
 		}
-		else if (_decreaseSettingValueBtn->GetState(true))
+		else if (_decreaseSettingValueBtn->IsClicked())
 		{
-			_spotManager->DecreaseSettingValue(1);
-
+			ChangeSettingValue(-1);
 			stateChanged = true;
 		}
-		else if (_increaseSettingValueBtn->GetState(true))
+		else if (_increaseSettingValueBtn->IsClicked())
 		{
-			_spotManager->IncreaseSettingValue(1);
-
+			ChangeSettingValue(1);
 			stateChanged = true;
+		}
+		else if (!_decreaseSettingValueBtn->IsPressed() && !_increaseSettingValueBtn->IsPressed())
+		{
+			_settingValueDelta = 0;
+			_settingValueChangeCounter = 0;
 		}
 		break;
 	}
@@ -150,4 +150,47 @@ void Controller::Loop()
 			break;
 		}
 	}
+}
+
+void Controller::ChangeSettingValue(int sign)
+{
+	switch (_spotManager->GetCurrentSetting())
+	{
+	case SpotSetting::Position:
+		_settingValueDelta = 1;
+		break;
+
+	case SpotSetting::SpotTime:
+	case SpotSetting::TravelTime:
+		if (_settingValueChangeCounter == 0)
+		{
+			_settingValueDelta = 1;
+		}
+		else if (_settingValueChangeCounter == 10)
+		{
+			_settingValueDelta = 2;
+		}
+		else if (_settingValueChangeCounter == 15)
+		{
+			_settingValueDelta = 5;
+		}
+		else if (_settingValueChangeCounter == 19)
+		{
+			_settingValueDelta = 10;
+		}
+		else if (_settingValueChangeCounter == 25)
+		{
+			_settingValueDelta = 100;
+		}
+		break;
+
+	case SpotSetting::SpotActivity:
+	case SpotSetting::TravelActivity:
+		_settingValueDelta = 1;
+		break;
+	}
+
+	_spotManager->ChangeSettingValue(_settingValueDelta * sign);
+
+	++_settingValueChangeCounter;
 }

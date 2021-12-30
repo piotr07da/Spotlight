@@ -1,7 +1,7 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 
-const int Button_DebounceDelay_SlowButton = 300;
+const int Button_DebounceDelay_SlowButton = 170;
 const int Button_DebounceDelay_FastButton = 70;
 
 class Button
@@ -9,7 +9,8 @@ class Button
 private:
 	int _pin;
 	int _debounceDelay;
-	int _state;
+	int _isPressed;
+	int _isClicked;
 	int _lastReading;
 	long _lastDebounceTime;
 
@@ -22,7 +23,8 @@ public:
 	void Setup();
 	void Loop();
 
-	bool GetState(bool clear);
+	bool IsPressed();
+	bool IsClicked(bool reset = true);
 	void ChangeDebounceDelay(int debounceDelay);
 };
 

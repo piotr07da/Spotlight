@@ -9,6 +9,7 @@ enum LightActivity
 	A_10,
 	A_010,
 	A_101,
+	A_Strobe,
 };
 
 #endif // LIGHT_ACTIVITY_H

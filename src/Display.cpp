@@ -77,8 +77,12 @@ void Display::ShowSpotSetting(int spotIndex, const char *label, String value)
 	_oled->setTextSize(1);
 	_oled->setCursor(0, 0);
 	_oled->print("SPOT: ");
+	_oled->setTextSize(2);
 	_oled->println(spotIndex);
+	_oled->setTextSize(1);
+	_oled->println("");
 	_oled->println(label);
+	_oled->println("");
 	_oled->setTextSize(2);
 	_oled->println(buff);
 	_oled->display();
@@ -100,6 +104,8 @@ String Display::FormatLightActivity(LightActivity activity)
 		return "Off-On-Off";
 	case LightActivity::A_101:
 		return "On-Off-On";
+	case LightActivity::A_Strobe:
+		return "Strobe";
 	}
 
 	return "Unknown";
