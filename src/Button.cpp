@@ -23,12 +23,18 @@ void Button::Setup()
 
 void Button::Loop()
 {
-	if (millis() - _lastDebounceTime > _debounceDelay)
+	if (millis() - _lastDebounceTime > (ulong)_debounceDelay)
 	{
 		int reading = digitalRead(_pin);
 		_isPressed = reading;
-		_isClicked = reading;
-		_lastDebounceTime = millis();
+		if (reading != _isClicked)
+		{
+			if (reading)
+			{
+				_isClicked = reading;
+			}
+			_lastDebounceTime = millis();
+		}
 	}
 }
 

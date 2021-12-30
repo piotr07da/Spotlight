@@ -1,7 +1,7 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 
-const int Button_DebounceDelay_SlowButton = 170;
+const int Button_DebounceDelay_SlowButton = 180;
 const int Button_DebounceDelay_FastButton = 70;
 
 class Button
