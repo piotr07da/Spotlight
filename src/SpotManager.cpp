@@ -94,7 +94,7 @@ void SpotManager::PreviousSetting()
 {
 	if (_currentSetting > SpotSetting::FIRST)
 	{
-		_currentSetting = (SpotSetting)(_currentSetting - 1);
+		_currentSetting = (SpotSetting)((int)_currentSetting - 1);
 	}
 	else
 	{
@@ -106,7 +106,7 @@ void SpotManager::NextSetting()
 {
 	if (_currentSetting < SpotSetting::LAST)
 	{
-		_currentSetting = (SpotSetting)(_currentSetting + 1);
+		_currentSetting = (SpotSetting)((int)_currentSetting + 1);
 	}
 	else
 	{

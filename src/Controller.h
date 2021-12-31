@@ -8,7 +8,7 @@
 #include "Display.h"
 #include "SpotManager.h"
 
-enum ControllerMode
+enum class ControllerMode
 {
 	GlobalSettings,
 	SpotSettings,

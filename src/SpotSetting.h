@@ -1,7 +1,7 @@
 #ifndef SPOT_SETTING_H
 #define SPOT_SETTING_H
 
-enum SpotSetting
+enum class SpotSetting
 {
 	FIRST = 0,
 	Position = 0,
