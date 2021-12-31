@@ -221,6 +221,9 @@ void Controller::ReconfigureButtons()
 		switch (setting)
 		{
 		case SpotSetting::Position:
+			_decreaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_SuperFastButton);
+			_increaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_SuperFastButton);
+			break;
 		case SpotSetting::SpotTime:
 		case SpotSetting::TravelTime:
 			_decreaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_FastButton);
