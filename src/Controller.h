@@ -14,6 +14,9 @@ enum ControllerMode
 	SpotSettings,
 };
 
+const int Controller_MaxMotorSpeed = 800;
+const int Controller_ButtonSyncMotorSpeed = 1000 / Button_DebounceDelay_FastButton;
+
 class Controller
 {
 private:
@@ -35,6 +38,7 @@ private:
 	void OnSettingChanged();
 	void ChangeSettingValue(int sign);
 	void OnSettingValueChanged();
+	void PositionMotor(int speed);
 	void RefreshDisplay();
 	void ReconfigureButtons();
 

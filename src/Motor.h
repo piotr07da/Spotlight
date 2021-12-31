@@ -16,7 +16,8 @@ public:
 	void Setup();
 	void Loop();
 	void MoveTo(int position);
-	void MoveTo(int position, int time);
+	void MoveToInTime(int position, int time);
+	void MoveToWithSpeed(int position, int speed);
 	bool IsRunning();
 	bool HasFinished(bool clear = true);
 };

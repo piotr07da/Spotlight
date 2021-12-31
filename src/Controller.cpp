@@ -46,7 +46,11 @@ void Controller::Loop()
 	switch (_mode)
 	{
 	case ControllerMode::GlobalSettings:
-		if (_nextSpotBtn->IsClicked() && _spotManager->GetActiveSpotCount() > 0)
+		if (_previousSpotBtn->IsClicked(true))
+		{
+			// nothing to do but we want to reset click status on this button
+		}
+		else if (_nextSpotBtn->IsClicked() && _spotManager->GetActiveSpotCount() > 0)
 		{
 			_spotManager->NextSpot();
 			ChangeMode(ControllerMode::SpotSettings);
@@ -81,7 +85,7 @@ void Controller::Loop()
 		{
 			_spotManager->NextSpot();
 			RefreshDisplay();
-			_motor->MoveTo(_spotManager->GetCurrentSpot()->Position);
+			PositionMotor(Controller_MaxMotorSpeed);
 		}
 		else if (_previousSettingBtn->IsClicked())
 		{
@@ -96,20 +100,19 @@ void Controller::Loop()
 		else if (_decreaseSettingValueBtn->IsClicked())
 		{
 			ChangeSettingValue(-1);
+			PositionMotor(Controller_ButtonSyncMotorSpeed);
 		}
 		else if (_increaseSettingValueBtn->IsClicked())
 		{
 			ChangeSettingValue(1);
+			PositionMotor(Controller_ButtonSyncMotorSpeed);
 		}
 		else if (!_decreaseSettingValueBtn->IsPressed() && !_increaseSettingValueBtn->IsPressed())
 		{
 			_settingValueDelta = 0;
 			_settingValueChangeCounter = 0;
 
-			if (_spotManager->GetCurrentSetting() == SpotSetting::Position)
-			{
-				_motor->MoveTo(_spotManager->GetCurrentSpot()->Position);
-			}
+			PositionMotor(Controller_MaxMotorSpeed);
 		}
 
 		break;
@@ -182,6 +185,14 @@ void Controller::ChangeSettingValue(int sign)
 void Controller::OnSettingValueChanged()
 {
 	RefreshDisplay();
+}
+
+void Controller::PositionMotor(int speed)
+{
+	if (_spotManager->GetCurrentSetting() == SpotSetting::Position)
+	{
+		_motor->MoveToWithSpeed(_spotManager->GetCurrentSpot()->Position, speed);
+	}
 }
 
 void Controller::RefreshDisplay()

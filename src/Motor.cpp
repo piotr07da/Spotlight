@@ -32,8 +32,22 @@ void Motor::MoveTo(int position)
 	_stepper->setSpeed(800);
 }
 
-void Motor::MoveTo(int position, int time)
+void Motor::MoveToInTime(int position, int time)
 {
+	_stepper->moveTo(position);
+	long distance = position - _stepper->currentPosition();
+	if (distance < 0)
+	{
+		distance *= -1;
+	}
+	float speed = distance / (float)time;
+	_stepper->setSpeed(speed);
+}
+
+void Motor::MoveToWithSpeed(int position, int speed)
+{
+	_stepper->moveTo(position);
+	_stepper->setSpeed(speed);
 }
 
 bool Motor::IsRunning()
