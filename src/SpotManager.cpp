@@ -129,6 +129,10 @@ void SpotManager::ChangeSettingValue(int delta)
 	case SpotSetting::SpotTime:
 	{
 		spot->SpotTime += delta;
+		if (spot->SpotTime < 0)
+		{
+			spot->SpotTime = 0;
+		}
 		break;
 	}
 
@@ -142,6 +146,10 @@ void SpotManager::ChangeSettingValue(int delta)
 	case SpotSetting::TravelTime:
 	{
 		spot->TravelTime += delta;
+		if (spot->TravelTime < 0)
+		{
+			spot->TravelTime = 0;
+		}
 		break;
 	}
 

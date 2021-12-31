@@ -4,6 +4,7 @@
 #include <Particle.h>
 
 #include "Button.h"
+#include "Motor.h"
 #include "Display.h"
 #include "SpotManager.h"
 
@@ -23,7 +24,7 @@ private:
 	Button *_nextSettingBtn;
 	Button *_decreaseSettingValueBtn;
 	Button *_increaseSettingValueBtn;
-	int _settingValueSensitivityPin;
+	Motor *_motor;
 	Display *_display;
 	SpotManager *_spotManager;
 	int _settingValueDelta;
@@ -32,7 +33,7 @@ private:
 	void ChangeSettingValue(int sign);
 
 public:
-	Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, int settingValueSensitivityPin, Display *display, SpotManager *spotManager);
+	Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, Motor *motor, Display *display, SpotManager *spotManager);
 
 	void Setup();
 	void Loop();

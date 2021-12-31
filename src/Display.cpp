@@ -13,10 +13,12 @@ void Display::ShowWelcome()
 {
 	_oled->clearDisplay();
 
-	_oled->setTextSize(2);
-	_oled->setTextColor(WHITE);
-	_oled->setCursor(0, 0);
-	_oled->println("Welcome!");
+	_oled->drawBitmap(15, 0, Display_Logo, 96, 64, 1);
+
+	// _oled->setTextSize(2);
+	// _oled->setTextColor(WHITE);
+	// _oled->setCursor(0, 0);
+	// _oled->println("Welcome!");
 	_oled->display();
 }
 

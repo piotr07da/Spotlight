@@ -2,7 +2,7 @@
 
 #include "Particle.h"
 
-Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, int settingValueSensitivityPin, Display *display, SpotManager *spotManager)
+Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, Motor *motor, Display *display, SpotManager *spotManager)
 {
 	_previousSpotBtn = new Button(previousSpotPin, Button_DebounceDelay_SlowButton);
 	_nextSpotBtn = new Button(nextSpotPin, Button_DebounceDelay_SlowButton);
@@ -10,7 +10,7 @@ Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSetting
 	_nextSettingBtn = new Button(nextSettingPin, Button_DebounceDelay_SlowButton);
 	_decreaseSettingValueBtn = new Button(decreaseSettingValuePin, Button_DebounceDelay_SlowButton);
 	_increaseSettingValueBtn = new Button(increaseSettingValuePin, Button_DebounceDelay_SlowButton);
-	_settingValueSensitivityPin = settingValueSensitivityPin;
+	_motor = motor;
 	_display = display;
 	_spotManager = spotManager;
 
@@ -25,8 +25,8 @@ void Controller::Setup()
 	_nextSettingBtn->Setup();
 	_decreaseSettingValueBtn->Setup();
 	_increaseSettingValueBtn->Setup();
-	pinMode(_settingValueSensitivityPin, PinMode::INPUT);
 
+	_motor->Setup();
 	_display->ShowWelcome();
 
 	_settingValueDelta = 0;
@@ -40,6 +40,8 @@ void Controller::Loop()
 	_nextSettingBtn->Loop();
 	_decreaseSettingValueBtn->Loop();
 	_increaseSettingValueBtn->Loop();
+
+	//_motor->Loop();
 
 	bool stateChanged = false;
 
@@ -140,14 +142,22 @@ void Controller::Loop()
 			break;
 		}
 
-		switch (_mode)
+		if (_mode == ControllerMode::SpotSettings && _spotManager->GetCurrentSetting() == SpotSetting::Position)
 		{
-		case ControllerMode::GlobalSettings:
-			_display->ShowGlobalSettings(_spotManager->GetActiveSpotCount());
-			break;
-		case ControllerMode::SpotSettings:
-			_display->ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
-			break;
+			_motor->Move(_spotManager->GetCurrentSpot()->Position);
+		}
+
+		// if (!_motor->IsMoving())
+		{
+			switch (_mode)
+			{
+			case ControllerMode::GlobalSettings:
+				_display->ShowGlobalSettings(_spotManager->GetActiveSpotCount());
+				break;
+			case ControllerMode::SpotSettings:
+				_display->ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
+				break;
+			}
 		}
 	}
 }
