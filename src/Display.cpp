@@ -1,6 +1,7 @@
 #include "Display.h"
 
 #include <Particle.h>
+#include "DisplayLogo.h"
 
 Display::Display(Adafruit_SH1106 *oled)
 {
@@ -12,13 +13,7 @@ Display::Display(Adafruit_SH1106 *oled)
 void Display::ShowWelcome()
 {
 	_oled->clearDisplay();
-
-	_oled->drawBitmap(15, 0, Display_Logo, 96, 64, 1);
-
-	// _oled->setTextSize(2);
-	// _oled->setTextColor(WHITE);
-	// _oled->setCursor(0, 0);
-	// _oled->println("Welcome!");
+	_oled->drawBitmap(15, 0, DisplayLogo, 96, 64, 1);
 	_oled->display();
 }
 
@@ -72,7 +67,7 @@ void Display::ShowSpotSetting(int spotIndex, const char *label, String value)
 	{
 		buff[i] = value.charAt(i);
 	}
-	buff[sl] = NULL;
+	buff[sl] = '\0';
 
 	_oled->clearDisplay();
 	_oled->setTextColor(WHITE);

@@ -30,7 +30,13 @@ private:
 	int _settingValueDelta;
 	int _settingValueChangeCounter;
 
+	void ChangeMode(ControllerMode mode);
+	void OnModeChanged();
+	void OnSettingChanged();
 	void ChangeSettingValue(int sign);
+	void OnSettingValueChanged();
+	void RefreshDisplay();
+	void ReconfigureButtons();
 
 public:
 	Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, Motor *motor, Display *display, SpotManager *spotManager);

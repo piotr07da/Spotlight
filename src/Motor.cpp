@@ -5,30 +5,48 @@
 Motor::Motor(AccelStepper *stepper)
 {
 	_stepper = stepper;
+	_isRunning = false;
+	_hasFinished = false;
 }
 
 void Motor::Setup()
 {
 	_stepper->setMaxSpeed(1000);
-	_stepper->setSpeed(200);
-	_stepper->moveTo(200);
 }
 
 void Motor::Loop()
 {
+	bool prevIsRunning = _isRunning;
+	_isRunning = _stepper->currentPosition() != _stepper->targetPosition();
+	if (prevIsRunning && !_isRunning)
+	{
+		_hasFinished = true;
+	}
+
 	_stepper->runSpeedToPosition();
 }
 
-bool Motor::IsMoving()
-{
-	return _stepper->currentPosition() != _stepper->targetPosition();
-}
-
-void Motor::Move(int position)
+void Motor::MoveTo(int position)
 {
 	_stepper->moveTo(position);
+	_stepper->setSpeed(800);
 }
 
-void Motor::Move(int position, int time)
+void Motor::MoveTo(int position, int time)
 {
+}
+
+bool Motor::IsRunning()
+{
+	return _isRunning;
+}
+
+bool Motor::HasFinished(bool clear)
+{
+	bool hasFinished = _hasFinished;
+	if (hasFinished && clear)
+	{
+		_hasFinished = false;
+	}
+	return hasFinished;
 }

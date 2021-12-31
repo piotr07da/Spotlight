@@ -26,7 +26,7 @@ Motor *_motor;
 Adafruit_SH1106 _oled(OLED_RESET);
 Display *_display;
 SpotManager *_spotManager;
-Controller *_inputController;
+Controller *_controller;
 
 void setup()
 {
@@ -35,22 +35,12 @@ void setup()
   _motor = new Motor(&_stepper);
   _display = new Display(&_oled);
   _spotManager = new SpotManager();
-  _inputController = new Controller(D2, D3, D4, D5, A0, A1, _motor, _display, _spotManager);
+  _controller = new Controller(D2, D3, D4, D5, A0, A1, _motor, _display, _spotManager);
 
-  _inputController->Setup();
-
-  // pinMode(A2, OUTPUT);
-  // pinMode(A3, OUTPUT);
-  // digitalWrite(A3, HIGH);
+  _controller->Setup();
 }
 
 void loop()
 {
-
-  // digitalWrite(A2, HIGH);
-  // delayMicroseconds(500000);
-  // digitalWrite(A2, LOW);
-  // delayMicroseconds(500000);
-
-  _inputController->Loop();
+  _controller->Loop();
 }

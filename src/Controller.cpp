@@ -41,9 +41,7 @@ void Controller::Loop()
 	_decreaseSettingValueBtn->Loop();
 	_increaseSettingValueBtn->Loop();
 
-	//_motor->Loop();
-
-	bool stateChanged = false;
+	_motor->Loop();
 
 	switch (_mode)
 	{
@@ -51,20 +49,17 @@ void Controller::Loop()
 		if (_nextSpotBtn->IsClicked() && _spotManager->GetActiveSpotCount() > 0)
 		{
 			_spotManager->NextSpot();
-			_mode = ControllerMode::SpotSettings;
-			stateChanged = true;
+			ChangeMode(ControllerMode::SpotSettings);
 		}
 		else if (_decreaseSettingValueBtn->IsClicked() && _spotManager->GetActiveSpotCount() > 0)
 		{
 			_spotManager->DecreaseActiveSpotCount();
-
-			stateChanged = true;
+			RefreshDisplay();
 		}
 		else if (_increaseSettingValueBtn->IsClicked() && _spotManager->GetActiveSpotCount() < SpotManager_MaxSpotCount - 1)
 		{
 			_spotManager->IncreaseActiveSpotCount();
-
-			stateChanged = true;
+			RefreshDisplay();
 		}
 		break;
 
@@ -75,91 +70,68 @@ void Controller::Loop()
 
 			if (_spotManager->GetCurrentSpotIndex() == -1)
 			{
-				_mode = ControllerMode::GlobalSettings;
+				ChangeMode(ControllerMode::GlobalSettings);
 			}
-
-			stateChanged = true;
+			else
+			{
+				RefreshDisplay();
+			}
 		}
 		else if (_nextSpotBtn->IsClicked())
 		{
 			_spotManager->NextSpot();
-
-			stateChanged = true;
+			RefreshDisplay();
+			_motor->MoveTo(_spotManager->GetCurrentSpot()->Position);
 		}
 		else if (_previousSettingBtn->IsClicked())
 		{
 			_spotManager->PreviousSetting();
-
-			stateChanged = true;
+			OnSettingChanged();
 		}
 		else if (_nextSettingBtn->IsClicked())
 		{
 			_spotManager->NextSetting();
-
-			stateChanged = true;
+			OnSettingChanged();
 		}
 		else if (_decreaseSettingValueBtn->IsClicked())
 		{
 			ChangeSettingValue(-1);
-			stateChanged = true;
 		}
 		else if (_increaseSettingValueBtn->IsClicked())
 		{
 			ChangeSettingValue(1);
-			stateChanged = true;
 		}
 		else if (!_decreaseSettingValueBtn->IsPressed() && !_increaseSettingValueBtn->IsPressed())
 		{
 			_settingValueDelta = 0;
 			_settingValueChangeCounter = 0;
+
+			if (_spotManager->GetCurrentSetting() == SpotSetting::Position)
+			{
+				_motor->MoveTo(_spotManager->GetCurrentSpot()->Position);
+			}
 		}
+
 		break;
 	}
+}
 
-	if (stateChanged)
-	{
-		switch (_mode)
-		{
-		case ControllerMode::GlobalSettings:
-			_decreaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
-			_increaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
-			break;
-		case ControllerMode::SpotSettings:
-			SpotSetting setting = _spotManager->GetCurrentSetting();
-			switch (setting)
-			{
-			case SpotSetting::Position:
-			case SpotSetting::SpotTime:
-			case SpotSetting::TravelTime:
-				_decreaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_FastButton);
-				_increaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_FastButton);
-				break;
-			default:
-				_decreaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
-				_increaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
-				break;
-			}
-			break;
-		}
+void Controller::ChangeMode(ControllerMode mode)
+{
+	_mode = mode;
+	OnModeChanged();
+}
 
-		if (_mode == ControllerMode::SpotSettings && _spotManager->GetCurrentSetting() == SpotSetting::Position)
-		{
-			_motor->Move(_spotManager->GetCurrentSpot()->Position);
-		}
+void Controller::OnModeChanged()
+{
+	RefreshDisplay();
+	ReconfigureButtons();
+}
 
-		// if (!_motor->IsMoving())
-		{
-			switch (_mode)
-			{
-			case ControllerMode::GlobalSettings:
-				_display->ShowGlobalSettings(_spotManager->GetActiveSpotCount());
-				break;
-			case ControllerMode::SpotSettings:
-				_display->ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
-				break;
-			}
-		}
-	}
+void Controller::OnSettingChanged()
+{
+	RefreshDisplay();
+	ReconfigureButtons();
 }
 
 void Controller::ChangeSettingValue(int sign)
@@ -203,4 +175,51 @@ void Controller::ChangeSettingValue(int sign)
 	_spotManager->ChangeSettingValue(_settingValueDelta * sign);
 
 	++_settingValueChangeCounter;
+
+	OnSettingValueChanged();
+}
+
+void Controller::OnSettingValueChanged()
+{
+	RefreshDisplay();
+}
+
+void Controller::RefreshDisplay()
+{
+	switch (_mode)
+	{
+	case ControllerMode::GlobalSettings:
+		_display->ShowGlobalSettings(_spotManager->GetActiveSpotCount());
+		break;
+	case ControllerMode::SpotSettings:
+		_display->ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
+		break;
+	}
+}
+
+void Controller::ReconfigureButtons()
+{
+	switch (_mode)
+	{
+	case ControllerMode::GlobalSettings:
+		_decreaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
+		_increaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
+		break;
+	case ControllerMode::SpotSettings:
+		SpotSetting setting = _spotManager->GetCurrentSetting();
+		switch (setting)
+		{
+		case SpotSetting::Position:
+		case SpotSetting::SpotTime:
+		case SpotSetting::TravelTime:
+			_decreaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_FastButton);
+			_increaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_FastButton);
+			break;
+		default:
+			_decreaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
+			_increaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
+			break;
+		}
+		break;
+	}
 }

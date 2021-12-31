@@ -7,15 +7,18 @@ class Motor
 {
 private:
 	AccelStepper *_stepper;
+	bool _isRunning;
+	bool _hasFinished;
 
 public:
 	Motor(AccelStepper *stepper);
 
 	void Setup();
 	void Loop();
-	bool IsMoving();
-	void Move(int position);
-	void Move(int position, int time);
+	void MoveTo(int position);
+	void MoveTo(int position, int time);
+	bool IsRunning();
+	bool HasFinished(bool clear = true);
 };
 
 #endif // MOTOR_H
