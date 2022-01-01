@@ -23,6 +23,7 @@ void Display::Loop()
 	if (_needsRefresh)
 	{
 		_oled->display();
+		_needsRefresh = false;
 	}
 }
 

@@ -36,8 +36,6 @@ void Controller::Loop()
 	_decreaseSettingValueBtn->Loop();
 	_increaseSettingValueBtn->Loop();
 
-	
-
 	switch (_mode)
 	{
 	case ControllerMode::GlobalSettings:
@@ -48,7 +46,7 @@ void Controller::Loop()
 		else if (_nextSpotBtn->IsClicked())
 		{
 			_spotManager->NextSpot();
-			if (_spotManager->GetCurrentSpotIndex() == -1)
+			if (_spotManager->GetCurrentSpotIndex() == 0)
 			{
 				ChangeMode(ControllerMode::SpotSettings);
 			}
