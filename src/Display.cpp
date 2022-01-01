@@ -13,15 +13,76 @@ Display::Display(Adafruit_SH1106 *oled, Controller *controller, SpotManager *spo
 	_oled->begin(SH1106_SWITCHCAPVCC, 0x3C); // initialize with the I2C addr 0x3D (for the 128x64)
 }
 
-void Display::ShowWelcome()
+void Display::Setup()
 {
-	_oled->clearDisplay();
-	_oled->drawBitmap(15, 0, DisplayLogo, 96, 64, 1);
-	_oled->display();
+	ShowWelcome();
+}
+
+void Display::Loop()
+{
+	if (_needsRefresh)
+	{
+		_oled->display();
+	}
+}
+
+void Display::OnControllerModeChanged(ControllerMode mode)
+{
+	switch (mode)
+	{
+	case ControllerMode::GlobalSettings:
+		ShowGlobalSettings(_spotManager->GetActiveSpotCount());
+		break;
+
+	case ControllerMode::SpotSettings:
+		ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
+		break;
+	}
+}
+
+void Display::OnNumberOfSpotsChanged()
+{
+	ShowGlobalSettings(_spotManager->GetActiveSpotCount());
+}
+
+void Display::OnSpotChanged()
+{
+	ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
+}
+
+void Display::OnSettingChanged(SpotSetting setting)
+{
+	ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), setting);
+}
+
+void Display::OnSettingValueChanged()
+{
+	ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
 }
 
 void Display::ShowDiag(String diag)
 {
+	int sl = diag.length();
+	char buff[sl + 1];
+	for (int i = 0; i < sl; ++i)
+	{
+		buff[i] = diag.charAt(i);
+	}
+	buff[sl] = '\0';
+
+	_oled->clearDisplay();
+	_oled->setTextColor(WHITE);
+	_oled->setTextSize(1);
+	_oled->setCursor(0, 0);
+	_oled->println(buff);
+	_needsRefresh = true;
+}
+
+void Display::ShowWelcome()
+{
+	_oled->clearDisplay();
+	_oled->drawBitmap(15, 0, DisplayLogo, 96, 64, 1);
+	_needsRefresh = true;
 }
 
 void Display::ShowGlobalSettings(int activeSpotCount)
@@ -33,7 +94,7 @@ void Display::ShowGlobalSettings(int activeSpotCount)
 	_oled->println("Active spots:");
 	_oled->setTextSize(2);
 	_oled->println(activeSpotCount);
-	_oled->display();
+	_needsRefresh = true;
 }
 
 void Display::ShowSpotSetting(int spotIndex, Spot spot, SpotSetting setting)
@@ -62,30 +123,6 @@ void Display::ShowSpotSetting(int spotIndex, Spot spot, SpotSetting setting)
 	}
 }
 
-void Display::OnControllerModeChanged(ControllerMode mode)
-{
-	switch (mode)
-	{
-	case ControllerMode::GlobalSettings:
-		ShowGlobalSettings(_spotManager->GetActiveSpotCount());
-		break;
-
-	case ControllerMode::SpotSettings:
-		ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
-		break;
-	}
-}
-
-void Display::OnNumberOfSpotsChanged()
-{
-	ShowGlobalSettings(_spotManager->GetActiveSpotCount());
-}
-
-void Display::OnSpotChanged()
-{
-	ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
-}
-
 void Display::ShowSpotSetting(int spotIndex, const char *label, String value)
 {
 	int sl = value.length();
@@ -109,7 +146,7 @@ void Display::ShowSpotSetting(int spotIndex, const char *label, String value)
 	_oled->println("");
 	_oled->setTextSize(2);
 	_oled->println(buff);
-	_oled->display();
+	_needsRefresh = true;
 }
 
 String Display::FormatLightActivity(LightActivity activity)

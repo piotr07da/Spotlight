@@ -85,7 +85,7 @@ void SpotManager::PreviousSpot()
 		if (_currentSetting != SpotSetting::Position)
 		{
 			_currentSetting = SpotSetting::Position;
-			SettingChanged.Raise();
+			SettingChanged.Raise(_currentSetting);
 		}
 	}
 }
@@ -100,7 +100,7 @@ void SpotManager::NextSpot()
 		if (_currentSetting != SpotSetting::Position)
 		{
 			_currentSetting = SpotSetting::Position;
-			SettingChanged.Raise();
+			SettingChanged.Raise(_currentSetting);
 		}
 	}
 }
@@ -115,6 +115,8 @@ void SpotManager::PreviousSetting()
 	{
 		_currentSetting = SpotSetting::LAST;
 	}
+
+	SettingChanged.Raise(_currentSetting);
 }
 
 void SpotManager::NextSetting()
@@ -127,6 +129,8 @@ void SpotManager::NextSetting()
 	{
 		_currentSetting = SpotSetting::FIRST;
 	}
+
+	SettingChanged.Raise(_currentSetting);
 }
 
 void SpotManager::ChangeSettingValue(int delta)
@@ -175,6 +179,8 @@ void SpotManager::ChangeSettingValue(int delta)
 		break;
 	}
 	}
+
+	SettingValueChanged.Raise();
 }
 
 LightActivity SpotManager::FindActivity(LightActivity *activities, int activitiesCount, int currentActivityIndex, int indexChangeValue)

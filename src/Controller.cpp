@@ -2,7 +2,7 @@
 
 #include "Particle.h"
 
-Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager)
+Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager, Motor *motor)
 {
 	_previousSpotBtn = new Button(previousSpotPin, Button_DebounceDelay_SlowButton);
 	_nextSpotBtn = new Button(nextSpotPin, Button_DebounceDelay_SlowButton);
@@ -10,9 +10,8 @@ Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSetting
 	_nextSettingBtn = new Button(nextSettingPin, Button_DebounceDelay_SlowButton);
 	_decreaseSettingValueBtn = new Button(decreaseSettingValuePin, Button_DebounceDelay_SlowButton);
 	_increaseSettingValueBtn = new Button(increaseSettingValuePin, Button_DebounceDelay_SlowButton);
-	//_motor = motor;
 	_spotManager = spotManager;
-
+	_motor = motor;
 	_mode = ControllerMode::GlobalSettings;
 }
 
@@ -24,8 +23,6 @@ void Controller::Setup()
 	_nextSettingBtn->Setup();
 	_decreaseSettingValueBtn->Setup();
 	_increaseSettingValueBtn->Setup();
-
-	//_motor->Setup();
 
 	_settingValueDelta = 0;
 }
@@ -39,7 +36,7 @@ void Controller::Loop()
 	_decreaseSettingValueBtn->Loop();
 	_increaseSettingValueBtn->Loop();
 
-	//_motor->Loop();
+	
 
 	switch (_mode)
 	{
@@ -48,20 +45,21 @@ void Controller::Loop()
 		{
 			// nothing to do but we want to reset click status on this button
 		}
-		else if (_nextSpotBtn->IsClicked() && _spotManager->GetActiveSpotCount() > 0)
+		else if (_nextSpotBtn->IsClicked())
 		{
 			_spotManager->NextSpot();
-			ChangeMode(ControllerMode::SpotSettings);
+			if (_spotManager->GetCurrentSpotIndex() == -1)
+			{
+				ChangeMode(ControllerMode::SpotSettings);
+			}
 		}
 		else if (_decreaseSettingValueBtn->IsClicked() && _spotManager->GetActiveSpotCount() > 0)
 		{
 			_spotManager->DecreaseActiveSpotCount();
-			// RefreshDisplay();
 		}
 		else if (_increaseSettingValueBtn->IsClicked() && _spotManager->GetActiveSpotCount() < SpotManager_MaxSpotCount - 1)
 		{
 			_spotManager->IncreaseActiveSpotCount();
-			// RefreshDisplay();
 		}
 		break;
 
@@ -74,15 +72,10 @@ void Controller::Loop()
 			{
 				ChangeMode(ControllerMode::GlobalSettings);
 			}
-			else
-			{
-				RefreshDisplay();
-			}
 		}
 		else if (_nextSpotBtn->IsClicked())
 		{
 			_spotManager->NextSpot();
-			RefreshDisplay();
 			PositionMotor(Controller_MaxMotorSpeed);
 		}
 		else if (_previousSettingBtn->IsClicked())
@@ -97,6 +90,7 @@ void Controller::Loop()
 		}
 		else if (_decreaseSettingValueBtn->IsClicked())
 		{
+
 			ChangeSettingValue(-1);
 			PositionMotor(Controller_ButtonSyncMotorSpeed);
 		}
@@ -126,13 +120,11 @@ void Controller::ChangeMode(ControllerMode mode)
 
 void Controller::OnModeChanged()
 {
-	RefreshDisplay();
 	ReconfigureButtons();
 }
 
 void Controller::OnSettingChanged()
 {
-	RefreshDisplay();
 	ReconfigureButtons();
 }
 
@@ -177,33 +169,13 @@ void Controller::ChangeSettingValue(int sign)
 	_spotManager->ChangeSettingValue(_settingValueDelta * sign);
 
 	++_settingValueChangeCounter;
-
-	OnSettingValueChanged();
-}
-
-void Controller::OnSettingValueChanged()
-{
-	RefreshDisplay();
 }
 
 void Controller::PositionMotor(int speed)
 {
 	if (_spotManager->GetCurrentSetting() == SpotSetting::Position)
 	{
-		//_motor->MoveToWithSpeed(_spotManager->GetCurrentSpot()->Position, speed);
-	}
-}
-
-void Controller::RefreshDisplay()
-{
-	switch (_mode)
-	{
-	case ControllerMode::GlobalSettings:
-		//_display->ShowGlobalSettings(_spotManager->GetActiveSpotCount());
-		break;
-	case ControllerMode::SpotSettings:
-		//_display->ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
-		break;
+		_motor->MoveToWithSpeed(_spotManager->GetCurrentSpot()->Position, speed);
 	}
 }
 

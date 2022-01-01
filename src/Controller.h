@@ -27,8 +27,8 @@ private:
 	Button *_nextSettingBtn;
 	Button *_decreaseSettingValueBtn;
 	Button *_increaseSettingValueBtn;
-	Motor *_motor;
 	SpotManager *_spotManager;
+	Motor *_motor;
 	int _settingValueDelta;
 	int _settingValueChangeCounter;
 
@@ -36,13 +36,11 @@ private:
 	void OnModeChanged();
 	void OnSettingChanged();
 	void ChangeSettingValue(int sign);
-	void OnSettingValueChanged();
 	void PositionMotor(int speed);
-	void RefreshDisplay();
 	void ReconfigureButtons();
 
 public:
-	Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager);
+	Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager, Motor *motor);
 
 	Event1<ControllerMode> ModeChanged;
 

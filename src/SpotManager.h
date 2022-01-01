@@ -30,7 +30,8 @@ public:
 
 	Event0 NumberOfSpotsChanged;
 	Event0 SpotChanged;
-	Event0 SettingChanged;
+	Event1<SpotSetting> SettingChanged;
+	Event0 SettingValueChanged;
 
 	int GetActiveSpotCount();
 	int GetCurrentSpotIndex();
