@@ -38,6 +38,10 @@ void Display::OnControllerModeChanged(ControllerMode mode)
 	case ControllerMode::SpotSettings:
 		ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
 		break;
+
+	case ControllerMode::Standby:
+		ShowStandby();
+		break;
 	}
 }
 
@@ -59,6 +63,11 @@ void Display::OnSettingChanged(SpotSetting setting)
 void Display::OnSettingValueChanged()
 {
 	ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
+}
+
+void Display::OnStartRequested()
+{
+	ShowRunning();
 }
 
 void Display::ShowDiag(String diag)
@@ -147,6 +156,26 @@ void Display::ShowSpotSetting(int spotIndex, const char *label, String value)
 	_oled->println("");
 	_oled->setTextSize(2);
 	_oled->println(buff);
+	_needsRefresh = true;
+}
+
+void Display::ShowStandby()
+{
+	_oled->clearDisplay();
+	_oled->setTextColor(WHITE);
+	_oled->setTextSize(1);
+	_oled->setCursor(0, 0);
+	_oled->print("STANDBY");
+	_needsRefresh = true;
+}
+
+void Display::ShowRunning()
+{
+	_oled->clearDisplay();
+	_oled->setTextColor(WHITE);
+	_oled->setTextSize(1);
+	_oled->setCursor(0, 0);
+	_oled->print("RUNNING");
 	_needsRefresh = true;
 }
 

@@ -10,6 +10,7 @@ class Button
 private:
 	int _pin;
 	int _debounceDelay;
+	bool _isEnabled;
 	int _isPressed;
 	int _isClicked;
 	int _lastReading;
@@ -24,6 +25,8 @@ public:
 	void Setup();
 	void Loop();
 
+	void Disable();
+	void Enable();
 	bool IsPressed();
 	bool IsClicked(bool reset = true);
 	void ChangeDebounceDelay(int debounceDelay);

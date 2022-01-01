@@ -12,6 +12,7 @@ enum class ControllerMode
 {
 	GlobalSettings,
 	SpotSettings,
+	Standby,
 };
 
 const int Controller_MaxMotorSpeed = 800;
@@ -43,6 +44,8 @@ public:
 	Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager, Motor *motor);
 
 	Event1<ControllerMode> ModeChanged;
+	Event0 StartRequested;
+	Event0 StopRequested;
 
 	void Setup();
 	void Loop();

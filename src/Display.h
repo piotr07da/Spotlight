@@ -23,6 +23,8 @@ private:
 	void ShowGlobalSettings(int activeSpotCount);
 	void ShowSpotSetting(int spotIndex, Spot spot, SpotSetting setting);
 	void ShowSpotSetting(int spotIndex, const char *label, String value);
+	void ShowStandby();
+	void ShowRunning();
 	String FormatLightActivity(LightActivity activity);
 
 public:
@@ -36,6 +38,7 @@ public:
 	void OnSpotChanged();
 	void OnSettingChanged(SpotSetting setting);
 	void OnSettingValueChanged();
+	void OnStartRequested();
 };
 
 #endif // DISPLAY_H

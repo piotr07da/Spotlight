@@ -7,6 +7,7 @@ Button::Button(int pin, int debounceDelay)
 	_pin = pin;
 	_debounceDelay = debounceDelay;
 
+	_isEnabled = true;
 	_isPressed = LOW;
 	_isClicked = LOW;
 	_lastReading = LOW;
@@ -23,19 +24,34 @@ void Button::Setup()
 
 void Button::Loop()
 {
-	if (millis() - _lastDebounceTime > (ulong)_debounceDelay)
+	if (_isEnabled)
 	{
-		int reading = digitalRead(_pin);
-		_isPressed = reading;
-		if (reading != _isClicked)
+		if (millis() - _lastDebounceTime > (ulong)_debounceDelay)
 		{
-			if (reading)
+			int reading = digitalRead(_pin);
+			_isPressed = reading;
+			if (reading != _isClicked)
 			{
-				_isClicked = reading;
+				if (reading)
+				{
+					_isClicked = reading;
+				}
+				_lastDebounceTime = millis();
 			}
-			_lastDebounceTime = millis();
 		}
 	}
+}
+
+void Button::Disable()
+{
+	_isEnabled = false;
+	_isPressed = false;
+	_isClicked = false;
+}
+
+void Button::Enable()
+{
+	_isEnabled = true;
 }
 
 bool Button::IsPressed()

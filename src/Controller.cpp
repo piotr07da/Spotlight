@@ -39,11 +39,7 @@ void Controller::Loop()
 	switch (_mode)
 	{
 	case ControllerMode::GlobalSettings:
-		if (_previousSpotBtn->IsClicked(true))
-		{
-			// nothing to do but we want to reset click status on this button
-		}
-		else if (_nextSpotBtn->IsClicked())
+		if (_nextSpotBtn->IsClicked())
 		{
 			_spotManager->NextSpot();
 			if (_spotManager->GetCurrentSpotIndex() == 0)
@@ -73,8 +69,15 @@ void Controller::Loop()
 		}
 		else if (_nextSpotBtn->IsClicked())
 		{
-			_spotManager->NextSpot();
-			PositionMotor(Controller_MaxMotorSpeed);
+			if (_spotManager->GetCurrentSpotIndex() < _spotManager->GetActiveSpotCount() - 1)
+			{
+				_spotManager->NextSpot();
+				PositionMotor(Controller_MaxMotorSpeed);
+			}
+			else
+			{
+				ChangeMode(ControllerMode::Standby);
+			}
 		}
 		else if (_previousSettingBtn->IsClicked())
 		{
@@ -104,7 +107,18 @@ void Controller::Loop()
 
 			PositionMotor(Controller_MaxMotorSpeed);
 		}
+		break;
 
+	case ControllerMode::Standby:
+		if (_previousSpotBtn->IsClicked(true))
+		{
+			StopRequested.Raise();
+			ChangeMode(ControllerMode::SpotSettings);
+		}
+		else if (_nextSpotBtn->IsClicked())
+		{
+			StartRequested.Raise();
+		}
 		break;
 	}
 }
@@ -182,10 +196,26 @@ void Controller::ReconfigureButtons()
 	switch (_mode)
 	{
 	case ControllerMode::GlobalSettings:
+	{
+		_previousSpotBtn->Disable();
+		_nextSpotBtn->Enable();
+		_previousSettingBtn->Disable();
+		_nextSettingBtn->Disable();
+		_decreaseSettingValueBtn->Enable();
+		_increaseSettingValueBtn->Enable();
 		_decreaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
 		_increaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
 		break;
+	}
+
 	case ControllerMode::SpotSettings:
+	{
+		_previousSpotBtn->Enable();
+		_nextSpotBtn->Enable();
+		_previousSettingBtn->Enable();
+		_nextSettingBtn->Enable();
+		_decreaseSettingValueBtn->Enable();
+		_increaseSettingValueBtn->Enable();
 		SpotSetting setting = _spotManager->GetCurrentSetting();
 		switch (setting)
 		{
@@ -204,5 +234,17 @@ void Controller::ReconfigureButtons()
 			break;
 		}
 		break;
+	}
+
+	case ControllerMode::Standby:
+	{
+		_previousSpotBtn->Enable();
+		_nextSpotBtn->Enable();
+		_previousSettingBtn->Disable();
+		_nextSettingBtn->Disable();
+		_decreaseSettingValueBtn->Disable();
+		_increaseSettingValueBtn->Disable();
+		break;
+	}
 	}
 }
