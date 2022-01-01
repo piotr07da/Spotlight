@@ -43,7 +43,7 @@ void setup()
     _light = new Light(WKP);
     _controller = new Controller(D2, D3, D4, D5, A0, A1, _spotManager, _motor);
     _display = new Display(&_oled, _controller, _spotManager, NULL);
-    _runner = new Runner(_spotManager);
+    _runner = new Runner(_spotManager, _motor, _light);
 
     _controller->ModeChanged.Subscribe(
         [](ControllerMode mode)
@@ -81,12 +81,14 @@ void setup()
     _light->Setup();
     _controller->Setup();
     _display->Setup();
+    _runner->Setup();
 }
 
 void loop()
 {
-    _controller->Loop();
-    _display->Loop();
     _motor->Loop();
     _light->Loop();
+    _controller->Loop();
+    _display->Loop();
+    _runner->Loop();
 }

@@ -188,9 +188,9 @@ String Display::FormatLightActivity(LightActivity activity)
 	case LightActivity::A_1:
 		return "On";
 	case LightActivity::A_01:
-		return "On-Off";
-	case LightActivity::A_10:
 		return "Off-On";
+	case LightActivity::A_10:
+		return "On-Off";
 	case LightActivity::A_010:
 		return "Off-On-Off";
 	case LightActivity::A_101:

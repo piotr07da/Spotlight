@@ -45,6 +45,11 @@ Spot *SpotManager::GetCurrentSpot()
 	return _spots + _currentSpotIndex;
 }
 
+Spot *SpotManager::GetSpotByIndex(int index)
+{
+	return _spots + index;
+}
+
 SpotSetting SpotManager::GetCurrentSetting()
 {
 	return _currentSetting;

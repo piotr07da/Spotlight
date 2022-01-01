@@ -40,7 +40,7 @@ void Motor::MoveToInTime(int position, int time)
 	{
 		distance *= -1;
 	}
-	float speed = distance / (float)time;
+	float speed = distance / (time / 1000.0f);
 	_stepper->setSpeed(speed);
 }
 

@@ -36,6 +36,7 @@ public:
 	int GetActiveSpotCount();
 	int GetCurrentSpotIndex();
 	Spot *GetCurrentSpot();
+	Spot *GetSpotByIndex(int index);
 	SpotSetting GetCurrentSetting();
 	void DecreaseActiveSpotCount();
 	void IncreaseActiveSpotCount();

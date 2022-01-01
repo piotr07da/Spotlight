@@ -77,6 +77,7 @@ void Controller::Loop()
 			else
 			{
 				ChangeMode(ControllerMode::Standby);
+				_motor->MoveToWithSpeed(_spotManager->GetSpotByIndex(0)->Position, Controller_MaxMotorSpeed);
 			}
 		}
 		else if (_previousSettingBtn->IsClicked())
