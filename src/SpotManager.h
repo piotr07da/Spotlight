@@ -4,6 +4,7 @@
 #include "LightActivity.h"
 #include "Spot.h"
 #include "SpotSetting.h"
+#include "Event.h"
 
 const int SpotManager_MaxSpotCount = 32;
 
@@ -26,6 +27,11 @@ private:
 
 public:
 	SpotManager();
+
+	Event0 NumberOfSpotsChanged;
+	Event0 SpotChanged;
+	Event0 SettingChanged;
+
 	int GetActiveSpotCount();
 	int GetCurrentSpotIndex();
 	Spot *GetCurrentSpot();

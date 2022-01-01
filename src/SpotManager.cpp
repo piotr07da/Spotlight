@@ -55,6 +55,7 @@ void SpotManager::DecreaseActiveSpotCount()
 	if (_activeSpotCount > 0)
 	{
 		--_activeSpotCount;
+		NumberOfSpotsChanged.Raise();
 	}
 }
 
@@ -63,6 +64,8 @@ void SpotManager::IncreaseActiveSpotCount()
 	if (_activeSpotCount < SpotManager_MaxSpotCount - 1)
 	{
 		++_activeSpotCount;
+		NumberOfSpotsChanged.Raise();
+
 		Spot *addedSpot = _spots + _activeSpotCount - 1;
 		addedSpot->Position = 0;
 		addedSpot->SpotTime = 1000;
@@ -77,7 +80,13 @@ void SpotManager::PreviousSpot()
 	if (_currentSpotIndex >= 0)
 	{
 		--_currentSpotIndex;
-		_currentSetting = SpotSetting::Position;
+		SpotChanged.Raise();
+
+		if (_currentSetting != SpotSetting::Position)
+		{
+			_currentSetting = SpotSetting::Position;
+			SettingChanged.Raise();
+		}
 	}
 }
 
@@ -86,7 +95,13 @@ void SpotManager::NextSpot()
 	if (_currentSpotIndex < _activeSpotCount - 1)
 	{
 		++_currentSpotIndex;
-		_currentSetting = SpotSetting::Position;
+		SpotChanged.Raise();
+
+		if (_currentSetting != SpotSetting::Position)
+		{
+			_currentSetting = SpotSetting::Position;
+			SettingChanged.Raise();
+		}
 	}
 }
 

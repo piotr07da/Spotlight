@@ -5,8 +5,8 @@
 
 #include "Button.h"
 #include "Motor.h"
-#include "Display.h"
 #include "SpotManager.h"
+#include "Event.h"
 
 enum class ControllerMode
 {
@@ -28,7 +28,6 @@ private:
 	Button *_decreaseSettingValueBtn;
 	Button *_increaseSettingValueBtn;
 	Motor *_motor;
-	Display *_display;
 	SpotManager *_spotManager;
 	int _settingValueDelta;
 	int _settingValueChangeCounter;
@@ -43,7 +42,9 @@ private:
 	void ReconfigureButtons();
 
 public:
-	Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, Motor *motor, Display *display, SpotManager *spotManager);
+	Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager);
+
+	Event1<ControllerMode> ModeChanged;
 
 	void Setup();
 	void Loop();

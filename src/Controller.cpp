@@ -2,7 +2,7 @@
 
 #include "Particle.h"
 
-Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, Motor *motor, Display *display, SpotManager *spotManager)
+Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager)
 {
 	_previousSpotBtn = new Button(previousSpotPin, Button_DebounceDelay_SlowButton);
 	_nextSpotBtn = new Button(nextSpotPin, Button_DebounceDelay_SlowButton);
@@ -10,8 +10,7 @@ Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSetting
 	_nextSettingBtn = new Button(nextSettingPin, Button_DebounceDelay_SlowButton);
 	_decreaseSettingValueBtn = new Button(decreaseSettingValuePin, Button_DebounceDelay_SlowButton);
 	_increaseSettingValueBtn = new Button(increaseSettingValuePin, Button_DebounceDelay_SlowButton);
-	_motor = motor;
-	_display = display;
+	//_motor = motor;
 	_spotManager = spotManager;
 
 	_mode = ControllerMode::GlobalSettings;
@@ -26,8 +25,7 @@ void Controller::Setup()
 	_decreaseSettingValueBtn->Setup();
 	_increaseSettingValueBtn->Setup();
 
-	_motor->Setup();
-	_display->ShowWelcome();
+	//_motor->Setup();
 
 	_settingValueDelta = 0;
 }
@@ -41,7 +39,7 @@ void Controller::Loop()
 	_decreaseSettingValueBtn->Loop();
 	_increaseSettingValueBtn->Loop();
 
-	_motor->Loop();
+	//_motor->Loop();
 
 	switch (_mode)
 	{
@@ -58,12 +56,12 @@ void Controller::Loop()
 		else if (_decreaseSettingValueBtn->IsClicked() && _spotManager->GetActiveSpotCount() > 0)
 		{
 			_spotManager->DecreaseActiveSpotCount();
-			RefreshDisplay();
+			// RefreshDisplay();
 		}
 		else if (_increaseSettingValueBtn->IsClicked() && _spotManager->GetActiveSpotCount() < SpotManager_MaxSpotCount - 1)
 		{
 			_spotManager->IncreaseActiveSpotCount();
-			RefreshDisplay();
+			// RefreshDisplay();
 		}
 		break;
 
@@ -122,6 +120,7 @@ void Controller::Loop()
 void Controller::ChangeMode(ControllerMode mode)
 {
 	_mode = mode;
+	ModeChanged.Raise(mode);
 	OnModeChanged();
 }
 
@@ -191,7 +190,7 @@ void Controller::PositionMotor(int speed)
 {
 	if (_spotManager->GetCurrentSetting() == SpotSetting::Position)
 	{
-		_motor->MoveToWithSpeed(_spotManager->GetCurrentSpot()->Position, speed);
+		//_motor->MoveToWithSpeed(_spotManager->GetCurrentSpot()->Position, speed);
 	}
 }
 
@@ -200,10 +199,10 @@ void Controller::RefreshDisplay()
 	switch (_mode)
 	{
 	case ControllerMode::GlobalSettings:
-		_display->ShowGlobalSettings(_spotManager->GetActiveSpotCount());
+		//_display->ShowGlobalSettings(_spotManager->GetActiveSpotCount());
 		break;
 	case ControllerMode::SpotSettings:
-		_display->ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
+		//_display->ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
 		break;
 	}
 }

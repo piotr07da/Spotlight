@@ -3,9 +3,12 @@
 #include <Particle.h>
 #include "DisplayLogo.h"
 
-Display::Display(Adafruit_SH1106 *oled)
+Display::Display(Adafruit_SH1106 *oled, Controller *controller, SpotManager *spotManager, Runner *runner)
 {
 	_oled = oled;
+	_controller = controller;
+	_spotManager = spotManager;
+	_runner = runner;
 
 	_oled->begin(SH1106_SWITCHCAPVCC, 0x3C); // initialize with the I2C addr 0x3D (for the 128x64)
 }
@@ -57,6 +60,30 @@ void Display::ShowSpotSetting(int spotIndex, Spot spot, SpotSetting setting)
 		ShowSpotSetting(spotIndex, "Travel Activity:", FormatLightActivity(spot.TravelActivity));
 		break;
 	}
+}
+
+void Display::OnControllerModeChanged(ControllerMode mode)
+{
+	switch (mode)
+	{
+	case ControllerMode::GlobalSettings:
+		ShowGlobalSettings(_spotManager->GetActiveSpotCount());
+		break;
+
+	case ControllerMode::SpotSettings:
+		ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
+		break;
+	}
+}
+
+void Display::OnNumberOfSpotsChanged()
+{
+	ShowGlobalSettings(_spotManager->GetActiveSpotCount());
+}
+
+void Display::OnSpotChanged()
+{
+	ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
 }
 
 void Display::ShowSpotSetting(int spotIndex, const char *label, String value)
