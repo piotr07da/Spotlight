@@ -25,6 +25,8 @@ void Controller::Setup()
 	_increaseSettingValueBtn->Setup();
 
 	_settingValueDelta = 0;
+
+	//_motor->MoveToWithSpeed(200, 500);
 }
 
 void Controller::Loop()
@@ -45,6 +47,7 @@ void Controller::Loop()
 			if (_spotManager->GetCurrentSpotIndex() == 0)
 			{
 				ChangeMode(ControllerMode::SpotSettings);
+				_motor->MoveToWithSpeed(200, 500);
 			}
 		}
 		else if (_decreaseSettingValueBtn->IsClicked() && _spotManager->GetActiveSpotCount() > 0)
@@ -62,7 +65,11 @@ void Controller::Loop()
 		{
 			_spotManager->PreviousSpot();
 
-			if (_spotManager->GetCurrentSpotIndex() == -1)
+			if (_spotManager->GetCurrentSpotIndex() >= 0)
+			{
+				PositionMotor(Controller_MaxMotorSpeed);
+			}
+			else
 			{
 				ChangeMode(ControllerMode::GlobalSettings);
 			}
@@ -188,7 +195,7 @@ void Controller::PositionMotor(int speed)
 {
 	if (_spotManager->GetCurrentSetting() == SpotSetting::Position)
 	{
-		_motor->MoveToWithSpeed(_spotManager->GetCurrentSpot()->Position, speed);
+		_motor->MoveToInTime(_spotManager->GetCurrentSpot()->Position, .5f);
 	}
 }
 

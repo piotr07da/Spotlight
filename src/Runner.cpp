@@ -1,5 +1,6 @@
 #include "Runner.h"
 
+#include <Particle.h>
 #include "Spot.h"
 
 Runner::Runner(SpotManager *spotManager, Motor *motor, Light *light)
@@ -56,6 +57,8 @@ void Runner::Loop()
 		activity = spot.SpotActivity;
 		break;
 	}
+
+	duration /= 1000.0f;
 
 	if (_setupStage)
 	{

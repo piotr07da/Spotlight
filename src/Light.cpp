@@ -140,5 +140,5 @@ int Light::CalculateOffOnOffValue()
 
 void Light::PwmWriteValue()
 {
-	analogWrite(_pin, _value, _maxFrequency);
+	analogWrite(_pin, _value, _maxFrequency / 2);
 }
