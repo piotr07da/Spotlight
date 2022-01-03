@@ -120,6 +120,28 @@ void SpotManager::NextSpot()
 	}
 }
 
+void SpotManager::FirstSpot()
+{
+	if (_activeSpotCount == 0)
+	{
+		return;
+	}
+
+	_currentSpotIndex = 0;
+	_currentSetting = SpotSetting::Position;
+}
+
+void SpotManager::LastSpot()
+{
+	if (_activeSpotCount == 0)
+	{
+		return;
+	}
+
+	_currentSpotIndex = _activeSpotCount - 1;
+	_currentSetting = SpotSetting::Position;
+}
+
 void SpotManager::PreviousSetting()
 {
 	if (_currentSetting > SpotSetting::FIRST)

@@ -60,7 +60,7 @@ void Motor::Loop()
 		_isRunning = false;
 		_hasFinished = true;
 
-		Particle.publish("diag-MoveEnd", "cp:" + String(_currentPosition) + " t:" + String(millis() - _diagT0));
+		// Particle.publish("diag-MoveEnd", "cp:" + String(_currentPosition) + " t:" + String(millis() - _diagT0));
 	}
 }
 
@@ -148,6 +148,6 @@ void Motor::InitializeMove(String diag)
 	}
 
 	auto t = DiagLed::Toggle();
-	_diagT0 = millis();
-	Particle.publish("diag-MoveInit", String(_currentPosition) + "->" + String(_targetPosition) + " si:" + String(_stepInterval) + " t:" + String(t) + " diag:" + diag);
+	//_diagT0 = millis();
+	// Particle.publish("diag-MoveInit", String(_currentPosition) + "->" + String(_targetPosition) + " si:" + String(_stepInterval) + " t:" + String(t) + " diag:" + diag);
 }

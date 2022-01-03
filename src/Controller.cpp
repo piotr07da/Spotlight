@@ -121,6 +121,8 @@ void Controller::Loop()
 		if (_previousSpotBtn->IsClicked(true))
 		{
 			StopRequested.Raise();
+			_spotManager->LastSpot();
+			PositionMotorOnCurrentSpot(Motor_MaxSpeed, "SB-prev-spot");
 			ChangeMode(ControllerMode::SpotSettings);
 		}
 		else if (_nextSpotBtn->IsClicked())
@@ -207,12 +209,12 @@ void Controller::ReconfigureButtons()
 	{
 	case ControllerMode::GlobalSettings:
 	{
-		_previousSpotBtn->Disable();
-		_nextSpotBtn->Enable();
-		_previousSettingBtn->Disable();
-		_nextSettingBtn->Disable();
-		_decreaseSettingValueBtn->Enable();
-		_increaseSettingValueBtn->Enable();
+		_previousSpotBtn->ResetDisabled();
+		_nextSpotBtn->ResetEnabled();
+		_previousSettingBtn->ResetDisabled();
+		_nextSettingBtn->ResetDisabled();
+		_decreaseSettingValueBtn->ResetEnabled();
+		_increaseSettingValueBtn->ResetEnabled();
 		_decreaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
 		_increaseSettingValueBtn->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
 		break;
@@ -220,12 +222,12 @@ void Controller::ReconfigureButtons()
 
 	case ControllerMode::SpotSettings:
 	{
-		_previousSpotBtn->Enable();
-		_nextSpotBtn->Enable();
-		_previousSettingBtn->Enable();
-		_nextSettingBtn->Enable();
-		_decreaseSettingValueBtn->Enable();
-		_increaseSettingValueBtn->Enable();
+		_previousSpotBtn->ResetEnabled();
+		_nextSpotBtn->ResetEnabled();
+		_previousSettingBtn->ResetEnabled();
+		_nextSettingBtn->ResetEnabled();
+		_decreaseSettingValueBtn->ResetEnabled();
+		_increaseSettingValueBtn->ResetEnabled();
 		SpotSetting setting = _spotManager->GetCurrentSetting();
 		switch (setting)
 		{
@@ -248,12 +250,12 @@ void Controller::ReconfigureButtons()
 
 	case ControllerMode::Standby:
 	{
-		_previousSpotBtn->Enable();
-		_nextSpotBtn->Enable();
-		_previousSettingBtn->Disable();
-		_nextSettingBtn->Disable();
-		_decreaseSettingValueBtn->Disable();
-		_increaseSettingValueBtn->Disable();
+		_previousSpotBtn->ResetEnabled();
+		_nextSpotBtn->ResetEnabled();
+		_previousSettingBtn->ResetDisabled();
+		_nextSettingBtn->ResetDisabled();
+		_decreaseSettingValueBtn->ResetDisabled();
+		_increaseSettingValueBtn->ResetDisabled();
 		break;
 	}
 	}

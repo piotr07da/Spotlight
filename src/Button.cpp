@@ -48,7 +48,7 @@ void Button::Loop()
 	}
 }
 
-void Button::Disable()
+void Button::ResetDisabled()
 {
 	_isEnabled = false;
 	_isPressed = false;
@@ -56,7 +56,7 @@ void Button::Disable()
 	_isReleased = false;
 }
 
-void Button::Enable()
+void Button::ResetEnabled()
 {
 	_isEnabled = true;
 	_isPressed = false;

@@ -42,6 +42,8 @@ public:
 	void IncreaseActiveSpotCount();
 	void PreviousSpot();
 	void NextSpot();
+	void FirstSpot();
+	void LastSpot();
 	void PreviousSetting();
 	void NextSetting();
 	void ChangeSettingValue(int delta);

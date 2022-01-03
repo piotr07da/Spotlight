@@ -26,8 +26,8 @@ public:
 	void Setup();
 	void Loop();
 
-	void Disable();
-	void Enable();
+	void ResetDisabled();
+	void ResetEnabled();
 	bool IsPressed();
 	bool IsClicked(bool reset = true);
 	bool IsReleased(bool reset = true);
