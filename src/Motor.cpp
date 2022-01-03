@@ -1,6 +1,7 @@
 #include "Motor.h"
 
 #include <Particle.h>
+#include "DiagLed.h"
 
 Motor::Motor(int stepPin, int directionPin)
 {
@@ -28,8 +29,9 @@ void Motor::Loop()
 		_lastStepTime = micros();
 	}
 
-	auto t = micros();
-	if ((float)t - _lastStepTime >= _stepInterval)
+	auto t = (float)micros();
+
+	if (t - _lastStepTime >= _stepInterval)
 	{
 		switch (_direction)
 		{
@@ -47,12 +49,18 @@ void Motor::Loop()
 		digitalWrite(_stepPin, LOW);
 
 		_lastStepTime += _stepInterval;
+		if (t - _lastStepTime >= _stepInterval)
+		{
+			_lastStepTime = t;
+		}
 	}
 
 	if (_currentPosition == _targetPosition)
 	{
 		_isRunning = false;
 		_hasFinished = true;
+
+		Particle.publish("diag-MoveEnd", "cp:" + String(_currentPosition) + " t:" + String(millis() - _diagT0));
 	}
 }
 
@@ -105,6 +113,11 @@ void Motor::InitializeMove()
 {
 	if (_targetPosition != _currentPosition)
 	{
+		if (_stepInterval < Motor_MinStepInterval)
+		{
+			_stepInterval = Motor_MinStepInterval;
+		}
+
 		if (_targetPosition > _currentPosition)
 		{
 			_direction = MotorDirection::CW;
@@ -133,4 +146,8 @@ void Motor::InitializeMove()
 			_hasFinished = true;
 		}
 	}
+
+	auto x = DiagLed::Toggle();
+	_diagT0 = millis();
+	Particle.publish("diag-MoveInit", String(_currentPosition) + "->" + String(_targetPosition) + " si:" + String(_stepInterval));
 }

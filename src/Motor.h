@@ -1,14 +1,15 @@
 #ifndef MOTOR_H
 #define MOTOR_H
 
-const float Motor_MinStepInterval = 0.00125; // 1.25ms
-
 enum class MotorDirection
 {
 	None,
 	CW,
 	CCW,
 };
+
+const int Motor_MaxSpeed = 500;
+const float Motor_MinStepInterval = 2000.0f; // microseconds
 
 class Motor
 {
@@ -22,6 +23,8 @@ private:
 	long _targetPosition;
 	bool _isRunning;
 	bool _hasFinished;
+
+	long _diagT0;
 
 	void InitializeMove();
 

@@ -79,74 +79,46 @@ void setup()
     _light->Setup();
     _controller->Setup();
     _display->Setup();
-    //_runner->Setup();
-
-    Particle.publish("diag", String(_motor->GetCurrentPosition()));
-    _motor->MoveToInTime(200, 5);
+    _runner->Setup();
 }
 
-// int x;
-// int cps[5];
+// int x = -1;
 
 void loop()
 {
+    _controller->Loop();
+    _display->Loop();
+    _runner->Loop();
     _motor->Loop();
     _light->Loop();
-    //_controller->Loop();
-    _display->Loop();
-    //_runner->Loop();
 
-    if (_motor->HasFinished())
-    {
-        Particle.publish("diag", String(_motor->GetCurrentPosition()));
-    }
-
-    // if (_motor->HasFinished())
+    // if (_motor->HasFinished() || x == -1)
     // {
-    //     int p = _motor->GetCurrentPosition();
-    //     cps[x] = p;
-
     //     ++x;
 
-    //     if (x == 5)
+    //     if (x % 3 == 0)
     //     {
-    //         Particle.publish("diag", "R: " + String(cps[0]) + ", " + String(cps[1]) + ", " + String(cps[2]) + ", " + String(cps[3]) + ", " + String(cps[4]));
+    //         if (!_motor->IsRunning())
+    //         {
+    //             delay(1000);
+    //             _motor->MoveToInTime(100, .2f);
+    //         }
     //     }
-    // }
-
-    // if (x == 0)
-    // {
-    //     if (!_motor->IsRunning())
+    //     else if (x % 3 == 1)
     //     {
-    //         _motor->MoveToInTime(55, .3f);
+    //         if (!_motor->IsRunning())
+    //         {
+    //             delay(100);
+    //             _motor->MoveToInTime(-100, .4f);
+    //         }
     //     }
-    // }
-    // else if (x == 1)
-    // {
-    //     if (!_motor->IsRunning())
+    //     else if (x % 3 == 2)
     //     {
-    //         _motor->MoveToInTime(-50, .6f);
-    //     }
-    // }
-    // else if (x == 2)
-    // {
-    //     if (!_motor->IsRunning())
-    //     {
-    //         _motor->MoveToWithSpeed(57, 500);
-    //     }
-    // }
-    // else if (x == 3)
-    // {
-    //     if (!_motor->IsRunning())
-    //     {
-    //         _motor->MoveToWithSpeed(-54, 500);
-    //     }
-    // }
-    // else if (x == 4)
-    // {
-    //     if (!_motor->IsRunning())
-    //     {
-    //         _motor->MoveToWithSpeed(0, 500);
+    //         if (!_motor->IsRunning())
+    //         {
+    //             delay(100);
+    //             _motor->MoveToWithSpeed(0, 500);
+    //         }
     //     }
     // }
 }

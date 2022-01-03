@@ -1,6 +1,7 @@
 #include "Controller.h"
 
-#include "Particle.h"
+#include <Particle.h>
+#include <DiagLed.h>
 
 Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager, Motor *motor)
 {
@@ -25,8 +26,6 @@ void Controller::Setup()
 	_increaseSettingValueBtn->Setup();
 
 	_settingValueDelta = 0;
-
-	//_motor->MoveToWithSpeed(200, 500);
 }
 
 void Controller::Loop()
@@ -47,7 +46,7 @@ void Controller::Loop()
 			if (_spotManager->GetCurrentSpotIndex() == 0)
 			{
 				ChangeMode(ControllerMode::SpotSettings);
-				_motor->MoveToWithSpeed(200, 500);
+				_motor->MoveToWithSpeed(200, 800);
 			}
 		}
 		else if (_decreaseSettingValueBtn->IsClicked() && _spotManager->GetActiveSpotCount() > 0)
@@ -72,6 +71,7 @@ void Controller::Loop()
 			else
 			{
 				ChangeMode(ControllerMode::GlobalSettings);
+				_motor->MoveToWithSpeed(0, Controller_MaxMotorSpeed);
 			}
 		}
 		else if (_nextSpotBtn->IsClicked())
@@ -89,8 +89,8 @@ void Controller::Loop()
 		}
 		else if (_previousSettingBtn->IsClicked())
 		{
-			_spotManager->PreviousSetting();
-			OnSettingChanged();
+			//_spotManager->PreviousSetting();
+			// OnSettingChanged();
 		}
 		else if (_nextSettingBtn->IsClicked())
 		{
@@ -99,7 +99,6 @@ void Controller::Loop()
 		}
 		else if (_decreaseSettingValueBtn->IsClicked())
 		{
-
 			ChangeSettingValue(-1);
 			PositionMotor(Controller_ButtonSyncMotorSpeed);
 		}
@@ -107,6 +106,11 @@ void Controller::Loop()
 		{
 			ChangeSettingValue(1);
 			PositionMotor(Controller_ButtonSyncMotorSpeed);
+
+			if (_spotManager->GetCurrentSetting() == SpotSetting::Position)
+			{
+				_motor->MoveToWithSpeed(_spotManager->GetCurrentSpot()->Position, Controller_ButtonSyncMotorSpeed / 2);
+			}
 		}
 		else if (!_decreaseSettingValueBtn->IsPressed() && !_increaseSettingValueBtn->IsPressed())
 		{
@@ -193,9 +197,11 @@ void Controller::ChangeSettingValue(int sign)
 
 void Controller::PositionMotor(int speed)
 {
+	return;
+
 	if (_spotManager->GetCurrentSetting() == SpotSetting::Position)
 	{
-		_motor->MoveToInTime(_spotManager->GetCurrentSpot()->Position, .5f);
+		_motor->MoveToWithSpeed(_spotManager->GetCurrentSpot()->Position, speed / 5);
 	}
 }
 

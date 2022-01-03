@@ -171,8 +171,6 @@ void Display::ShowStandby()
 
 void Display::ShowRunning()
 {
-	return;
-
 	_oled->clearDisplay();
 	_oled->setTextColor(WHITE);
 	_oled->setTextSize(1);
