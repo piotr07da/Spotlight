@@ -2,8 +2,9 @@
 
 #include <Particle.h>
 
-Button::Button(int pin, int debounceDelay)
+Button::Button(String name, int pin, int debounceDelay)
 {
+	_name = name;
 	_pin = pin;
 	_debounceDelay = debounceDelay;
 
@@ -65,6 +66,10 @@ bool Button::IsClicked(bool reset)
 	if (_isClicked && reset)
 	{
 		_isClicked = false;
+	}
+	if (isClicked)
+	{
+		Particle.publish("diag", _name + " clicked");
 	}
 	return isClicked;
 }

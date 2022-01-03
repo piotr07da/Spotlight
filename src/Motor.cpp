@@ -147,7 +147,7 @@ void Motor::InitializeMove()
 		}
 	}
 
-	auto x = DiagLed::Toggle();
+	auto t = DiagLed::Toggle();
 	_diagT0 = millis();
-	Particle.publish("diag-MoveInit", String(_currentPosition) + "->" + String(_targetPosition) + " si:" + String(_stepInterval));
+	Particle.publish("diag-MoveInit", String(_currentPosition) + "->" + String(_targetPosition) + " si:" + String(_stepInterval) + " t:" + String(t));
 }

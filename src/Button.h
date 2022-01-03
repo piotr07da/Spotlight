@@ -1,6 +1,8 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 
+#include <Particle.h>
+
 const int Button_DebounceDelay_SlowButton = 180;
 const int Button_DebounceDelay_FastButton = 70;
 const int Button_DebounceDelay_SuperFastButton = 25;
@@ -8,6 +10,7 @@ const int Button_DebounceDelay_SuperFastButton = 25;
 class Button
 {
 private:
+	String _name;
 	int _pin;
 	int _debounceDelay;
 	bool _isEnabled;
@@ -20,7 +23,7 @@ private:
 	int _tmpFlag1;
 
 public:
-	Button(int pin, int debounceDelay);
+	Button(String name, int pin, int debounceDelay);
 
 	void Setup();
 	void Loop();

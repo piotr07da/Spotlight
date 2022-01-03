@@ -5,12 +5,12 @@
 
 Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager, Motor *motor)
 {
-	_previousSpotBtn = new Button(previousSpotPin, Button_DebounceDelay_SlowButton);
-	_nextSpotBtn = new Button(nextSpotPin, Button_DebounceDelay_SlowButton);
-	_previousSettingBtn = new Button(previousSettingPin, Button_DebounceDelay_SlowButton);
-	_nextSettingBtn = new Button(nextSettingPin, Button_DebounceDelay_SlowButton);
-	_decreaseSettingValueBtn = new Button(decreaseSettingValuePin, Button_DebounceDelay_SlowButton);
-	_increaseSettingValueBtn = new Button(increaseSettingValuePin, Button_DebounceDelay_SlowButton);
+	_previousSpotBtn = new Button("prev-spot", previousSpotPin, Button_DebounceDelay_SlowButton);
+	_nextSpotBtn = new Button("next-spot", nextSpotPin, Button_DebounceDelay_SlowButton);
+	_previousSettingBtn = new Button("prev-sett", previousSettingPin, Button_DebounceDelay_SlowButton);
+	_nextSettingBtn = new Button("next-sett", nextSettingPin, Button_DebounceDelay_SlowButton);
+	_decreaseSettingValueBtn = new Button("decr-val", decreaseSettingValuePin, Button_DebounceDelay_SlowButton);
+	_increaseSettingValueBtn = new Button("incr-val", increaseSettingValuePin, Button_DebounceDelay_SlowButton);
 	_spotManager = spotManager;
 	_motor = motor;
 	_mode = ControllerMode::GlobalSettings;
