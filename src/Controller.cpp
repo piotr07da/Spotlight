@@ -1,7 +1,7 @@
 #include "Controller.h"
 
 #include <Particle.h>
-#include <DiagLed.h>
+#include "DiagLed.h"
 
 Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager, Motor *motor)
 {
