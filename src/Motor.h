@@ -1,6 +1,8 @@
 #ifndef MOTOR_H
 #define MOTOR_H
 
+#include <Particle.h>
+
 enum class MotorDirection
 {
 	None,
@@ -26,7 +28,7 @@ private:
 
 	long _diagT0;
 
-	void InitializeMove();
+	void InitializeMove(String diag);
 
 public:
 	Motor(int stepPin, int directionPin);
@@ -34,7 +36,7 @@ public:
 	void Setup();
 	void Loop();
 	void MoveToInTime(int position, float time);
-	void MoveToWithSpeed(int position, int speed);
+	void MoveToWithSpeed(int position, int speed, String diag);
 	bool IsRunning();
 	bool HasFinished(bool clear = true);
 	long GetCurrentPosition();

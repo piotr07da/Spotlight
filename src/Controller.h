@@ -36,8 +36,8 @@ private:
 	void OnModeChanged();
 	void OnSettingChanged();
 	void ChangeSettingValue(int sign);
-	void PositionMotorOnFirstSpot(int speed);
-	void PositionMotorOnCurrentSpot(int speed);
+	void PositionMotorOnFirstSpot(int speed, String diag);
+	void PositionMotorOnCurrentSpot(int speed, String diag);
 	void ReconfigureButtons();
 
 public:

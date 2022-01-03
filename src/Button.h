@@ -14,13 +14,11 @@ private:
 	int _pin;
 	int _debounceDelay;
 	bool _isEnabled;
-	int _isPressed;
-	int _isClicked;
-	int _lastReading;
+	bool _isPressed;
+	bool _isClicked;
+	bool _isReleased;
+	bool _lastReading;
 	long _lastDebounceTime;
-
-	int _tmpFlag0;
-	int _tmpFlag1;
 
 public:
 	Button(String name, int pin, int debounceDelay);
@@ -32,6 +30,7 @@ public:
 	void Enable();
 	bool IsPressed();
 	bool IsClicked(bool reset = true);
+	bool IsReleased(bool reset = true);
 	void ChangeDebounceDelay(int debounceDelay);
 };
 

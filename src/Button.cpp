@@ -9,13 +9,11 @@ Button::Button(String name, int pin, int debounceDelay)
 	_debounceDelay = debounceDelay;
 
 	_isEnabled = true;
-	_isPressed = LOW;
-	_isClicked = LOW;
-	_lastReading = LOW;
+	_isPressed = false;
+	_isClicked = false;
+	_isReleased = false;
+	_lastReading = false;
 	_lastDebounceTime = -debounceDelay - 1;
-
-	_tmpFlag0 = 0;
-	_tmpFlag1 = 0;
 }
 
 void Button::Setup()
@@ -29,8 +27,8 @@ void Button::Loop()
 	{
 		if (millis() - _lastDebounceTime > (ulong)_debounceDelay)
 		{
-			int reading = digitalRead(_pin);
-			_isPressed = reading;
+			bool reading = digitalRead(_pin) == HIGH;
+
 			if (reading != _isClicked)
 			{
 				if (reading)
@@ -39,6 +37,13 @@ void Button::Loop()
 				}
 				_lastDebounceTime = millis();
 			}
+
+			if (_isPressed && !reading)
+			{
+				_isReleased = HIGH;
+			}
+
+			_isPressed = reading;
 		}
 	}
 }
@@ -48,11 +53,15 @@ void Button::Disable()
 	_isEnabled = false;
 	_isPressed = false;
 	_isClicked = false;
+	_isReleased = false;
 }
 
 void Button::Enable()
 {
 	_isEnabled = true;
+	_isPressed = false;
+	_isClicked = false;
+	_isReleased = false;
 }
 
 bool Button::IsPressed()
@@ -67,11 +76,25 @@ bool Button::IsClicked(bool reset)
 	{
 		_isClicked = false;
 	}
-	if (isClicked)
-	{
-		Particle.publish("diag", _name + " clicked");
-	}
+	// if (isClicked)
+	// {
+	// 	Particle.publish("diag", _name + " clicked");
+	// }
 	return isClicked;
+}
+
+bool Button::IsReleased(bool reset)
+{
+	int isReleased = _isReleased;
+	if (_isReleased && reset)
+	{
+		_isReleased = false;
+	}
+	// if (isReleased)
+	// {
+	// 	Particle.publish("diag", _name + " released");
+	// }
+	return isReleased;
 }
 
 void Button::ChangeDebounceDelay(int debounceDelay)

@@ -4,7 +4,8 @@
     "files.associations": {
         "*.ino": "cpp",
         "type_traits": "cpp",
-        "xtr1common": "cpp"
+        "xtr1common": "cpp",
+        "new": "cpp"
     },
     "particle.firmwareVersion": "3.1.0",
     "particle.targetPlatform": "photon",

@@ -45,7 +45,7 @@ void Controller::Loop()
 			if (_spotManager->GetActiveSpotCount() > 0)
 			{
 				ChangeMode(ControllerMode::SpotSettings);
-				PositionMotorOnFirstSpot(Motor_MaxSpeed);
+				PositionMotorOnFirstSpot(Motor_MaxSpeed, "GS-next-spot");
 			}
 		}
 		else if (_decreaseSettingValueBtn->IsClicked() && _spotManager->GetActiveSpotCount() > 0)
@@ -64,12 +64,12 @@ void Controller::Loop()
 			if (_spotManager->GetCurrentSpotIndex() > 0)
 			{
 				_spotManager->PreviousSpot();
-				PositionMotorOnCurrentSpot(Motor_MaxSpeed);
+				PositionMotorOnCurrentSpot(Motor_MaxSpeed, "SS-prev-spot[currSpotIx not first]");
 			}
 			else
 			{
 				ChangeMode(ControllerMode::GlobalSettings);
-				_motor->MoveToWithSpeed(0, Motor_MaxSpeed);
+				_motor->MoveToWithSpeed(0, Motor_MaxSpeed, "SS-prev-spot[currSpotIx first]");
 			}
 		}
 		else if (_nextSpotBtn->IsClicked())
@@ -77,12 +77,12 @@ void Controller::Loop()
 			if (_spotManager->GetCurrentSpotIndex() < _spotManager->GetActiveSpotCount() - 1)
 			{
 				_spotManager->NextSpot();
-				PositionMotorOnCurrentSpot(Motor_MaxSpeed);
+				PositionMotorOnCurrentSpot(Motor_MaxSpeed, "SS-next-spot[currSpotIx not last");
 			}
 			else
 			{
 				ChangeMode(ControllerMode::Standby);
-				PositionMotorOnFirstSpot(Motor_MaxSpeed);
+				PositionMotorOnFirstSpot(Motor_MaxSpeed, "SS-next-spot[currSpotIx last]");
 			}
 		}
 		else if (_previousSettingBtn->IsClicked())
@@ -99,21 +99,21 @@ void Controller::Loop()
 		{
 			ChangeSettingValue(-1);
 			if (_spotManager->GetCurrentSetting() == SpotSetting::Position)
-				PositionMotorOnCurrentSpot(Controller_ButtonSyncMotorSpeed);
+				PositionMotorOnCurrentSpot(Controller_ButtonSyncMotorSpeed, "SS-decr-val");
 		}
 		else if (_increaseSettingValueBtn->IsClicked())
 		{
 			ChangeSettingValue(1);
 			if (_spotManager->GetCurrentSetting() == SpotSetting::Position)
-				PositionMotorOnCurrentSpot(Controller_ButtonSyncMotorSpeed);
+				PositionMotorOnCurrentSpot(Controller_ButtonSyncMotorSpeed, "SS-incr-val");
 		}
-		else if (!_decreaseSettingValueBtn->IsPressed() && !_increaseSettingValueBtn->IsPressed())
+		else if (_decreaseSettingValueBtn->IsReleased() || _increaseSettingValueBtn->IsReleased())
 		{
 			_settingValueDelta = 0;
 			_settingValueChangeCounter = 0;
 
 			if (_spotManager->GetCurrentSetting() == SpotSetting::Position)
-				PositionMotorOnCurrentSpot(Motor_MaxSpeed);
+				PositionMotorOnCurrentSpot(Motor_MaxSpeed, "SS-decr-incr-val-not-pressed");
 		}
 		break;
 
@@ -191,14 +191,14 @@ void Controller::ChangeSettingValue(int sign)
 	++_settingValueChangeCounter;
 }
 
-void Controller::PositionMotorOnFirstSpot(int speed)
+void Controller::PositionMotorOnFirstSpot(int speed, String diag)
 {
-	_motor->MoveToWithSpeed(_spotManager->GetSpotByIndex(0)->Position, speed);
+	_motor->MoveToWithSpeed(_spotManager->GetSpotByIndex(0)->Position, speed, diag);
 }
 
-void Controller::PositionMotorOnCurrentSpot(int speed)
+void Controller::PositionMotorOnCurrentSpot(int speed, String diag)
 {
-	_motor->MoveToWithSpeed(_spotManager->GetCurrentSpot()->Position, speed);
+	_motor->MoveToWithSpeed(_spotManager->GetCurrentSpot()->Position, speed, diag);
 }
 
 void Controller::ReconfigureButtons()

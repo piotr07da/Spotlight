@@ -73,7 +73,7 @@ void SpotManager::IncreaseActiveSpotCount()
 {
 	if (_activeSpotCount < SpotManager_MaxSpotCount - 1)
 	{
-		Spot *addedSpot = _spots + _activeSpotCount - 1;
+		Spot *addedSpot = _spots + _activeSpotCount;
 		addedSpot->Position = 0;
 		addedSpot->SpotTime = 1000;
 		addedSpot->SpotActivity = LightActivity::A_1;
