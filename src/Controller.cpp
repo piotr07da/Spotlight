@@ -42,11 +42,10 @@ void Controller::Loop()
 	case ControllerMode::GlobalSettings:
 		if (_nextSpotBtn->IsClicked())
 		{
-			_spotManager->NextSpot();
-			if (_spotManager->GetCurrentSpotIndex() == 0)
+			if (_spotManager->GetActiveSpotCount() > 0)
 			{
 				ChangeMode(ControllerMode::SpotSettings);
-				_motor->MoveToWithSpeed(200, 800);
+				PositionMotorOnFirstSpot(Motor_MaxSpeed);
 			}
 		}
 		else if (_decreaseSettingValueBtn->IsClicked() && _spotManager->GetActiveSpotCount() > 0)
@@ -62,16 +61,15 @@ void Controller::Loop()
 	case ControllerMode::SpotSettings:
 		if (_previousSpotBtn->IsClicked())
 		{
-			_spotManager->PreviousSpot();
-
-			if (_spotManager->GetCurrentSpotIndex() >= 0)
+			if (_spotManager->GetCurrentSpotIndex() > 0)
 			{
-				PositionMotor(Controller_MaxMotorSpeed);
+				_spotManager->PreviousSpot();
+				PositionMotorOnCurrentSpot(Motor_MaxSpeed);
 			}
 			else
 			{
 				ChangeMode(ControllerMode::GlobalSettings);
-				_motor->MoveToWithSpeed(0, Controller_MaxMotorSpeed);
+				_motor->MoveToWithSpeed(0, Motor_MaxSpeed);
 			}
 		}
 		else if (_nextSpotBtn->IsClicked())
@@ -79,18 +77,18 @@ void Controller::Loop()
 			if (_spotManager->GetCurrentSpotIndex() < _spotManager->GetActiveSpotCount() - 1)
 			{
 				_spotManager->NextSpot();
-				PositionMotor(Controller_MaxMotorSpeed);
+				PositionMotorOnCurrentSpot(Motor_MaxSpeed);
 			}
 			else
 			{
 				ChangeMode(ControllerMode::Standby);
-				_motor->MoveToWithSpeed(_spotManager->GetSpotByIndex(0)->Position, Controller_MaxMotorSpeed);
+				PositionMotorOnFirstSpot(Motor_MaxSpeed);
 			}
 		}
 		else if (_previousSettingBtn->IsClicked())
 		{
-			//_spotManager->PreviousSetting();
-			// OnSettingChanged();
+			_spotManager->PreviousSetting();
+			OnSettingChanged();
 		}
 		else if (_nextSettingBtn->IsClicked())
 		{
@@ -100,24 +98,22 @@ void Controller::Loop()
 		else if (_decreaseSettingValueBtn->IsClicked())
 		{
 			ChangeSettingValue(-1);
-			PositionMotor(Controller_ButtonSyncMotorSpeed);
+			if (_spotManager->GetCurrentSetting() == SpotSetting::Position)
+				PositionMotorOnCurrentSpot(Controller_ButtonSyncMotorSpeed);
 		}
 		else if (_increaseSettingValueBtn->IsClicked())
 		{
 			ChangeSettingValue(1);
-			PositionMotor(Controller_ButtonSyncMotorSpeed);
-
 			if (_spotManager->GetCurrentSetting() == SpotSetting::Position)
-			{
-				_motor->MoveToWithSpeed(_spotManager->GetCurrentSpot()->Position, Controller_ButtonSyncMotorSpeed / 2);
-			}
+				PositionMotorOnCurrentSpot(Controller_ButtonSyncMotorSpeed);
 		}
 		else if (!_decreaseSettingValueBtn->IsPressed() && !_increaseSettingValueBtn->IsPressed())
 		{
 			_settingValueDelta = 0;
 			_settingValueChangeCounter = 0;
 
-			PositionMotor(Controller_MaxMotorSpeed);
+			if (_spotManager->GetCurrentSetting() == SpotSetting::Position)
+				PositionMotorOnCurrentSpot(Motor_MaxSpeed);
 		}
 		break;
 
@@ -195,14 +191,14 @@ void Controller::ChangeSettingValue(int sign)
 	++_settingValueChangeCounter;
 }
 
-void Controller::PositionMotor(int speed)
+void Controller::PositionMotorOnFirstSpot(int speed)
 {
-	return;
+	_motor->MoveToWithSpeed(_spotManager->GetSpotByIndex(0)->Position, speed);
+}
 
-	if (_spotManager->GetCurrentSetting() == SpotSetting::Position)
-	{
-		_motor->MoveToWithSpeed(_spotManager->GetCurrentSpot()->Position, speed / 5);
-	}
+void Controller::PositionMotorOnCurrentSpot(int speed)
+{
+	_motor->MoveToWithSpeed(_spotManager->GetCurrentSpot()->Position, speed);
 }
 
 void Controller::ReconfigureButtons()

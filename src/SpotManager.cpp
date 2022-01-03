@@ -60,6 +60,11 @@ void SpotManager::DecreaseActiveSpotCount()
 	if (_activeSpotCount > 0)
 	{
 		--_activeSpotCount;
+		if (_activeSpotCount == 0)
+		{
+			_currentSpotIndex = -1;
+		}
+
 		NumberOfSpotsChanged.Raise();
 	}
 }
@@ -68,21 +73,26 @@ void SpotManager::IncreaseActiveSpotCount()
 {
 	if (_activeSpotCount < SpotManager_MaxSpotCount - 1)
 	{
-		++_activeSpotCount;
-		NumberOfSpotsChanged.Raise();
-
 		Spot *addedSpot = _spots + _activeSpotCount - 1;
 		addedSpot->Position = 0;
 		addedSpot->SpotTime = 1000;
 		addedSpot->SpotActivity = LightActivity::A_1;
 		addedSpot->TravelTime = 200;
 		addedSpot->TravelActivity = LightActivity::A_0;
+
+		++_activeSpotCount;
+		if (_currentSpotIndex == -1)
+		{
+			_currentSpotIndex = 0;
+		}
+
+		NumberOfSpotsChanged.Raise();
 	}
 }
 
 void SpotManager::PreviousSpot()
 {
-	if (_currentSpotIndex >= 0)
+	if (_currentSpotIndex > 0)
 	{
 		--_currentSpotIndex;
 		SpotChanged.Raise();
