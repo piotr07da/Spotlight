@@ -26,17 +26,15 @@ private:
 	bool _isRunning;
 	bool _hasFinished;
 
-	long _diagT0;
-
-	void InitializeMove(String diag);
+	void InitializeMove();
 
 public:
 	Motor(int stepPin, int directionPin);
 
 	void Setup();
 	void Loop();
-	void MoveToInTime(int position, float time);
-	void MoveToWithSpeed(int position, int speed, String diag);
+	void MoveToInTime(int position, int time);
+	void MoveToWithSpeed(int position, int speed);
 	bool IsRunning();
 	bool HasFinished(bool clear = true);
 	long GetCurrentPosition();

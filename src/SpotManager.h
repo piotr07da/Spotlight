@@ -17,7 +17,7 @@ private:
 	static int _travelActivitiesCount;
 
 	Spot _spots[SpotManager_MaxSpotCount];
-	int _activeSpotCount;
+	int _spotCount;
 	int _currentSpotIndex;
 	SpotSetting _currentSetting;
 
@@ -33,7 +33,7 @@ public:
 	Event1<SpotSetting> SettingChanged;
 	Event0 SettingValueChanged;
 
-	int GetActiveSpotCount();
+	int GetSpotCount();
 	int GetCurrentSpotIndex();
 	Spot *GetCurrentSpot();
 	Spot *GetSpotByIndex(int index);

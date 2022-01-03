@@ -32,7 +32,7 @@ void Display::OnControllerModeChanged(ControllerMode mode)
 	switch (mode)
 	{
 	case ControllerMode::GlobalSettings:
-		ShowGlobalSettings(_spotManager->GetActiveSpotCount());
+		ShowGlobalSettings(_spotManager->GetSpotCount());
 		break;
 
 	case ControllerMode::SpotSettings:
@@ -47,7 +47,7 @@ void Display::OnControllerModeChanged(ControllerMode mode)
 
 void Display::OnNumberOfSpotsChanged()
 {
-	ShowGlobalSettings(_spotManager->GetActiveSpotCount());
+	ShowGlobalSettings(_spotManager->GetSpotCount());
 }
 
 void Display::OnSpotChanged()

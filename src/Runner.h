@@ -6,6 +6,8 @@
 #include "Light.h"
 #include "Event.h"
 
+#include <Particle.h>
+
 enum class RunnerSpotStage
 {
 	Travel,
@@ -19,10 +21,12 @@ private:
 	Motor *_motor;
 	Light *_light;
 	bool _isRunning;
-	int _t0;
+	ulong _t0;
 	int _spotIndex;
 	RunnerSpotStage _spotStage;
 	bool _setupStage;
+
+	int CalculateCurrentSpotTravelTime();
 
 public:
 	Runner(SpotManager *spotManager, Motor *motor, Light *light);

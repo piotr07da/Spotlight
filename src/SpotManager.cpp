@@ -1,6 +1,6 @@
 #include "SpotManager.h"
 
-#include "Particle.h"
+#include <Particle.h>
 
 LightActivity SpotManager::_spotActivites[7] = {
 	LightActivity::A_1,
@@ -25,14 +25,14 @@ int SpotManager::_travelActivitiesCount = 7;
 
 SpotManager::SpotManager()
 {
-	_activeSpotCount = 0;
+	_spotCount = 0;
 	_currentSpotIndex = -1;
 	_currentSetting = SpotSetting::Position;
 }
 
-int SpotManager::GetActiveSpotCount()
+int SpotManager::GetSpotCount()
 {
-	return _activeSpotCount;
+	return _spotCount;
 }
 
 int SpotManager::GetCurrentSpotIndex()
@@ -57,10 +57,10 @@ SpotSetting SpotManager::GetCurrentSetting()
 
 void SpotManager::DecreaseActiveSpotCount()
 {
-	if (_activeSpotCount > 0)
+	if (_spotCount > 0)
 	{
-		--_activeSpotCount;
-		if (_activeSpotCount == 0)
+		--_spotCount;
+		if (_spotCount == 0)
 		{
 			_currentSpotIndex = -1;
 		}
@@ -71,16 +71,16 @@ void SpotManager::DecreaseActiveSpotCount()
 
 void SpotManager::IncreaseActiveSpotCount()
 {
-	if (_activeSpotCount < SpotManager_MaxSpotCount - 1)
+	if (_spotCount < SpotManager_MaxSpotCount - 1)
 	{
-		Spot *addedSpot = _spots + _activeSpotCount;
+		Spot *addedSpot = _spots + _spotCount;
 		addedSpot->Position = 0;
 		addedSpot->SpotTime = 1000;
 		addedSpot->SpotActivity = LightActivity::A_1;
 		addedSpot->TravelTime = 200;
 		addedSpot->TravelActivity = LightActivity::A_0;
 
-		++_activeSpotCount;
+		++_spotCount;
 		if (_currentSpotIndex == -1)
 		{
 			_currentSpotIndex = 0;
@@ -107,7 +107,7 @@ void SpotManager::PreviousSpot()
 
 void SpotManager::NextSpot()
 {
-	if (_currentSpotIndex < _activeSpotCount - 1)
+	if (_currentSpotIndex < _spotCount - 1)
 	{
 		++_currentSpotIndex;
 		SpotChanged.Raise();
@@ -122,7 +122,7 @@ void SpotManager::NextSpot()
 
 void SpotManager::FirstSpot()
 {
-	if (_activeSpotCount == 0)
+	if (_spotCount == 0)
 	{
 		return;
 	}
@@ -133,12 +133,12 @@ void SpotManager::FirstSpot()
 
 void SpotManager::LastSpot()
 {
-	if (_activeSpotCount == 0)
+	if (_spotCount == 0)
 	{
 		return;
 	}
 
-	_currentSpotIndex = _activeSpotCount - 1;
+	_currentSpotIndex = _spotCount - 1;
 	_currentSetting = SpotSetting::Position;
 }
 

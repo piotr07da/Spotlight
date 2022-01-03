@@ -22,19 +22,21 @@ void Runner::Loop()
 	}
 
 	Spot spot = *_spotManager->GetSpotByIndex(_spotIndex);
+	int travelTime = CalculateCurrentSpotTravelTime();
+
 	auto t = millis() - _t0;
-	if (_spotStage == RunnerSpotStage::Travel && t > spot.TravelTime)
+	if (_spotStage == RunnerSpotStage::Travel && t > (ulong)travelTime)
 	{
 		_t0 = millis();
 		_spotStage = RunnerSpotStage::Spot;
 		_setupStage = true;
 	}
-	else if (_spotStage == RunnerSpotStage::Spot && t > spot.SpotTime)
+	else if (_spotStage == RunnerSpotStage::Spot && t > (ulong)spot.SpotTime)
 	{
 		_t0 = millis();
 		_spotStage = RunnerSpotStage::Travel;
 		++_spotIndex;
-		if (_spotIndex == _spotManager->GetActiveSpotCount())
+		if (_spotIndex == _spotManager->GetSpotCount())
 		{
 			_spotIndex = 0;
 		}
@@ -42,23 +44,25 @@ void Runner::Loop()
 		_setupStage = true;
 	}
 
-	int duration;
-	LightActivity activity;
+	int duration = 0;
+	LightActivity activity = LightActivity::A_0;
 
 	switch (_spotStage)
 	{
 	case RunnerSpotStage::Travel:
-		duration = spot.TravelTime;
+	{
+		duration = CalculateCurrentSpotTravelTime();
 		activity = spot.TravelActivity;
 		break;
+	}
 
 	case RunnerSpotStage::Spot:
+	{
 		duration = spot.SpotTime;
 		activity = spot.SpotActivity;
 		break;
 	}
-
-	duration /= 1000.0f;
+	}
 
 	if (_setupStage)
 	{
@@ -81,4 +85,23 @@ void Runner::OnStopRequested()
 {
 	_isRunning = false;
 	_light->SetActivity(LightActivity::A_0, 1);
+}
+
+int Runner::CalculateCurrentSpotTravelTime()
+{
+	int previousSpotIndex = _spotIndex - 1;
+	if (previousSpotIndex == -1)
+	{
+		previousSpotIndex = _spotManager->GetSpotCount() - 1;
+	}
+
+	Spot currentSpot = *_spotManager->GetSpotByIndex(_spotIndex);
+	Spot previousSpot = *_spotManager->GetSpotByIndex(previousSpotIndex);
+
+	auto distance = abs(currentSpot.Position - previousSpot.Position);
+	auto minEngineAllowedTime = (int)(distance * Motor_MinStepInterval / 1000.0f);
+
+	auto travelTime = max(currentSpot.TravelTime, minEngineAllowedTime);
+
+	return travelTime;
 }
