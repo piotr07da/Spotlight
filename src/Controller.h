@@ -4,8 +4,9 @@
 #include <Particle.h>
 
 #include "Button.h"
-#include "Motor.h"
 #include "SpotManager.h"
+#include "Motor.h"
+#include "Light.h"
 #include "Event.h"
 
 enum class ControllerMode
@@ -29,6 +30,7 @@ private:
 	Button *_increaseSettingValueBtn;
 	SpotManager *_spotManager;
 	Motor *_motor;
+	Light *_light;
 	int _settingValueDelta;
 	int _settingValueChangeCounter;
 
@@ -38,10 +40,12 @@ private:
 	void ChangeSettingValue(int sign);
 	void PositionMotorOnFirstSpot(int speed);
 	void PositionMotorOnCurrentSpot(int speed);
+	void LightUp();
+	void LightDown();
 	void ReconfigureButtons();
 
 public:
-	Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager, Motor *motor);
+	Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager, Motor *motor, Light *light);
 
 	Event1<ControllerMode> ModeChanged;
 	Event0 StartRequested;

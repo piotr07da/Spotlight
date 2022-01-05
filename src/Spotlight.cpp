@@ -39,7 +39,7 @@ void setup()
     _spotManager = new SpotManager();
     _motor = new Motor(A2, A3);
     _light = new Light(WKP);
-    _controller = new Controller(D2, D3, D4, D5, A0, A1, _spotManager, _motor);
+    _controller = new Controller(D2, D3, D4, D5, A0, A1, _spotManager, _motor, _light);
     _display = new Display(&_oled, _controller, _spotManager, NULL);
     _runner = new Runner(_spotManager, _motor, _light);
 

@@ -3,7 +3,7 @@
 #include <Particle.h>
 #include "DiagLed.h"
 
-Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager, Motor *motor)
+Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager, Motor *motor, Light *light)
 {
 	_previousSpotBtn = new Button("prev-spot", previousSpotPin, Button_DebounceDelay_SlowButton);
 	_nextSpotBtn = new Button("next-spot", nextSpotPin, Button_DebounceDelay_SlowButton);
@@ -13,6 +13,7 @@ Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSetting
 	_increaseSettingValueBtn = new Button("incr-val", increaseSettingValuePin, Button_DebounceDelay_SlowButton);
 	_spotManager = spotManager;
 	_motor = motor;
+	_light = light;
 	_mode = ControllerMode::GlobalSettings;
 }
 
@@ -46,6 +47,7 @@ void Controller::Loop()
 			{
 				ChangeMode(ControllerMode::SpotSettings);
 				PositionMotorOnFirstSpot(Motor_MaxSpeed);
+				LightUp();
 			}
 		}
 		else if (_decreaseSettingValueBtn->IsClicked() && _spotManager->GetSpotCount() > 0)
@@ -70,6 +72,7 @@ void Controller::Loop()
 			{
 				ChangeMode(ControllerMode::GlobalSettings);
 				_motor->MoveToWithSpeed(0, Motor_MaxSpeed);
+				LightDown();
 			}
 		}
 		else if (_nextSpotBtn->IsClicked())
@@ -83,6 +86,7 @@ void Controller::Loop()
 			{
 				ChangeMode(ControllerMode::Standby);
 				PositionMotorOnFirstSpot(Motor_MaxSpeed);
+				LightDown();
 			}
 		}
 		else if (_previousSettingBtn->IsClicked())
@@ -123,6 +127,7 @@ void Controller::Loop()
 			StopRequested.Raise();
 			_spotManager->LastSpot();
 			PositionMotorOnCurrentSpot(Motor_MaxSpeed);
+			LightUp();
 			ChangeMode(ControllerMode::SpotSettings);
 		}
 		else if (_nextSpotBtn->IsClicked())
@@ -201,6 +206,16 @@ void Controller::PositionMotorOnFirstSpot(int speed)
 void Controller::PositionMotorOnCurrentSpot(int speed)
 {
 	_motor->MoveToWithSpeed(_spotManager->GetCurrentSpot()->Position, speed);
+}
+
+void Controller::LightUp()
+{
+	_light->SetActivity(LightActivity::A_01, 300);
+}
+
+void Controller::LightDown()
+{
+	_light->SetActivity(LightActivity::A_10, 300);
 }
 
 void Controller::ReconfigureButtons()

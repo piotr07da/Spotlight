@@ -24,11 +24,6 @@ void Motor::Loop()
 		return;
 	}
 
-	// if (_lastStepTime < 0)
-	// {
-	// 	_lastStepTime = micros();
-	// }
-
 	auto t = (float)micros();
 
 	if (t - _lastStepTime >= _stepInterval)
@@ -51,6 +46,9 @@ void Motor::Loop()
 		_lastStepTime += _stepInterval;
 		if (t - _lastStepTime >= _stepInterval)
 		{
+			// DIAG
+			DiagLed::Toggle();
+			//_lastStepTime += _stepInterval * (float)(long)((t - _lastStepTime) / _stepInterval);
 			_lastStepTime = t;
 		}
 	}
@@ -145,5 +143,5 @@ void Motor::InitializeMove()
 		}
 	}
 
-	DiagLed::Toggle();
+	// DiagLed::Toggle();
 }
