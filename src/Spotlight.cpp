@@ -38,8 +38,8 @@ void setup()
 
     _spotManager = new SpotManager();
     _motor = new Motor(A2, A3);
-    _light = new Light(WKP);
-    _controller = new Controller(D2, D3, D4, D5, A0, A1, _spotManager, _motor, _light);
+    _light = new Light(D2);
+    _controller = new Controller(A0, A1, D3, D4, D5, D6, _spotManager, _motor, _light);
     _display = new Display(&_oled, _controller, _spotManager, NULL);
     _runner = new Runner(_spotManager, _motor, _light);
 
@@ -82,8 +82,6 @@ void setup()
     _runner->Setup();
 }
 
-// int x = -1;
-
 void loop()
 {
     _controller->Loop();
@@ -91,34 +89,4 @@ void loop()
     _runner->Loop();
     _motor->Loop();
     _light->Loop();
-
-    // if (_motor->HasFinished() || x == -1)
-    // {
-    //     ++x;
-
-    //     if (x % 3 == 0)
-    //     {
-    //         if (!_motor->IsRunning())
-    //         {
-    //             delay(1000);
-    //             _motor->MoveToInTime(100, .2f);
-    //         }
-    //     }
-    //     else if (x % 3 == 1)
-    //     {
-    //         if (!_motor->IsRunning())
-    //         {
-    //             delay(100);
-    //             _motor->MoveToInTime(-100, .4f);
-    //         }
-    //     }
-    //     else if (x % 3 == 2)
-    //     {
-    //         if (!_motor->IsRunning())
-    //         {
-    //             delay(100);
-    //             _motor->MoveToWithSpeed(0, 500);
-    //         }
-    //     }
-    // }
 }

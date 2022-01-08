@@ -9,7 +9,7 @@
     },
     "particle.firmwareVersion": "3.1.0",
     "particle.targetPlatform": "photon",
-    "particle.targetDevice": "Spotlight",
+    "particle.targetDevice": "Spotlight-reborn",
     "C_Cpp.default.configurationProvider": "particle.particle-vscode-core",
     "prettier.printWidth": 180,
     "C_Cpp.codeFolding": "Disabled"
