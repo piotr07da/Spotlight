@@ -3,7 +3,7 @@
 /******************************************************/
 
 #include "Particle.h"
-#line 1 "c:/_git/Spotlight/src/Spotlight.ino"
+#line 1 "c:/_git/Spotlight/Spotlight/src/Spotlight.ino"
 /*
  * Project Spotlight
  * Description:
@@ -19,10 +19,11 @@
 #include "Light.h"
 #include "Display.h"
 #include "Runner.h"
+#include "AdcDma.h"
 
 void setup();
 void loop();
-#line 17 "c:/_git/Spotlight/src/Spotlight.ino"
+#line 18 "c:/_git/Spotlight/Spotlight/src/Spotlight.ino"
 SpotManager *_spotManager;
 Motor *_motor;
 Light *_light;
@@ -32,9 +33,16 @@ Adafruit_SH1106 _oled(OLED_RESET);
 Display *_display;
 Runner *_runner;
 
+uint16_t _samplesBuffer[4410];
+AdcDma _adcDma(A5, _samplesBuffer, 4410, 44100);
+
 void setup()
 {
+    Serial.begin();
+
     pinMode(D7, OUTPUT);
+
+    pinMode(A5, INPUT);
 
     _spotManager = new SpotManager();
     _motor = new Motor(A2, A3);
@@ -80,6 +88,8 @@ void setup()
     _controller->Setup();
     _display->Setup();
     _runner->Setup();
+
+    _adcDma.Start();
 }
 
 void loop()
@@ -89,4 +99,20 @@ void loop()
     _runner->Loop();
     _motor->Loop();
     _light->Loop();
+
+    if (DMA_GetFlagStatus(DMA2_Stream0, DMA_FLAG_HTIF0)) // HTIF - half transfer interrupt flag
+    {
+        DMA_ClearFlag(DMA2_Stream0, DMA_FLAG_HTIF0);
+    }
+
+    if (DMA_GetFlagStatus(DMA2_Stream0, DMA_FLAG_TCIF0)) // TCIF - transfer complete interrupt flag
+    {
+
+        for (int i = 0; i < 500; i += 1)
+        {
+            Serial.println(_samplesBuffer[i]);
+        }
+
+        DMA_ClearFlag(DMA2_Stream0, DMA_FLAG_TCIF0);
+    }
 }
