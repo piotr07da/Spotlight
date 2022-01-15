@@ -29,8 +29,6 @@ AdcDma _adcDma(A5, _samplesBuffer, 4410, 44100);
 
 void setup()
 {
-    Serial.begin();
-
     pinMode(D7, OUTPUT);
 
     pinMode(A5, INPUT);
@@ -101,7 +99,7 @@ void loop()
 
         for (int i = 0; i < 500; i += 1)
         {
-            Serial.println(_samplesBuffer[i]);
+            // Serial.println(_samplesBuffer[i]);
         }
 
         DMA_ClearFlag(DMA2_Stream0, DMA_FLAG_TCIF0);

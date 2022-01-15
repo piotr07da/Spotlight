@@ -48,7 +48,7 @@ void Motor::Loop()
 		{
 			// DIAG
 			DiagLed::Toggle();
-			//_lastStepTime += _stepInterval * (float)(long)((t - _lastStepTime) / _stepInterval);
+			_lastStepTime += _stepInterval * (float)(long)((t - _lastStepTime) / _stepInterval);
 			_lastStepTime = t;
 		}
 	}
@@ -129,7 +129,7 @@ void Motor::InitializeMove()
 		digitalWrite(_stepPin, LOW);
 
 		_isRunning = true;
-		_lastStepTime = micros();
+		_lastStepTime = micros() - _stepInterval - __FLT_EPSILON__;
 	}
 	else
 	{
@@ -142,6 +142,4 @@ void Motor::InitializeMove()
 			_hasFinished = true;
 		}
 	}
-
-	// DiagLed::Toggle();
 }
