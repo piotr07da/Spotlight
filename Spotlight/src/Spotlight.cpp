@@ -20,10 +20,11 @@
 #include "Display.h"
 #include "Runner.h"
 #include "AdcDma.h"
+#include "DiagLed.h"
 
 void setup();
 void loop();
-#line 18 "c:/_git/Spotlight/Spotlight/src/Spotlight.ino"
+#line 19 "c:/_git/Spotlight/Spotlight/src/Spotlight.ino"
 SpotManager *_spotManager;
 Motor *_motor;
 Light *_light;
@@ -37,6 +38,7 @@ uint16_t _samplesBuffer[4410];
 AdcDma _adcDma(A5, _samplesBuffer, 4410, 44100);
 
 TCPServer *_server;
+TCPClient _client;
 
 void setup()
 {
@@ -117,5 +119,14 @@ void loop()
         }
 
         DMA_ClearFlag(DMA2_Stream0, DMA_FLAG_TCIF0);
+    }
+
+    if (_client.connected())
+    {
+        _client.write("Spotlight here mate!");
+    }
+    else
+    {
+        _client = _server->available();
     }
 }

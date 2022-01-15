@@ -14,6 +14,7 @@
 #include "Display.h"
 #include "Runner.h"
 #include "AdcDma.h"
+#include "DiagLed.h"
 
 SpotManager *_spotManager;
 Motor *_motor;
@@ -28,6 +29,7 @@ uint16_t _samplesBuffer[4410];
 AdcDma _adcDma(A5, _samplesBuffer, 4410, 44100);
 
 TCPServer *_server;
+TCPClient _client;
 
 void setup()
 {
@@ -108,5 +110,14 @@ void loop()
         }
 
         DMA_ClearFlag(DMA2_Stream0, DMA_FLAG_TCIF0);
+    }
+
+    if (_client.connected())
+    {
+        _client.write("Spotlight here mate!");
+    }
+    else
+    {
+        _client = _server->available();
     }
 }
