@@ -15,6 +15,10 @@ Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSetting
 	_motor = motor;
 	_light = light;
 	_mode = ControllerMode::GlobalSettings;
+
+	ModeChanged = new Event1<ControllerMode>();
+	StartRequested = new Event0();
+	StopRequested = new Event0();
 }
 
 void Controller::Setup()
@@ -124,7 +128,7 @@ void Controller::Loop()
 	case ControllerMode::Standby:
 		if (_previousSpotBtn->IsClicked(true))
 		{
-			StopRequested.Raise();
+			StopRequested->Raise();
 			_spotManager->LastSpot();
 			PositionMotorOnCurrentSpot(Motor_MaxSpeed);
 			LightUp();
@@ -132,7 +136,7 @@ void Controller::Loop()
 		}
 		else if (_nextSpotBtn->IsClicked())
 		{
-			StartRequested.Raise();
+			StartRequested->Raise();
 		}
 		break;
 	}
@@ -141,7 +145,7 @@ void Controller::Loop()
 void Controller::ChangeMode(ControllerMode mode)
 {
 	_mode = mode;
-	ModeChanged.Raise(mode);
+	ModeChanged->Raise(mode);
 	OnModeChanged();
 }
 

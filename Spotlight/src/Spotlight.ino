@@ -27,8 +27,13 @@ Runner *_runner;
 uint16_t _samplesBuffer[4410];
 AdcDma _adcDma(A5, _samplesBuffer, 4410, 44100);
 
+TCPServer *_server;
+
 void setup()
 {
+    _server = new TCPServer(33334);
+    _server->begin();
+
     pinMode(D7, OUTPUT);
 
     pinMode(A5, INPUT);
@@ -40,35 +45,35 @@ void setup()
     _display = new Display(&_oled, _controller, _spotManager, NULL);
     _runner = new Runner(_spotManager, _motor, _light);
 
-    _controller->ModeChanged.Subscribe(
+    _controller->ModeChanged->Subscribe(
         [](ControllerMode mode)
         { _display->OnControllerModeChanged(mode); });
 
-    _controller->StartRequested.Subscribe(
+    _controller->StartRequested->Subscribe(
         []()
         { _display->OnStartRequested(); });
 
-    _controller->StartRequested.Subscribe(
+    _controller->StartRequested->Subscribe(
         []()
         { _runner->OnStartRequested(); });
 
-    _controller->StopRequested.Subscribe(
+    _controller->StopRequested->Subscribe(
         []()
         { _runner->OnStopRequested(); });
 
-    _spotManager->NumberOfSpotsChanged.Subscribe(
+    _spotManager->NumberOfSpotsChanged->Subscribe(
         []()
         { _display->OnNumberOfSpotsChanged(); });
 
-    _spotManager->SpotChanged.Subscribe(
+    _spotManager->SpotChanged->Subscribe(
         []()
         { _display->OnSpotChanged(); });
 
-    _spotManager->SettingChanged.Subscribe(
+    _spotManager->SettingChanged->Subscribe(
         [](SpotSetting setting)
         { _display->OnSettingChanged(setting); });
 
-    _spotManager->SettingValueChanged.Subscribe(
+    _spotManager->SettingValueChanged->Subscribe(
         []()
         { _display->OnSettingValueChanged(); });
 
