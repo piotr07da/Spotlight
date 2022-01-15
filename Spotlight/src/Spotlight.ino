@@ -103,21 +103,28 @@ void loop()
 
     if (DMA_GetFlagStatus(DMA2_Stream0, DMA_FLAG_TCIF0)) // TCIF - transfer complete interrupt flag
     {
-
-        for (int i = 0; i < 500; i += 1)
+        if (_client.connected())
         {
-            // Serial.println(_samplesBuffer[i]);
+            String s = "";
+            for (int i = 0; i < 4410; i += 1)
+            {
+                s += String(_samplesBuffer[i]) + ",";
+                if (i % 10 == 9)
+                {
+                    _client.write(s);
+                    s = "";
+                }
+            }
+        }
+        else
+        {
+            _client = _server->available();
+            if (_client.connected())
+            {
+                _client.write("Spotlight here!");
+            }
         }
 
         DMA_ClearFlag(DMA2_Stream0, DMA_FLAG_TCIF0);
-    }
-
-    if (_client.connected())
-    {
-        _client.write("Spotlight here mate!");
-    }
-    else
-    {
-        _client = _server->available();
     }
 }
