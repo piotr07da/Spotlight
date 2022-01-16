@@ -11,7 +11,7 @@ enum class MotorDirection
 };
 
 const int Motor_MaxSpeed = 500;
-const float Motor_MinStepInterval = 2000.0f; // microseconds
+const double Motor_MinStepInterval = 2000.0; // microseconds
 
 class Motor
 {
@@ -19,8 +19,8 @@ private:
 	int _stepPin;
 	int _directionPin;
 	MotorDirection _direction;
-	float _lastStepTime;
-	float _stepInterval;
+	double _lastStepTime;
+	double _stepInterval;
 	long _currentPosition;
 	long _targetPosition;
 	bool _isRunning;

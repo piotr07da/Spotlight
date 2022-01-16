@@ -24,7 +24,7 @@ void Motor::Loop()
 		return;
 	}
 
-	auto t = (float)micros();
+	auto t = (double)micros();
 
 	if (t - _lastStepTime >= _stepInterval)
 	{
@@ -48,7 +48,7 @@ void Motor::Loop()
 		{
 			// DIAG
 			DiagLed::Toggle();
-			_lastStepTime += _stepInterval * (float)(long)((t - _lastStepTime) / _stepInterval);
+			_lastStepTime += _stepInterval * (double)(long)((t - _lastStepTime) / _stepInterval);
 			_lastStepTime = t;
 		}
 	}
@@ -66,19 +66,17 @@ void Motor::MoveToInTime(int position, int time)
 	if (_targetPosition != _currentPosition)
 	{
 		auto distance = abs(_targetPosition - _currentPosition);
-		_stepInterval = 1000.0f * time / distance; // time is in milliseconds, need to convert to microseconds
+		_stepInterval = 1000.0 * time / distance; // time is in milliseconds, need to convert to microseconds
 	}
 
-	Particle.publish("diag", "MoveToInTime");
 	InitializeMove();
 }
 
 void Motor::MoveToWithSpeed(int position, int speed)
 {
 	_targetPosition = position;
-	_stepInterval = 1000000.0f / speed;
+	_stepInterval = 1000000.0 / speed;
 
-	Particle.publish("diag", "MoveToWithSpeed");
 	InitializeMove();
 }
 
@@ -131,9 +129,7 @@ void Motor::InitializeMove()
 		digitalWrite(_stepPin, LOW);
 
 		_isRunning = true;
-		_lastStepTime = micros() - _stepInterval - __FLT_EPSILON__;
-
-		Particle.publish("diag", "MoveInitialized cp:" + String(_currentPosition) + " tp:" + String(_targetPosition) + " si:" + String(_stepInterval));
+		_lastStepTime = (double)micros() - _stepInterval - __DBL_EPSILON__;
 	}
 	else
 	{

@@ -66,7 +66,6 @@ void Runner::Loop()
 
 	if (_setupStage)
 	{
-		Particle.publish("diag", "_setupStage spotCnt:" + String(_spotManager->GetSpotCount()));
 		_motor->MoveToInTime(spot.Position, duration);
 		_light->SetActivity(activity, duration);
 		_setupStage = false;
