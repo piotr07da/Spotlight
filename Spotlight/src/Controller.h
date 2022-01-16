@@ -21,16 +21,16 @@ const int Controller_ButtonSyncMotorSpeed = 1000 / Button_DebounceDelay_SuperFas
 class Controller
 {
 private:
-	ControllerMode _mode;
-	Button *_previousSpotBtn;
-	Button *_nextSpotBtn;
-	Button *_previousSettingBtn;
-	Button *_nextSettingBtn;
-	Button *_decreaseSettingValueBtn;
-	Button *_increaseSettingValueBtn;
+	Button _previousSpotBtn;
+	Button _nextSpotBtn;
+	Button _previousSettingBtn;
+	Button _nextSettingBtn;
+	Button _decreaseSettingValueBtn;
+	Button _increaseSettingValueBtn;
 	SpotManager *_spotManager;
 	Motor *_motor;
 	Light *_light;
+	ControllerMode _mode;
 	int _settingValueDelta;
 	int _settingValueChangeCounter;
 
@@ -47,9 +47,9 @@ private:
 public:
 	Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager, Motor *motor, Light *light);
 
-	Event1<ControllerMode> *ModeChanged;
-	Event0 *StartRequested;
-	Event0 *StopRequested;
+	Event1<ControllerMode> ModeChanged;
+	Event0 StartRequested;
+	Event0 StopRequested;
 
 	void Setup();
 	void Loop();

@@ -28,10 +28,10 @@ private:
 public:
 	SpotManager();
 
-	Event0 *NumberOfSpotsChanged;
-	Event0 *SpotChanged;
-	Event1<SpotSetting> *SettingChanged;
-	Event0 *SettingValueChanged;
+	Event0 NumberOfSpotsChanged;
+	Event0 SpotChanged;
+	Event1<SpotSetting> SettingChanged;
+	Event0 SettingValueChanged;
 
 	int GetSpotCount();
 	int GetCurrentSpotIndex();
@@ -46,7 +46,7 @@ public:
 	void LastSpot();
 	void PreviousSetting();
 	void NextSetting();
-	void ChangeSettingValue(int delta);
+	void ChangeSettingValue(int delta, bool notify);
 };
 
 #endif // SPOT_MANAGER_H

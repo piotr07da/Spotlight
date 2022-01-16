@@ -39,7 +39,7 @@ void AdcDma::Start()
 	// GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
 	// GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	HAL_Pin_Mode(_pin, AN_INPUT);
-	HAL_Pin_Mode(A7, AN_INPUT);
+	// HAL_Pin_Mode(A7, AN_INPUT);
 
 	// Enable the DMA Stream IRQ Channel
 	NVIC_InitTypeDef NVIC_InitStructure;
@@ -120,7 +120,7 @@ void AdcDma::Start()
 	// ADC_SampleTime_144Cycles: Sample time equal to 144 cycles, 4.80us
 	// ADC_SampleTime_480Cycles: Sample time equal to 480 cycles, 16.0us (default)
 	ADC_RegularChannelConfig(ADC1, PIN_MAP[_pin].adc_channel, 1, ADC_SampleTime_28Cycles);
-	ADC_RegularChannelConfig(ADC2, PIN_MAP[A7].adc_channel, 1, ADC_SampleTime_28Cycles);
+	ADC_RegularChannelConfig(ADC2, PIN_MAP[_pin].adc_channel, 1, ADC_SampleTime_28Cycles);
 
 	// Enable DMA request after last transfer (Multi-ADC mode)
 	ADC_MultiModeDMARequestAfterLastTransferCmd(ENABLE);

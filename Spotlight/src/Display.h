@@ -13,9 +13,7 @@ class Display
 {
 private:
 	Adafruit_SH1106 *_oled;
-	Controller *_controller;
 	SpotManager *_spotManager;
-	Runner *_runner;
 	bool _needsRefresh;
 
 	void ShowDiag(String diag);
@@ -28,7 +26,7 @@ private:
 	String FormatLightActivity(LightActivity activity);
 
 public:
-	Display(Adafruit_SH1106 *oled, Controller *controller, SpotManager *spotManager, Runner *runner);
+	Display(Adafruit_SH1106 *oled, SpotManager *spotManager);
 
 	void Setup();
 	void Loop();

@@ -28,11 +28,6 @@ SpotManager::SpotManager()
 	_spotCount = 0;
 	_currentSpotIndex = -1;
 	_currentSetting = SpotSetting::Position;
-
-	NumberOfSpotsChanged = new Event0();
-	SpotChanged = new Event0();
-	SettingChanged = new Event1<SpotSetting>();
-	SettingValueChanged = new Event0();
 }
 
 int SpotManager::GetSpotCount()
@@ -70,7 +65,7 @@ void SpotManager::DecreaseActiveSpotCount()
 			_currentSpotIndex = -1;
 		}
 
-		NumberOfSpotsChanged->Raise();
+		NumberOfSpotsChanged.Raise();
 	}
 }
 
@@ -91,7 +86,7 @@ void SpotManager::IncreaseActiveSpotCount()
 			_currentSpotIndex = 0;
 		}
 
-		NumberOfSpotsChanged->Raise();
+		NumberOfSpotsChanged.Raise();
 	}
 }
 
@@ -100,12 +95,12 @@ void SpotManager::PreviousSpot()
 	if (_currentSpotIndex > 0)
 	{
 		--_currentSpotIndex;
-		SpotChanged->Raise();
+		SpotChanged.Raise();
 
 		if (_currentSetting != SpotSetting::Position)
 		{
 			_currentSetting = SpotSetting::Position;
-			SettingChanged->Raise(_currentSetting);
+			SettingChanged.Raise(_currentSetting);
 		}
 	}
 }
@@ -115,12 +110,12 @@ void SpotManager::NextSpot()
 	if (_currentSpotIndex < _spotCount - 1)
 	{
 		++_currentSpotIndex;
-		SpotChanged->Raise();
+		SpotChanged.Raise();
 
 		if (_currentSetting != SpotSetting::Position)
 		{
 			_currentSetting = SpotSetting::Position;
-			SettingChanged->Raise(_currentSetting);
+			SettingChanged.Raise(_currentSetting);
 		}
 	}
 }
@@ -158,7 +153,7 @@ void SpotManager::PreviousSetting()
 		_currentSetting = SpotSetting::LAST;
 	}
 
-	SettingChanged->Raise(_currentSetting);
+	SettingChanged.Raise(_currentSetting);
 }
 
 void SpotManager::NextSetting()
@@ -172,10 +167,10 @@ void SpotManager::NextSetting()
 		_currentSetting = SpotSetting::FIRST;
 	}
 
-	SettingChanged->Raise(_currentSetting);
+	SettingChanged.Raise(_currentSetting);
 }
 
-void SpotManager::ChangeSettingValue(int delta)
+void SpotManager::ChangeSettingValue(int delta, bool notify)
 {
 	Spot *spot = GetCurrentSpot();
 
@@ -222,7 +217,10 @@ void SpotManager::ChangeSettingValue(int delta)
 	}
 	}
 
-	SettingValueChanged->Raise();
+	if (notify)
+	{
+		SettingValueChanged.Raise();
+	}
 }
 
 LightActivity SpotManager::FindActivity(LightActivity *activities, int activitiesCount, int currentActivityIndex, int indexChangeValue)

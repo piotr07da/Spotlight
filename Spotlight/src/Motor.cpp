@@ -69,6 +69,7 @@ void Motor::MoveToInTime(int position, int time)
 		_stepInterval = 1000.0f * time / distance; // time is in milliseconds, need to convert to microseconds
 	}
 
+	Particle.publish("diag", "MoveToInTime");
 	InitializeMove();
 }
 
@@ -77,6 +78,7 @@ void Motor::MoveToWithSpeed(int position, int speed)
 	_targetPosition = position;
 	_stepInterval = 1000000.0f / speed;
 
+	Particle.publish("diag", "MoveToWithSpeed");
 	InitializeMove();
 }
 
@@ -130,6 +132,8 @@ void Motor::InitializeMove()
 
 		_isRunning = true;
 		_lastStepTime = micros() - _stepInterval - __FLT_EPSILON__;
+
+		Particle.publish("diag", "MoveInitialized cp:" + String(_currentPosition) + " tp:" + String(_targetPosition) + " si:" + String(_stepInterval));
 	}
 	else
 	{

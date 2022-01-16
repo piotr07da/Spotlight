@@ -13,8 +13,8 @@ namespace SpotlightCommunicator
             var buff = new byte[1024];
             while (ns.CanRead)
             {
-                ns.Read(buff, 0, buff.Length);
-                var s = Encoding.UTF8.GetString(buff);
+                var bytesRead = ns.Read(buff);
+                var s = Encoding.UTF8.GetString(buff.AsSpan(0, bytesRead));
                 Console.WriteLine(s);
             }
         }

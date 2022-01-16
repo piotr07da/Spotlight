@@ -16,85 +16,80 @@
 #include "AdcDma.h"
 #include "DiagLed.h"
 
-SpotManager *_spotManager;
-Motor *_motor;
-Light *_light;
-Controller *_controller;
+SpotManager _spotManager;
+Motor _motor(A2, A3);
+Light _light(D2);
+Controller _controller(A0, A1, D3, D4, D5, D6, &_spotManager, &_motor, &_light);
 #define OLED_RESET 4
 Adafruit_SH1106 _oled(OLED_RESET);
-Display *_display;
-Runner *_runner;
+Display _display(&_oled, &_spotManager);
+Runner _runner(&_spotManager, &_motor, &_light);
 
-uint16_t _samplesBuffer[4410];
-AdcDma _adcDma(A5, _samplesBuffer, 4410, 44100);
+const int AudioSampleBufferSize = 4410;
+uint16_t _samplesBuffer[AudioSampleBufferSize];
+AdcDma _adcDma(A5, _samplesBuffer, AudioSampleBufferSize, 44100);
 
-TCPServer *_server;
+TCPServer _server(33334);
 TCPClient _client;
 
 void setup()
 {
-    _server = new TCPServer(33334);
-    _server->begin();
+    _server.begin();
 
     pinMode(D7, OUTPUT);
 
     pinMode(A5, INPUT);
 
-    _spotManager = new SpotManager();
-    _motor = new Motor(A2, A3);
-    _light = new Light(D2);
-    _controller = new Controller(A0, A1, D3, D4, D5, D6, _spotManager, _motor, _light);
-    _display = new Display(&_oled, _controller, _spotManager, NULL);
-    _runner = new Runner(_spotManager, _motor, _light);
-
-    _controller->ModeChanged->Subscribe(
+    _controller.ModeChanged.Subscribe(
         [](ControllerMode mode)
-        { _display->OnControllerModeChanged(mode); });
+        { _display.OnControllerModeChanged(mode); });
 
-    _controller->StartRequested->Subscribe(
+    _controller.StartRequested.Subscribe(
         []()
-        { _display->OnStartRequested(); });
+        { _display.OnStartRequested(); });
 
-    _controller->StartRequested->Subscribe(
+    _controller.StartRequested.Subscribe(
         []()
-        { _runner->OnStartRequested(); });
+        { _runner.OnStartRequested(); });
 
-    _controller->StopRequested->Subscribe(
+    _controller.StopRequested.Subscribe(
         []()
-        { _runner->OnStopRequested(); });
+        { _runner.OnStopRequested(); });
 
-    _spotManager->NumberOfSpotsChanged->Subscribe(
+    _spotManager.NumberOfSpotsChanged.Subscribe(
         []()
-        { _display->OnNumberOfSpotsChanged(); });
+        { _display.OnNumberOfSpotsChanged(); });
 
-    _spotManager->SpotChanged->Subscribe(
+    _spotManager.SpotChanged.Subscribe(
         []()
-        { _display->OnSpotChanged(); });
+        { _display.OnSpotChanged(); });
 
-    _spotManager->SettingChanged->Subscribe(
+    _spotManager.SettingChanged.Subscribe(
         [](SpotSetting setting)
-        { _display->OnSettingChanged(setting); });
+        { _display.OnSettingChanged(setting); });
 
-    _spotManager->SettingValueChanged->Subscribe(
+    _spotManager.SettingValueChanged.Subscribe(
         []()
-        { _display->OnSettingValueChanged(); });
+        { _display.OnSettingValueChanged(); });
 
-    _motor->Setup();
-    _light->Setup();
-    _controller->Setup();
-    _display->Setup();
-    _runner->Setup();
+    _motor.Setup();
+    _light.Setup();
+    _controller.Setup();
+    _display.Setup();
+    _runner.Setup();
 
     _adcDma.Start();
+
+    // DiagLed::Toggle();
 }
 
 void loop()
 {
-    _controller->Loop();
-    _display->Loop();
-    _runner->Loop();
-    _motor->Loop();
-    _light->Loop();
+    _controller.Loop();
+    _display.Loop();
+    _runner.Loop();
+    _motor.Loop();
+    _light.Loop();
 
     if (DMA_GetFlagStatus(DMA2_Stream0, DMA_FLAG_HTIF0)) // HTIF - half transfer interrupt flag
     {
@@ -105,20 +100,22 @@ void loop()
     {
         if (_client.connected())
         {
+            _client.write("BATCH BEGIN t:" + String(millis()) + ";");
             String s = "";
-            for (int i = 0; i < 4410; i += 1)
+            for (int i = 0; i < AudioSampleBufferSize / 2; ++i)
             {
-                s += String(_samplesBuffer[i]) + ",";
+                s += String(_samplesBuffer[i * 2]) + ";";
                 if (i % 10 == 9)
                 {
                     _client.write(s);
                     s = "";
                 }
             }
+            _client.write("BATCH END;");
         }
         else
         {
-            _client = _server->available();
+            _client = _server.available();
             if (_client.connected())
             {
                 _client.write("Spotlight here!");

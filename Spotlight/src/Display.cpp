@@ -3,12 +3,10 @@
 #include <Particle.h>
 #include "DisplayLogo.h"
 
-Display::Display(Adafruit_SH1106 *oled, Controller *controller, SpotManager *spotManager, Runner *runner)
+Display::Display(Adafruit_SH1106 *oled, SpotManager *spotManager)
 {
 	_oled = oled;
-	_controller = controller;
 	_spotManager = spotManager;
-	_runner = runner;
 
 	_oled->begin(SH1106_SWITCHCAPVCC, 0x3C); // initialize with the I2C addr 0x3D (for the 128x64)
 }
