@@ -109,7 +109,7 @@ void loop()
     {
         if (_client.connected())
         {
-            _client.write("BATCH BEGIN t:" + String(millis()) + ";");
+            _client.write("BEGIN SAMPLES_BATCH;t:" + String(millis()) + ";");
             String s = "";
             for (int i = 0; i < AudioSampleBufferSize / 2; ++i)
             {
@@ -120,14 +120,15 @@ void loop()
                     s = "";
                 }
             }
-            _client.write("BATCH END;");
+            _client.write("END;");
         }
         else
         {
+            DiagLed::Toggle();
             _client = _server.available();
             if (_client.connected())
             {
-                _client.write("Spotlight here!");
+                _client.write("BEGIN WELCOME;<header>;Spotlight here!;END;");
             }
         }
 

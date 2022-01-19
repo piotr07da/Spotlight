@@ -1,5 +1,5 @@
-import { samplesApi } from "../preload";
+import { spotlightApi } from "../preload";
 
 declare global{
-	interface Window { samplesApi: typeof samplesApi }
+	interface Window { spotlightApi: typeof spotlightApi }
 }

@@ -1,14 +1,14 @@
 import { ipcRenderer, contextBridge } from "electron";
 
-export const samplesApi = {
-  onNext: (callback: (samples: number[]) => void) : void => {
-    ipcRenderer.on("ch1", (event, msg) => {
+export const spotlightApi = {
+  onNextSamples: (callback: (samples: number[]) => void) : void => {
+    ipcRenderer.on("samples-channel", (event, msg) => {
       callback(msg.samples);
     });
   }
 };
 
-contextBridge.exposeInMainWorld("samplesApi", samplesApi);
+contextBridge.exposeInMainWorld("spotlightApi", spotlightApi);
 
 // All of the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.

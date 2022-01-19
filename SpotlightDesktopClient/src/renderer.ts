@@ -3,8 +3,8 @@ window.addEventListener("DOMContentLoaded", () => {
   const context = canvas.getContext("2d");
   context.fillRect(10, 20, 200, 100);
 
-  console.log(window.samplesApi);
-  window.samplesApi.onNext((samples: number[]) =>{
+  console.log(window.spotlightApi);
+  window.spotlightApi.onNextSamples((samples: number[]) =>{
     const canvas = <HTMLCanvasElement>document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
