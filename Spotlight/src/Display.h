@@ -9,10 +9,12 @@
 #include "SpotSetting.h"
 #include "LightActivity.h"
 
+#define OLED_RESET 4
+
 class Display
 {
 private:
-	Adafruit_SH1106 *_oled;
+	Adafruit_SH1106 _oled;
 	SpotManager *_spotManager;
 	bool _needsRefresh;
 
@@ -26,7 +28,7 @@ private:
 	String FormatLightActivity(LightActivity activity);
 
 public:
-	Display(Adafruit_SH1106 *oled, SpotManager *spotManager);
+	Display(SpotManager *spotManager);
 
 	void Setup();
 	void Loop();

@@ -27,24 +27,15 @@ SpotManager _spotManager;
 Motor _motor(A2, A3);
 Light _light(D2);
 Controller _controller(A0, A1, D3, D4, D5, D6, &_spotManager, &_motor, &_light);
-#define OLED_RESET 4
-Adafruit_SH1106 _oled(OLED_RESET);
-Display _display(&_oled, &_spotManager);
+Display _display(&_spotManager);
 Runner _runner(&_spotManager, &_motor, &_light);
 AudioSampler _audioSampler(A5);
-FastFourierTransform _fft;
-AudioTrigger _audioTrigger;
-
-
-Complex _spectrumSingleHalfBuffer[AudioSamplesSingleHalfBufferSize];
-
-TCPServer _server(33334);
-Messenger _messenger(&_server);
+AudioSpectrumCalculator _audioSpectrumCalculator(&_audioSampler);
+AudioTrigger _audioTrigger(&_audioSpectrumCalculator);
+Messenger _messenger(33334);
 
 void setup()
 {
-    _server.begin();
-
     pinMode(D7, OUTPUT);
 
     pinMode(A5, INPUT);
@@ -81,13 +72,15 @@ void setup()
         []()
         { _display.OnSettingValueChanged(); });
 
-    _motor.Setup();
-    _light.Setup();
     _controller.Setup();
     _display.Setup();
     _runner.Setup();
-
-    _adcDma.Start();
+    _motor.Setup();
+    _light.Setup();
+    _audioSampler.Setup();
+    _audioSpectrumCalculator.Setup();
+    _audioTrigger.Setup();
+    _messenger.Setup();
 
     // DiagLed::Toggle();
 }
@@ -99,14 +92,18 @@ void loop()
     _runner.Loop();
     _motor.Loop();
     _light.Loop();
+    _audioSampler.Loop();
+    _audioSpectrumCalculator.Loop();
+    _audioTrigger.Loop();
+    _messenger.Loop();
 
-    
+    if (_audioSampler.DoubleHalfBufferReady())
+    {
+        _messenger.SendSamplesBatch(_audioSampler.DoubleHalfBuffer(), AudioSampler_SingleHalfBufferSize);
+    }
+
+    if (_audioSpectrumCalculator.SpectrumReady())
+    {
+        _messenger.SendAmplitudeSpectrum(_audioSpectrumCalculator.Spectrum(), AudioSampler_SingleHalfBufferSize);
+    }
 }
-
-float _spectrumSingleHalfBuffer2[AudioSamplesSingleHalfBufferSize * 2];
-
-void CalculateSpectrum()
-{
-    
-}
-

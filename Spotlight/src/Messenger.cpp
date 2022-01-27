@@ -4,8 +4,17 @@
 
 #include "DiagLed.h"
 
-Messenger::Messenger(TCPServer *server)
-	: _server(server)
+Messenger::Messenger(int port)
+	: _server(port)
+{
+}
+
+void Messenger::Setup()
+{
+	_server.begin();
+}
+
+void Messenger::Loop()
 {
 }
 
@@ -56,7 +65,7 @@ bool Messenger::EnsureConnected()
 	else
 	{
 		DiagLed::Toggle();
-		_client = _server->available();
+		_client = _server.available();
 		if (_client.connected())
 		{
 			_client.write("BEGIN WELCOME;<header>;Spotlight here!;END;");

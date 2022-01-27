@@ -1,6 +1,8 @@
 #ifndef FAST_FOURIER_TRANSFORM_H
 #define FAST_FOURIER_TRANSFORM_H
 
+#include <Particle.h>
+
 class FastFourierTransform
 {
 private:

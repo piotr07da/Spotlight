@@ -1,6 +1,8 @@
 #ifndef AUDIO_SAMPLER_H
 #define AUDIO_SAMPLER_H
 
+#include <Particle.h>
+
 #include "AdcDma.h"
 
 static const int AudioSampler_Frequency = 20480;
@@ -20,10 +22,11 @@ private:
 public:
 	AudioSampler(int pin);
 
+	void Setup();
 	void Loop();
 
-	bool DoubleHalfBufferReady();
 	uint16_t *DoubleHalfBuffer();
+	bool DoubleHalfBufferReady();
 };
 
 #endif // AUDIO_SAMPLER_H

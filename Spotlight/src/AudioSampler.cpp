@@ -1,8 +1,15 @@
 #include "AudioSampler.h"
 
+#include "DiagLed.h"
+
 AudioSampler::AudioSampler(int pin)
 	: _adcDma(pin, _doubleFullBuffer, AudioSampler_DoubleFullBufferSize, 20480)
 {
+}
+
+void AudioSampler::Setup()
+{
+	_adcDma.Start();
 }
 
 void AudioSampler::Loop()
@@ -24,12 +31,12 @@ void AudioSampler::Loop()
 	}
 }
 
-bool AudioSampler::DoubleHalfBufferReady()
-{
-	return _doubleHalfBufferReady;
-}
-
 uint16_t *AudioSampler::DoubleHalfBuffer()
 {
 	return _doubleHalfBuffer;
+}
+
+bool AudioSampler::DoubleHalfBufferReady()
+{
+	return _doubleHalfBufferReady;
 }

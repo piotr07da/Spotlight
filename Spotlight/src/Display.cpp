@@ -3,16 +3,14 @@
 #include <Particle.h>
 #include "DisplayLogo.h"
 
-Display::Display(Adafruit_SH1106 *oled, SpotManager *spotManager)
+Display::Display(SpotManager *spotManager)
+	: _oled(OLED_RESET), _spotManager(spotManager)
 {
-	_oled = oled;
-	_spotManager = spotManager;
-
-	_oled->begin(SH1106_SWITCHCAPVCC, 0x3C); // initialize with the I2C addr 0x3D (for the 128x64)
 }
 
 void Display::Setup()
 {
+	_oled.begin(SH1106_SWITCHCAPVCC, 0x3C); // initialize with the I2C addr 0x3D (for the 128x64)
 	ShowWelcome();
 }
 
@@ -20,7 +18,7 @@ void Display::Loop()
 {
 	if (_needsRefresh)
 	{
-		_oled->display();
+		_oled.display();
 		_needsRefresh = false;
 	}
 }
@@ -78,30 +76,30 @@ void Display::ShowDiag(String diag)
 	}
 	buff[sl] = '\0';
 
-	_oled->clearDisplay();
-	_oled->setTextColor(WHITE);
-	_oled->setTextSize(1);
-	_oled->setCursor(0, 0);
-	_oled->println(buff);
+	_oled.clearDisplay();
+	_oled.setTextColor(WHITE);
+	_oled.setTextSize(1);
+	_oled.setCursor(0, 0);
+	_oled.println(buff);
 	_needsRefresh = true;
 }
 
 void Display::ShowWelcome()
 {
-	_oled->clearDisplay();
-	_oled->drawBitmap(15, 0, DisplayLogo, 96, 64, 1);
+	_oled.clearDisplay();
+	_oled.drawBitmap(15, 0, DisplayLogo, 96, 64, 1);
 	_needsRefresh = true;
 }
 
 void Display::ShowGlobalSettings(int activeSpotCount)
 {
-	_oled->clearDisplay();
-	_oled->setTextColor(WHITE);
-	_oled->setTextSize(1);
-	_oled->setCursor(0, 0);
-	_oled->println("Active spots:");
-	_oled->setTextSize(2);
-	_oled->println(activeSpotCount);
+	_oled.clearDisplay();
+	_oled.setTextColor(WHITE);
+	_oled.setTextSize(1);
+	_oled.setCursor(0, 0);
+	_oled.println("Active spots:");
+	_oled.setTextSize(2);
+	_oled.println(activeSpotCount);
 	_needsRefresh = true;
 }
 
@@ -141,39 +139,39 @@ void Display::ShowSpotSetting(int spotIndex, const char *label, String value)
 	}
 	buff[sl] = '\0';
 
-	_oled->clearDisplay();
-	_oled->setTextColor(WHITE);
-	_oled->setTextSize(1);
-	_oled->setCursor(0, 0);
-	_oled->print("SPOT: ");
-	_oled->setTextSize(2);
-	_oled->println(spotIndex);
-	_oled->setTextSize(1);
-	_oled->println("");
-	_oled->println(label);
-	_oled->println("");
-	_oled->setTextSize(2);
-	_oled->println(buff);
+	_oled.clearDisplay();
+	_oled.setTextColor(WHITE);
+	_oled.setTextSize(1);
+	_oled.setCursor(0, 0);
+	_oled.print("SPOT: ");
+	_oled.setTextSize(2);
+	_oled.println(spotIndex);
+	_oled.setTextSize(1);
+	_oled.println("");
+	_oled.println(label);
+	_oled.println("");
+	_oled.setTextSize(2);
+	_oled.println(buff);
 	_needsRefresh = true;
 }
 
 void Display::ShowStandby()
 {
-	_oled->clearDisplay();
-	_oled->setTextColor(WHITE);
-	_oled->setTextSize(1);
-	_oled->setCursor(0, 0);
-	_oled->print("STANDBY");
+	_oled.clearDisplay();
+	_oled.setTextColor(WHITE);
+	_oled.setTextSize(1);
+	_oled.setCursor(0, 0);
+	_oled.print("STANDBY");
 	_needsRefresh = true;
 }
 
 void Display::ShowRunning()
 {
-	_oled->clearDisplay();
-	_oled->setTextColor(WHITE);
-	_oled->setTextSize(1);
-	_oled->setCursor(0, 0);
-	_oled->print("RUNNING");
+	_oled.clearDisplay();
+	_oled.setTextColor(WHITE);
+	_oled.setTextSize(1);
+	_oled.setCursor(0, 0);
+	_oled.print("RUNNING");
 	_needsRefresh = true;
 }
 
