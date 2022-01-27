@@ -8,6 +8,8 @@
 #include "SpotManager.h"
 #include "Adafruit_SH1106_headers.h"
 
+#include <math.h>
+
 #include "Controller.h"
 #include "Button.h"
 #include "Light.h"
@@ -15,6 +17,11 @@
 #include "Runner.h"
 #include "AdcDma.h"
 #include "DiagLed.h"
+#include "AudioSampler.h"
+#include "FastFourierTransform.h"
+#include "AudioTrigger.h"
+#include "Messenger.h"
+#include "Complex.h"
 
 SpotManager _spotManager;
 Motor _motor(A2, A3);
@@ -24,13 +31,15 @@ Controller _controller(A0, A1, D3, D4, D5, D6, &_spotManager, &_motor, &_light);
 Adafruit_SH1106 _oled(OLED_RESET);
 Display _display(&_oled, &_spotManager);
 Runner _runner(&_spotManager, &_motor, &_light);
+AudioSampler _audioSampler(A5);
+FastFourierTransform _fft;
+AudioTrigger _audioTrigger;
 
-const int AudioSampleBufferSize = 4410;
-uint16_t _samplesBuffer[AudioSampleBufferSize];
-AdcDma _adcDma(A5, _samplesBuffer, AudioSampleBufferSize, 44100);
+
+Complex _spectrumSingleHalfBuffer[AudioSamplesSingleHalfBufferSize];
 
 TCPServer _server(33334);
-TCPClient _client;
+Messenger _messenger(&_server);
 
 void setup()
 {
@@ -91,38 +100,13 @@ void loop()
     _motor.Loop();
     _light.Loop();
 
-    if (DMA_GetFlagStatus(DMA2_Stream0, DMA_FLAG_HTIF0)) // HTIF - half transfer interrupt flag
-    {
-        DMA_ClearFlag(DMA2_Stream0, DMA_FLAG_HTIF0);
-    }
-
-    if (DMA_GetFlagStatus(DMA2_Stream0, DMA_FLAG_TCIF0)) // TCIF - transfer complete interrupt flag
-    {
-        if (_client.connected())
-        {
-            _client.write("BEGIN SAMPLES_BATCH;t:" + String(millis()) + ";");
-            String s = "";
-            for (int i = 0; i < AudioSampleBufferSize / 2; ++i)
-            {
-                s += String(_samplesBuffer[i * 2]) + ";";
-                if (i % 10 == 9)
-                {
-                    _client.write(s);
-                    s = "";
-                }
-            }
-            _client.write("END;");
-        }
-        else
-        {
-            DiagLed::Toggle();
-            _client = _server.available();
-            if (_client.connected())
-            {
-                _client.write("BEGIN WELCOME;<header>;Spotlight here!;END;");
-            }
-        }
-
-        DMA_ClearFlag(DMA2_Stream0, DMA_FLAG_TCIF0);
-    }
+    
 }
+
+float _spectrumSingleHalfBuffer2[AudioSamplesSingleHalfBufferSize * 2];
+
+void CalculateSpectrum()
+{
+    
+}
+

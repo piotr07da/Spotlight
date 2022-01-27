@@ -5,6 +5,11 @@ export const spotlightApi = {
     ipcRenderer.on("samples-channel", (event, msg) => {
       callback(msg.samples);
     });
+  },
+  onNextSpectrum: (callback: (spectrum: number[]) => void) : void => {
+    ipcRenderer.on("spectrum-channel", (event, msg) => {
+      callback(msg.spectrum);
+    });
   }
 };
 

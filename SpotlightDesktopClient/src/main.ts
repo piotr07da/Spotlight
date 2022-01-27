@@ -155,22 +155,6 @@ function supplyData(webContents: WebContents) {
   client.on('data', (data) => {
     const sData = data.toString();
     dataProcesseor.process(sData);
-    //console.log(sData);
-    // const splittedData = sData.split(";");
-    // const samples:number[] = [];
-    // let i = 0;
-    // splittedData.forEach(sv => {
-    //   if (i < 2205) {
-    //     ++i;
-    //     const v = parseInt(sv);
-    //     if (!isNaN(v)) {
-    //       samples.push(v);
-    //     }
-    //   }
-    // });
-    // if (samples.length > 0) {
-    //   webContents.send("ch1", { "samples": samples });
-    // }
   });
 }
 
