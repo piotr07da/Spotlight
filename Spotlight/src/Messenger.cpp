@@ -64,7 +64,6 @@ bool Messenger::EnsureConnected()
 	}
 	else
 	{
-		DiagLed::Toggle();
 		_client = _server.available();
 		if (_client.connected())
 		{
