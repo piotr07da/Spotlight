@@ -9,7 +9,7 @@
 #include "SpotSetting.h"
 #include "LightActivity.h"
 
-#define OLED_RESET 4
+#define OLED_DUMMY_RESET_PIN -1
 
 class Display
 {

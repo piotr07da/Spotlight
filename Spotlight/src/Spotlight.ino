@@ -6,7 +6,6 @@
  */
 
 #include "SpotManager.h"
-#include "Adafruit_SH1106_headers.h"
 
 #include <math.h>
 
@@ -15,10 +14,9 @@
 #include "Light.h"
 #include "Display.h"
 #include "Runner.h"
-#include "AdcDma.h"
 #include "DiagLed.h"
 #include "AudioSampler.h"
-#include "FastFourierTransform.h"
+#include "AudioSpectrumCalculator.h"
 #include "AudioTrigger.h"
 #include "Messenger.h"
 #include "Complex.h"
@@ -72,26 +70,26 @@ void setup()
         []()
         { _display.OnSettingValueChanged(); });
 
+    _motor.Setup();
+    _light.Setup();
     _controller.Setup();
     _display.Setup();
     _runner.Setup();
-    _motor.Setup();
-    _light.Setup();
     _audioSampler.Setup();
     _audioSpectrumCalculator.Setup();
     _audioTrigger.Setup();
     _messenger.Setup();
 
-    // DiagLed::Toggle();
+    DiagLed::Toggle();
 }
 
 void loop()
 {
+    _motor.Loop();
+    _light.Loop();
     _controller.Loop();
     _display.Loop();
     _runner.Loop();
-    _motor.Loop();
-    _light.Loop();
     _audioSampler.Loop();
     _audioSpectrumCalculator.Loop();
     _audioTrigger.Loop();

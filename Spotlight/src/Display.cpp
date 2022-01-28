@@ -4,7 +4,7 @@
 #include "DisplayLogo.h"
 
 Display::Display(SpotManager *spotManager)
-	: _oled(OLED_RESET), _spotManager(spotManager)
+	: _oled(OLED_DUMMY_RESET_PIN), _spotManager(spotManager)
 {
 }
 
