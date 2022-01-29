@@ -1,156 +1,29 @@
 import { app, BrowserWindow, WebContents } from "electron";
 import * as net from "net";
 import * as path from "path";
-
-class WelcomeMessage {
-	message: string;
-
-	constructor(message: string) {
-		this.message = message;
-	}
-}
-
-class SamplesBatchMessage {
-	samples: number[];
-
-	constructor(samples: number[]) {
-		this.samples = samples;
-	}
-}
-
-class AmplitudeSpectrumMessage {
-	spectrum: number[];
-
-	constructor(spectrum: number[]) {
-		this.spectrum = spectrum;
-	}
-}
-
-enum MessageType {
-	Welcome,
-	SamplesBatch,
-	AmplitudeSpectrum,
-}
-
-enum DataProcessorState {
-	Begin,
-	Header,
-	DataOrEnd,
-}
-
-class DataProcessor {
-	private unprocessedRawData: string;
-	private state: DataProcessorState;
-	private currentMessageType: MessageType;
-	private currentHeader: string;
-	private dataEntries: string[];
-	private onMessage: { (messageType: MessageType, message: unknown): void };
-
-	constructor(onMessage: { (messageType: MessageType, message: unknown): void }) {
-		this.unprocessedRawData = "";
-		this.state = DataProcessorState.Begin;
-		this.onMessage = onMessage;
-	}
-
-	process(data: string) {
-		this.unprocessedRawData += data;
-		let continueAnalyze = true;
-		while (continueAnalyze) {
-			continueAnalyze = this.analyze();
-		}
-	}
-
-	analyze(): boolean {
-		switch (this.state) {
-			case DataProcessorState.Begin: {
-				const beginIx = this.unprocessedRawData.indexOf("BEGIN ");
-				if (beginIx == -1) {
-					return false;
-				}
-				const beginDelimiterIx = this.unprocessedRawData.indexOf(";", beginIx + 6);
-				if (beginDelimiterIx == -1) {
-					return false;
-				}
-				const messageName = this.unprocessedRawData.substring(beginIx + 6, beginDelimiterIx);
-				this.currentMessageType = this.toMessageType(messageName);
-				this.unprocessedRawData = this.unprocessedRawData.substring(beginDelimiterIx + 1);
-				this.state = DataProcessorState.Header;
-				return true;
-			}
-			case DataProcessorState.Header: {
-				const headerDelimiterIx = this.unprocessedRawData.indexOf(";");
-				if (headerDelimiterIx == -1) {
-					return false;
-				}
-				this.currentHeader = this.unprocessedRawData.substring(0, headerDelimiterIx);
-				this.unprocessedRawData = this.unprocessedRawData.substring(headerDelimiterIx + 1);
-				this.dataEntries = [];
-				this.state = DataProcessorState.DataOrEnd;
-				return true;
-			}
-			case DataProcessorState.DataOrEnd: {
-				const dataDelimiterIx = this.unprocessedRawData.indexOf(";");
-				if (dataDelimiterIx == -1) {
-					return false;
-				}
-				const dataEntry = this.unprocessedRawData.substring(0, dataDelimiterIx);
-				if (dataEntry.trim() == "END") {
-					try {
-						this.onMessage(this.currentMessageType, this.createMessage());
-					} catch (ex) {
-						console.log(ex);
-					}
-					this.unprocessedRawData = this.unprocessedRawData.substring(dataDelimiterIx + 1);
-					this.state = DataProcessorState.Begin;
-					return true;
-				}
-				this.dataEntries.push(dataEntry);
-				this.unprocessedRawData = this.unprocessedRawData.substring(dataDelimiterIx + 1);
-				return true;
-			}
-		}
-	}
-
-	toMessageType(messageName: string): MessageType {
-		switch (messageName) {
-			case "WELCOME":
-				return MessageType.Welcome;
-			case "SAMPLES_BATCH":
-				return MessageType.SamplesBatch;
-			case "AMPLITUDE_SPECTRUM":
-				return MessageType.AmplitudeSpectrum;
-		}
-		return undefined;
-	}
-
-	createMessage(): unknown {
-		switch (this.currentMessageType) {
-			case MessageType.Welcome:
-				return new WelcomeMessage(this.dataEntries[0]);
-			case MessageType.SamplesBatch:
-				return new SamplesBatchMessage(this.dataEntries.map((v) => parseInt(v)));
-			case MessageType.AmplitudeSpectrum:
-				return new AmplitudeSpectrumMessage(this.dataEntries.map((v) => parseFloat(v)));
-		}
-	}
-}
+import { DataProcessor, MessageType, WelcomeMessage, SamplesBatchMessage, AmplitudeSpectrumMessage, AudioTriggerMessage } from "./data-processing/data-processing-module";
 
 function supplyData(webContents: WebContents) {
 	const dataProcesseor = new DataProcessor((messageType, message) => {
 		switch (messageType) {
 			case MessageType.Welcome: {
 				const welcomeMessage = <WelcomeMessage>message;
-				webContents.send("welcome-channel", { message: welcomeMessage.message });
+				webContents.send("welcome-channel", welcomeMessage);
 				break;
 			}
 			case MessageType.SamplesBatch: {
 				const samplesBatchMessage = <SamplesBatchMessage>message;
-				webContents.send("samples-channel", { samples: samplesBatchMessage.samples });
+				webContents.send("samples-channel", samplesBatchMessage);
 				break;
 			}
 			case MessageType.AmplitudeSpectrum: {
 				const samplesBatchMessage = <AmplitudeSpectrumMessage>message;
-				webContents.send("spectrum-channel", { spectrum: samplesBatchMessage.spectrum });
+				webContents.send("spectrum-channel", samplesBatchMessage);
+				break;
+			}
+			case MessageType.AudioTrigger: {
+				const audioTriggerMessage = <AudioTriggerMessage>message;
+				webContents.send("audio-trigger-channel", audioTriggerMessage);
 				break;
 			}
 		}

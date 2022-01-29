@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include "DiagLed.h"
+#include "AudioTriggerBandSelector.h"
 
 Messenger::Messenger(int port)
 	: _server(port)
@@ -47,6 +48,26 @@ void Messenger::SendAmplitudeSpectrum(float *data, uint16_t size)
 		{
 			s += String(sqrt(data[2 * i] * data[2 * i] + data[2 * i + 1] * data[2 * i + 1])) + ";";
 			if (i % 50 == 49 || i == size - 1)
+			{
+				_client.write(s);
+				s = "";
+			}
+		}
+		_client.write("END;");
+	}
+}
+
+void Messenger::SendAudioTriggerInfo(AudioTriggerBandSelector *bandSelector, float bandsSpectrumAverage, float oldestWholeAverage, float oldestBandsAverage, float *amplitudeSpectrumSquared, uint16_t amplitudeSpectrumSize)
+{
+	if (EnsureConnected())
+	{
+		_client.write("BEGIN AUDIO_TRIGGER;t:" + String(millis()) + ";bandSelector;" + String(bandSelector->MinimumFrequencyValueIndex) + ";" + String(bandSelector->MaximumFrequencyValueIndex) + ";");
+		_client.write("bandsSpectrumAverage;" + String(bandsSpectrumAverage) + ";oldestWholeAverage;" + String(oldestWholeAverage) + ";oldestBandsAverage;" + String(oldestBandsAverage) + ";");
+		String s = "amplitudeSpectrum;";
+		for (int i = 0; i < amplitudeSpectrumSize; ++i)
+		{
+			s += String(amplitudeSpectrumSquared[i]) + ";";
+			if (i % 50 == 49 || i == amplitudeSpectrumSize - 1)
 			{
 				_client.write(s);
 				s = "";

@@ -3,7 +3,7 @@
 #include "DiagLed.h"
 
 AudioSampler::AudioSampler(int pin)
-	: _adcDma(pin, _doubleFullBuffer, AudioSampler_DoubleFullBufferSize, 20480)
+	: _adcDma(pin, _doubleFullBuffer, AudioSampler_DoubleFullBufferSize, AudioSampler_Frequency)
 {
 }
 

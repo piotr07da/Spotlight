@@ -11,6 +11,27 @@ export const spotlightApi = {
 			callback(msg.spectrum);
 		});
 	},
+	onNextAudioTrigger: (
+		callback: (
+			bandMinFrequencyValueIndex: number,
+			bandMaxFrequencyValueIndex: number,
+			bandsSpectrumAverage: number,
+			oldestWholeAverage: number,
+			oldestBandsAverage: number,
+			amplitudeSpectrum: number[]
+		) => void
+	): void => {
+		ipcRenderer.on("audio-trigger-channel", (event, msg) => {
+			callback(
+				msg.bandMinFrequencyValueIndex,
+				msg.bandMaxFrequencyValueIndex,
+				msg.bandsSpectrumAverage,
+				msg.oldestWholeAverage,
+				msg.oldestBandsAverage,
+				msg.amplitudeSpectrum
+			);
+		});
+	},
 };
 
 contextBridge.exposeInMainWorld("spotlightApi", spotlightApi);

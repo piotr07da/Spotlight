@@ -5,8 +5,8 @@
 
 #include "AdcDma.h"
 
-static const int AudioSampler_Frequency = 20480;
-static const int AudioSampler_DoubleFullBufferSize = 2048;
+static const int AudioSampler_Frequency = 10240;		   // 10.24kHz
+static const int AudioSampler_DoubleFullBufferSize = 2048; // has to be power of 2 for FFT
 static const int AudioSampler_DoubleHalfBufferSize = AudioSampler_DoubleFullBufferSize / 2;
 static const int AudioSampler_SingleFullBufferSize = AudioSampler_DoubleFullBufferSize / 2;
 static const int AudioSampler_SingleHalfBufferSize = AudioSampler_DoubleHalfBufferSize / 2;

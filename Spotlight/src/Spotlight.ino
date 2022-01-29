@@ -5,22 +5,21 @@
  * Date: 2021-12-27
  */
 
-#include "SpotManager.h"
-
 #include <math.h>
 
-#include "Controller.h"
-#include "Button.h"
+#include "DiagLed.h"
+#include "Messenger.h"
+#include "SpotManager.h"
+#include "Motor.h"
 #include "Light.h"
+#include "Controller.h"
 #include "Display.h"
 #include "Runner.h"
-#include "DiagLed.h"
 #include "AudioSampler.h"
 #include "AudioSpectrumCalculator.h"
 #include "AudioTrigger.h"
-#include "Messenger.h"
-#include "Complex.h"
 
+Messenger _messenger(33334);
 SpotManager _spotManager;
 Motor _motor(A2, A3);
 Light _light(D2);
@@ -29,8 +28,7 @@ Display _display(&_spotManager);
 Runner _runner(&_spotManager, &_motor, &_light);
 AudioSampler _audioSampler(A5);
 AudioSpectrumCalculator _audioSpectrumCalculator(&_audioSampler);
-AudioTrigger _audioTrigger(&_audioSpectrumCalculator);
-Messenger _messenger(33334);
+AudioTrigger _audioTrigger(&_audioSpectrumCalculator, &_messenger);
 
 void setup()
 {
@@ -70,6 +68,7 @@ void setup()
         []()
         { _display.OnSettingValueChanged(); });
 
+    _messenger.Setup();
     _motor.Setup();
     _light.Setup();
     _controller.Setup();
@@ -78,13 +77,13 @@ void setup()
     _audioSampler.Setup();
     _audioSpectrumCalculator.Setup();
     _audioTrigger.Setup();
-    _messenger.Setup();
 
     DiagLed::Toggle();
 }
 
 void loop()
 {
+    _messenger.Loop();
     _motor.Loop();
     _light.Loop();
     _controller.Loop();
@@ -93,7 +92,6 @@ void loop()
     _audioSampler.Loop();
     _audioSpectrumCalculator.Loop();
     _audioTrigger.Loop();
-    _messenger.Loop();
 
     if (_audioSampler.DoubleHalfBufferReady())
     {
