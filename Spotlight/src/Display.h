@@ -6,6 +6,7 @@
 #include "SpotManager.h"
 #include "Runner.h"
 #include "Spot.h"
+#include "SpotCollection.h"
 #include "SpotSetting.h"
 #include "LightActivity.h"
 
@@ -19,7 +20,7 @@ private:
 	bool _needsRefresh;
 
 	void ShowDiag(String diag);
-	void ShowWelcome();
+	
 	void ShowGlobalSettings(int activeSpotCount);
 	void ShowSpotSetting(int spotIndex, Spot spot, SpotSetting setting);
 	void ShowSpotSetting(int spotIndex, const char *label, String value);
@@ -34,6 +35,8 @@ public:
 	void Setup();
 	void Loop();
 
+	void ShowWelcome();
+	void ShowGlobalProperties(SpotCollection *spots);
 	void ShowSpotProperties(Spot spot, SpotSetting currentProperty);
 	void ShowSpotProperty(Spot spot, SpotSetting currentProperty);
 	void OnControllerModeChanged(ControllerMode mode);

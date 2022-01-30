@@ -41,6 +41,8 @@ public:
 
 	void Loop();
 
+	bool IsActive();
+	SpotSetting GetCurrentProperty();
 	void AssingSpotPropertiesMenu(SpotPropertiesMenu *spotPropertiesMenu);
 	void Activate(Spot *spot, SpotSetting currentProperty);
 	void Deactivate();

@@ -23,12 +23,34 @@ void Display::Loop()
 	}
 }
 
+void Display::ShowWelcome()
+{
+	_oled.clearDisplay();
+	_oled.drawBitmap(15, 0, DisplayLogo, 96, 64, 1);
+	_needsRefresh = true;
+}
+
+void Display::ShowGlobalProperties(SpotCollection *spots)
+{
+	_oled.clearDisplay();
+	_oled.setTextColor(WHITE);
+	_oled.setTextSize(1);
+	_oled.setCursor(0, 0);
+	_oled.println("Active spots:");
+	_oled.setTextSize(2);
+	_oled.println(spots->GetCount());
+	_needsRefresh = true;
+}
+
 void Display::ShowSpotProperties(Spot spot, SpotSetting currentProperty)
 {
 	_oled.clearDisplay();
 	_oled.setTextColor(WHITE);
 	_oled.setTextSize(1);
 	_oled.setCursor(0, 0);
+
+	_oled.print("SPOT: ");
+	_oled.println(spot.Index);
 
 	_oled.print(currentProperty == SpotSetting::Position ? "-> " : "   ");
 	_oled.print("Position: ");
@@ -137,13 +159,6 @@ void Display::ShowDiag(String diag)
 	_oled.setTextSize(1);
 	_oled.setCursor(0, 0);
 	_oled.println(buff);
-	_needsRefresh = true;
-}
-
-void Display::ShowWelcome()
-{
-	_oled.clearDisplay();
-	_oled.drawBitmap(15, 0, DisplayLogo, 96, 64, 1);
 	_needsRefresh = true;
 }
 

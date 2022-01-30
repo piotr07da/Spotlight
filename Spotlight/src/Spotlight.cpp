@@ -32,7 +32,7 @@ void loop();
 #line 24 "c:/_git/Spotlight/Spotlight/src/Spotlight.ino"
 Messenger _messenger(33334);
 SpotManager _spotManager;
-SpotCollection _spotCollection;
+SpotCollection _spots;
 AudioSampler _audioSampler(A4);
 AudioSpectrumCalculator _audioSpectrumCalculator(&_audioSampler);
 AudioTrigger _audioTrigger(&_audioSpectrumCalculator, &_messenger);
@@ -40,7 +40,7 @@ Motor _motor(A2, A3);
 Light _light(D2);
 // Controller _controller(A0, A1, D3, D4, D5, D6, &_spotManager, &_audioTrigger, &_motor, &_light);
 Display _display(&_spotManager);
-MasterMenu _masterMenu(A0, A1, D3, D4, D5, D6, &_display, &_motor, &_spotCollection);
+MasterMenu _masterMenu(A0, A1, D3, D4, D5, D6, &_display, &_motor, &_spots);
 Runner _runner(&_spotManager, &_motor, &_light);
 
 void setup()

@@ -5,6 +5,7 @@
 #include "Display.h"
 #include "Motor.h"
 #include "SpotCollection.h"
+#include "GlobalPropertiesMenu.h"
 #include "SpotPropertiesMenu.h"
 #include "SpotPropertyValueMenu.h"
 
@@ -19,12 +20,18 @@ private:
 	Button _rrButton;
 	Display *_display;
 	Motor *_motor;
-	SpotCollection *_spotCollection;
+	SpotCollection *_spots;
+	GlobalPropertiesMenu _globalPropertiesMenu;
 	SpotPropertiesMenu _spotPropertiesMenu;
 	SpotPropertyValueMenu _spotPropertyValueMenu;
+	int _currentSpotIndex;
+
+	bool AnySpotMenuIsActive();
+	void ActivateSpotMenuForCurrentSpot();
+	void DeactivateAllSpotMenus();
 
 public:
-	MasterMenu(int ldPin, int luPin, int rdPin, int ruPin, int rlPin, int rrPin, Display *display, Motor *motor, SpotCollection *spotCollection);
+	MasterMenu(int ldPin, int luPin, int rdPin, int ruPin, int rlPin, int rrPin, Display *display, Motor *motor, SpotCollection *spots);
 
 	void Setup();
 	void Loop();

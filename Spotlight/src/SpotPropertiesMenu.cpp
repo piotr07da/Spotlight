@@ -17,10 +17,6 @@ void SpotPropertiesMenu::Loop()
 		return;
 	}
 
-	_prevPropertyButton->Loop();
-	_nextPropertyButton->Loop();
-	_enterButton->Loop();
-
 	if (_prevPropertyButton->IsClicked())
 	{
 		if (_currentProperty > SpotSetting::FIRST)
@@ -52,6 +48,16 @@ void SpotPropertiesMenu::Loop()
 		Deactivate();
 		_spotPropertyValueMenu->Activate(_spot, _currentProperty);
 	}
+}
+
+bool SpotPropertiesMenu::IsActive()
+{
+	return _isActive;
+}
+
+SpotSetting SpotPropertiesMenu::GetCurrentProperty()
+{
+	return _currentProperty;
 }
 
 void SpotPropertiesMenu::AssignSpotPropertyValueMenu(SpotPropertyValueMenu *spotPropertyValueMenu)

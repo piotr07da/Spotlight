@@ -39,11 +39,6 @@ void SpotPropertyValueMenu::Loop()
 		return;
 	}
 
-	_decreasePropertyValueButton->Loop();
-	_increasePropertyValueButton->Loop();
-	_escapeButton->Loop();
-	_enterButton->Loop();
-
 	if (_decreasePropertyValueButton->IsClicked())
 	{
 		ChangePropertyValue(-1);
@@ -72,6 +67,16 @@ void SpotPropertyValueMenu::Loop()
 			_motor->MoveToWithSpeed(_spot->Position, Motor_MaxSpeed);
 		}
 	}
+}
+
+bool SpotPropertyValueMenu::IsActive()
+{
+	return _isActive;
+}
+
+SpotSetting SpotPropertyValueMenu::GetCurrentProperty()
+{
+	return _currentProperty;
 }
 
 void SpotPropertyValueMenu::AssingSpotPropertiesMenu(SpotPropertiesMenu *spotPropertiesMenu)

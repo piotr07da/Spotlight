@@ -26,6 +26,8 @@ public:
 
 	void Loop();
 
+	bool IsActive();
+	SpotSetting GetCurrentProperty();
 	void AssignSpotPropertyValueMenu(SpotPropertyValueMenu *spotPropertyValueMenu);
 	void Activate(Spot *spot, SpotSetting currentProperty);
 	void Deactivate();
