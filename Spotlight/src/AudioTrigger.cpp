@@ -9,7 +9,7 @@
 AudioTrigger::AudioTrigger(AudioSpectrumCalculator *spectrumCalculator, Messenger *messenger)
 	: _spectrumCalculator(spectrumCalculator),
 	  _messenger(messenger),
-	  _bandSelector(2320, 2320) // PACT TIMER - 2320Hz
+	  _bandSelector(2320, 2340) // PACT TIMER freq
 {
 }
 
@@ -69,7 +69,7 @@ void AudioTrigger::Loop()
 			}
 
 			if (bandsSpectrumAvg > _latestWholeAverages[oldestAverageIndex] &&
-				bandsSpectrumAvg > 400 * _latestBandsAverages[oldestAverageIndex])
+				bandsSpectrumAvg > 300 * _latestBandsAverages[oldestAverageIndex])
 			{
 				//_messenger->SendAudioTriggerInfo(&_bandSelector, bandsSpectrumAvg, _latestWholeAverages[oldestAverageIndex], _latestBandsAverages[oldestAverageIndex], _amplitudeSpectrumSquared, AudioTrigger_AmplitudeSpectrumSize);
 				_isTriggered = true;

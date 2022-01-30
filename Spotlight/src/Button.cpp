@@ -18,7 +18,7 @@ Button::Button(String name, int pin, int debounceDelay)
 
 void Button::Setup()
 {
-	pinMode(_pin, INPUT);
+	pinMode(_pin, INPUT_PULLDOWN);
 }
 
 void Button::Loop()

@@ -103,7 +103,7 @@ window.addEventListener("DOMContentLoaded", () => {
 		}
 
 		if (maxValue > 80000) {
-			peaks.push({ v: maxValue, ix: maxValueIx });
+			peaks.push({ v: Math.round(maxValue), ix: maxValueIx });
 			const peaksElement = document.getElementById("spectrum-peaks");
 			peaksElement.innerText = peaks.map((p) => "ix:" + p.ix + " v:" + p.v).join("\n");
 		}

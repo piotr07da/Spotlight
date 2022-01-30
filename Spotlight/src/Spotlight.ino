@@ -91,13 +91,13 @@ void loop()
     _display.Loop();
     _runner.Loop();
 
-    if (_audioSampler.DoubleHalfBufferReady())
-    {
-        _messenger.SendSamplesBatch(_audioSampler.DoubleHalfBuffer(), AudioSampler_SingleHalfBufferSize);
-    }
+    // if (_audioSampler.DoubleHalfBufferReady())
+    // {
+    //     _messenger.SendSamplesBatch(_audioSampler.DoubleHalfBuffer(), AudioSampler_SingleHalfBufferSize);
+    // }
 
-    if (_audioSpectrumCalculator.SpectrumReady())
-    {
-        _messenger.SendAmplitudeSpectrum(_audioSpectrumCalculator.Spectrum(), AudioSampler_SingleHalfBufferSize);
-    }
+    // if (_audioSpectrumCalculator.SpectrumReady())
+    // {
+    //     _messenger.SendAmplitudeSpectrum(_audioSpectrumCalculator.Spectrum(), AudioSampler_SingleHalfBufferSize);
+    // }
 }
