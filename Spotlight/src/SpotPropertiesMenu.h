@@ -5,7 +5,7 @@
 #include "Display.h"
 #include "SpotPropertyValueMenu.h"
 #include "Spot.h"
-#include "SpotSetting.h"
+#include "SpotProperty.h"
 
 class SpotPropertyValueMenu;
 
@@ -19,7 +19,7 @@ private:
 	Display *_display;
 	bool _isActive;
 	Spot *_spot;
-	SpotSetting _currentProperty;
+	SpotProperty _currentProperty;
 
 public:
 	SpotPropertiesMenu(Button *prevPropertyButton, Button *nextPropertyButton, Button *enterButton, Display *display);
@@ -27,9 +27,9 @@ public:
 	void Loop();
 
 	bool IsActive();
-	SpotSetting GetCurrentProperty();
+	SpotProperty GetCurrentProperty();
 	void AssignSpotPropertyValueMenu(SpotPropertyValueMenu *spotPropertyValueMenu);
-	void Activate(Spot *spot, SpotSetting currentProperty);
+	void Activate(Spot *spot, SpotProperty currentProperty);
 	void Deactivate();
 };
 

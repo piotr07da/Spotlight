@@ -6,7 +6,7 @@
 #include "Motor.h"
 #include "SpotPropertiesMenu.h"
 #include "Spot.h"
-#include "SpotSetting.h"
+#include "SpotProperty.h"
 
 const int SpotPropertyValueMenu_ButtonSyncMotorSpeed = 1000 / Button_DebounceDelay_SuperFastButton;
 
@@ -29,7 +29,7 @@ private:
 	SpotPropertiesMenu *_spotPropertiesMenu;
 	bool _isActive;
 	Spot *_spot;
-	SpotSetting _currentProperty;
+	SpotProperty _currentProperty;
 	int _valueDelta;
 	int _valueChangeCounter;
 
@@ -42,9 +42,9 @@ public:
 	void Loop();
 
 	bool IsActive();
-	SpotSetting GetCurrentProperty();
+	SpotProperty GetCurrentProperty();
 	void AssingSpotPropertiesMenu(SpotPropertiesMenu *spotPropertiesMenu);
-	void Activate(Spot *spot, SpotSetting currentProperty);
+	void Activate(Spot *spot, SpotProperty currentProperty);
 	void Deactivate();
 };
 

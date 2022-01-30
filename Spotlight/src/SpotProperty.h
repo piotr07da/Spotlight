@@ -1,7 +1,7 @@
-#ifndef SPOT_SETTING_H
-#define SPOT_SETTING_H
+#ifndef SPOT_PROPERTY_H
+#define SPOT_PROPERTY_H
 
-enum class SpotSetting
+enum class SpotProperty
 {
 	FIRST = 0,
 	Position = 0,
@@ -12,4 +12,4 @@ enum class SpotSetting
 	LAST = 4,
 };
 
-#endif // SPOT_SETTING_H
+#endif // SPOT_PROPERTY_H

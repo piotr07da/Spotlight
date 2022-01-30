@@ -1,10 +1,9 @@
 #ifndef RUNNER_H
 #define RUNNER_H
 
-#include "SpotManager.h"
+#include "SpotCollection.h"
 #include "Motor.h"
 #include "Light.h"
-#include "Event.h"
 
 #include <Particle.h>
 
@@ -17,7 +16,7 @@ enum class RunnerSpotStage
 class Runner
 {
 private:
-	SpotManager *_spotManager;
+	SpotCollection *_spots;
 	Motor *_motor;
 	Light *_light;
 	bool _isRunning;
@@ -29,13 +28,13 @@ private:
 	int CalculateCurrentSpotTravelTime();
 
 public:
-	Runner(SpotManager *spotManager, Motor *motor, Light *light);
+	Runner(SpotCollection *spots, Motor *motor, Light *light);
 
 	void Setup();
 	void Loop();
 
-	void OnStartRequested();
-	void OnStopRequested();
+	void Start();
+	void Stop();
 };
 
 #endif // RUNNER_H

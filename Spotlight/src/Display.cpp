@@ -3,8 +3,8 @@
 #include <Particle.h>
 #include "DisplayLogo.h"
 
-Display::Display(SpotManager *spotManager)
-	: _oled(OLED_DUMMY_RESET_PIN), _spotManager(spotManager)
+Display::Display()
+	: _oled(OLED_DUMMY_RESET_PIN)
 {
 }
 
@@ -42,7 +42,7 @@ void Display::ShowGlobalProperties(SpotCollection *spots)
 	_needsRefresh = true;
 }
 
-void Display::ShowSpotProperties(Spot spot, SpotSetting currentProperty)
+void Display::ShowSpotProperties(Spot spot, SpotProperty currentProperty)
 {
 	_oled.clearDisplay();
 	_oled.setTextColor(WHITE);
@@ -52,96 +52,70 @@ void Display::ShowSpotProperties(Spot spot, SpotSetting currentProperty)
 	_oled.print("SPOT: ");
 	_oled.println(spot.Index);
 
-	_oled.print(currentProperty == SpotSetting::Position ? "-> " : "   ");
+	_oled.print(currentProperty == SpotProperty::Position ? "-> " : "   ");
 	_oled.print("Position: ");
 	_oled.println(spot.Position);
 
-	_oled.print(currentProperty == SpotSetting::SpotTime ? "-> " : "   ");
+	_oled.print(currentProperty == SpotProperty::SpotTime ? "-> " : "   ");
 	_oled.print("SpotTime: ");
 	_oled.println(spot.SpotTime);
 
-	_oled.print(currentProperty == SpotSetting::SpotActivity ? "-> " : "   ");
+	_oled.print(currentProperty == SpotProperty::SpotActivity ? "-> " : "   ");
 	_oled.print("SpotActv: ");
 	_oled.println(FormatLightActivityShort(spot.SpotActivity));
 
-	_oled.print(currentProperty == SpotSetting::TravelTime ? "-> " : "   ");
+	_oled.print(currentProperty == SpotProperty::TravelTime ? "-> " : "   ");
 	_oled.print("TravTime: ");
 	_oled.println(spot.TravelTime);
 
-	_oled.print(currentProperty == SpotSetting::TravelActivity ? "-> " : "   ");
+	_oled.print(currentProperty == SpotProperty::TravelActivity ? "-> " : "   ");
 	_oled.print("TravActv: ");
 	_oled.println(FormatLightActivityShort(spot.TravelActivity));
 
 	_needsRefresh = true;
 }
 
-void Display::ShowSpotProperty(Spot spot, SpotSetting currentProperty)
+void Display::ShowSpotProperty(Spot spot, SpotProperty property)
 {
-	switch (currentProperty)
+	switch (property)
 	{
-	case SpotSetting::Position:
-		ShowSpotSetting(spot.Index, "Position:", String(spot.Position));
+	case SpotProperty::Position:
+		ShowSpotProperty(spot.Index, "Position:", String(spot.Position));
 		break;
 
-	case SpotSetting::SpotTime:
-		ShowSpotSetting(spot.Index, "Spot Time:", String(spot.SpotTime));
+	case SpotProperty::SpotTime:
+		ShowSpotProperty(spot.Index, "Spot Time:", String(spot.SpotTime));
 		break;
 
-	case SpotSetting::SpotActivity:
-		ShowSpotSetting(spot.Index, "Spot Activity:", FormatLightActivity(spot.SpotActivity));
+	case SpotProperty::SpotActivity:
+		ShowSpotProperty(spot.Index, "Spot Activity:", FormatLightActivity(spot.SpotActivity));
 		break;
 
-	case SpotSetting::TravelTime:
-		ShowSpotSetting(spot.Index, "Travel Time:", String(spot.TravelTime));
+	case SpotProperty::TravelTime:
+		ShowSpotProperty(spot.Index, "Travel Time:", String(spot.TravelTime));
 		break;
 
-	case SpotSetting::TravelActivity:
-		ShowSpotSetting(spot.Index, "Travel Activity:", FormatLightActivity(spot.TravelActivity));
+	case SpotProperty::TravelActivity:
+		ShowSpotProperty(spot.Index, "Travel Activity:", FormatLightActivity(spot.TravelActivity));
 		break;
 	}
 }
 
-void Display::OnControllerModeChanged(ControllerMode mode)
+void Display::ShowStandby()
 {
-	switch (mode)
-	{
-	case ControllerMode::GlobalSettings:
-		ShowGlobalSettings(_spotManager->GetSpotCount());
-		break;
-
-	case ControllerMode::SpotSettings:
-		ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
-		break;
-
-	case ControllerMode::Standby:
-		ShowStandby();
-		break;
-	}
+	_oled.clearDisplay();
+	_oled.setTextColor(WHITE);
+	_oled.setTextSize(1);
+	_oled.setCursor(0, 0);
+	_oled.print("STANDBY");
+	_needsRefresh = true;
 }
 
-void Display::OnNumberOfSpotsChanged()
+void Display::ShowRunning()
 {
-	ShowGlobalSettings(_spotManager->GetSpotCount());
-}
-
-void Display::OnSpotChanged()
-{
-	ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
-}
-
-void Display::OnSettingChanged(SpotSetting setting)
-{
-	ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), setting);
-}
-
-void Display::OnSettingValueChanged()
-{
-	ShowSpotSetting(_spotManager->GetCurrentSpotIndex(), *_spotManager->GetCurrentSpot(), _spotManager->GetCurrentSetting());
-}
-
-void Display::OnStartRequested()
-{
-	ShowRunning();
+	_oled.clearDisplay();
+	_oled.drawBitmap(15, 0, DisplayLogo, 96, 64, 1);
+	_needsRefresh = true;
 }
 
 void Display::ShowDiag(String diag)
@@ -162,45 +136,33 @@ void Display::ShowDiag(String diag)
 	_needsRefresh = true;
 }
 
-void Display::ShowGlobalSettings(int activeSpotCount)
+void Display::ShowSpotProperty(int spotIndex, Spot spot, SpotProperty property)
 {
-	_oled.clearDisplay();
-	_oled.setTextColor(WHITE);
-	_oled.setTextSize(1);
-	_oled.setCursor(0, 0);
-	_oled.println("Active spots:");
-	_oled.setTextSize(2);
-	_oled.println(activeSpotCount);
-	_needsRefresh = true;
-}
-
-void Display::ShowSpotSetting(int spotIndex, Spot spot, SpotSetting setting)
-{
-	switch (setting)
+	switch (property)
 	{
-	case SpotSetting::Position:
-		ShowSpotSetting(spotIndex, "Position:", String(spot.Position));
+	case SpotProperty::Position:
+		ShowSpotProperty(spotIndex, "Position:", String(spot.Position));
 		break;
 
-	case SpotSetting::SpotTime:
-		ShowSpotSetting(spotIndex, "Spot Time:", String(spot.SpotTime));
+	case SpotProperty::SpotTime:
+		ShowSpotProperty(spotIndex, "Spot Time:", String(spot.SpotTime));
 		break;
 
-	case SpotSetting::SpotActivity:
-		ShowSpotSetting(spotIndex, "Spot Activity:", FormatLightActivity(spot.SpotActivity));
+	case SpotProperty::SpotActivity:
+		ShowSpotProperty(spotIndex, "Spot Activity:", FormatLightActivity(spot.SpotActivity));
 		break;
 
-	case SpotSetting::TravelTime:
-		ShowSpotSetting(spotIndex, "Travel Time:", String(spot.TravelTime));
+	case SpotProperty::TravelTime:
+		ShowSpotProperty(spotIndex, "Travel Time:", String(spot.TravelTime));
 		break;
 
-	case SpotSetting::TravelActivity:
-		ShowSpotSetting(spotIndex, "Travel Activity:", FormatLightActivity(spot.TravelActivity));
+	case SpotProperty::TravelActivity:
+		ShowSpotProperty(spotIndex, "Travel Activity:", FormatLightActivity(spot.TravelActivity));
 		break;
 	}
 }
 
-void Display::ShowSpotSetting(int spotIndex, const char *label, String value)
+void Display::ShowSpotProperty(int spotIndex, const char *label, String value)
 {
 	int sl = value.length();
 	char buff[sl + 1];
@@ -223,23 +185,6 @@ void Display::ShowSpotSetting(int spotIndex, const char *label, String value)
 	_oled.println("");
 	_oled.setTextSize(2);
 	_oled.println(buff);
-	_needsRefresh = true;
-}
-
-void Display::ShowStandby()
-{
-	_oled.clearDisplay();
-	_oled.setTextColor(WHITE);
-	_oled.setTextSize(1);
-	_oled.setCursor(0, 0);
-	_oled.print("STANDBY");
-	_needsRefresh = true;
-}
-
-void Display::ShowRunning()
-{
-	_oled.clearDisplay();
-	_oled.drawBitmap(15, 0, DisplayLogo, 96, 64, 1);
 	_needsRefresh = true;
 }
 

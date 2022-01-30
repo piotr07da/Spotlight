@@ -1,13 +1,14 @@
 #include "Runner.h"
 
 #include <Particle.h>
+
 #include "Spot.h"
 
-Runner::Runner(SpotManager *spotManager, Motor *motor, Light *light)
+Runner::Runner(SpotCollection *spots, Motor *motor, Light *light)
+	: _spots(spots),
+	  _motor(motor),
+	  _light(light)
 {
-	_spotManager = spotManager;
-	_motor = motor;
-	_light = light;
 }
 
 void Runner::Setup()
@@ -21,7 +22,7 @@ void Runner::Loop()
 		return;
 	}
 
-	Spot spot = *_spotManager->GetSpotByIndex(_spotIndex);
+	Spot spot = *_spots->GetByIndex(_spotIndex);
 	int travelTime = CalculateCurrentSpotTravelTime();
 
 	auto t = millis() - _t0;
@@ -36,11 +37,11 @@ void Runner::Loop()
 		_t0 = millis();
 		_spotStage = RunnerSpotStage::Travel;
 		++_spotIndex;
-		if (_spotIndex == _spotManager->GetSpotCount())
+		if (_spotIndex == _spots->GetCount())
 		{
 			_spotIndex = 0;
 		}
-		spot = *_spotManager->GetSpotByIndex(_spotIndex);
+		spot = *_spots->GetByIndex(_spotIndex);
 		_setupStage = true;
 	}
 
@@ -72,7 +73,7 @@ void Runner::Loop()
 	}
 }
 
-void Runner::OnStartRequested()
+void Runner::Start()
 {
 	_isRunning = true;
 	_t0 = millis();
@@ -81,7 +82,7 @@ void Runner::OnStartRequested()
 	_setupStage = true;
 }
 
-void Runner::OnStopRequested()
+void Runner::Stop()
 {
 	_isRunning = false;
 	_light->SetActivity(LightActivity::A_0, 1);
@@ -92,11 +93,11 @@ int Runner::CalculateCurrentSpotTravelTime()
 	int previousSpotIndex = _spotIndex - 1;
 	if (previousSpotIndex == -1)
 	{
-		previousSpotIndex = _spotManager->GetSpotCount() - 1;
+		previousSpotIndex = _spots->GetCount() - 1;
 	}
 
-	Spot currentSpot = *_spotManager->GetSpotByIndex(_spotIndex);
-	Spot previousSpot = *_spotManager->GetSpotByIndex(previousSpotIndex);
+	Spot currentSpot = *_spots->GetByIndex(_spotIndex);
+	Spot previousSpot = *_spots->GetByIndex(previousSpotIndex);
 
 	auto distance = abs(currentSpot.Position - previousSpot.Position);
 	auto minEngineAllowedTime = (int)(distance * Motor_MinStepInterval / 1000.0f);

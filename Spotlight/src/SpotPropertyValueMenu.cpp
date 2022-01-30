@@ -61,7 +61,7 @@ void SpotPropertyValueMenu::Loop()
 		_valueDelta = 0;
 		_valueChangeCounter = 0;
 
-		if (_currentProperty == SpotSetting::Position)
+		if (_currentProperty == SpotProperty::Position)
 		{
 			_display->ShowSpotProperty(*_spot, _currentProperty);
 			_motor->MoveToWithSpeed(_spot->Position, Motor_MaxSpeed);
@@ -74,7 +74,7 @@ bool SpotPropertyValueMenu::IsActive()
 	return _isActive;
 }
 
-SpotSetting SpotPropertyValueMenu::GetCurrentProperty()
+SpotProperty SpotPropertyValueMenu::GetCurrentProperty()
 {
 	return _currentProperty;
 }
@@ -84,7 +84,7 @@ void SpotPropertyValueMenu::AssingSpotPropertiesMenu(SpotPropertiesMenu *spotPro
 	_spotPropertiesMenu = spotPropertiesMenu;
 }
 
-void SpotPropertyValueMenu::Activate(Spot *spot, SpotSetting currentProperty)
+void SpotPropertyValueMenu::Activate(Spot *spot, SpotProperty currentProperty)
 {
 	_spot = spot;
 	_currentProperty = currentProperty;
@@ -96,12 +96,12 @@ void SpotPropertyValueMenu::Activate(Spot *spot, SpotSetting currentProperty)
 
 	switch (currentProperty)
 	{
-	case SpotSetting::Position:
+	case SpotProperty::Position:
 		_decreasePropertyValueButton->ChangeDebounceDelay(100);
 		_increasePropertyValueButton->ChangeDebounceDelay(100);
 		break;
-	case SpotSetting::SpotTime:
-	case SpotSetting::TravelTime:
+	case SpotProperty::SpotTime:
+	case SpotProperty::TravelTime:
 		_decreasePropertyValueButton->ChangeDebounceDelay(Button_DebounceDelay_FastButton);
 		_increasePropertyValueButton->ChangeDebounceDelay(Button_DebounceDelay_FastButton);
 		break;
@@ -136,7 +136,7 @@ void SpotPropertyValueMenu::ChangePropertyValue(int sign)
 		return;
 	}
 
-	if (_currentProperty == SpotSetting::SpotTime || _currentProperty == SpotSetting::TravelTime)
+	if (_currentProperty == SpotProperty::SpotTime || _currentProperty == SpotProperty::TravelTime)
 	{
 		if (_valueChangeCounter == 0)
 		{
@@ -162,34 +162,34 @@ void SpotPropertyValueMenu::ChangePropertyValue(int sign)
 
 	switch (_currentProperty)
 	{
-	case SpotSetting::Position:
+	case SpotProperty::Position:
 	{
 		_spot->Position += 1 * sign;
 		break;
 	}
-	case SpotSetting::SpotTime:
+	case SpotProperty::SpotTime:
 	{
 		_spot->SpotTime += _valueDelta * sign;
 		break;
 	}
-	case SpotSetting::SpotActivity:
+	case SpotProperty::SpotActivity:
 	{
 		_spot->SpotActivity = FindActivity(_spotActivites, _spotActivitiesCount, _spot->SpotActivity, sign);
 		break;
 	}
-	case SpotSetting::TravelTime:
+	case SpotProperty::TravelTime:
 	{
 		_spot->TravelTime -= _valueDelta;
 		break;
 	}
-	case SpotSetting::TravelActivity:
+	case SpotProperty::TravelActivity:
 	{
 		_spot->TravelActivity = FindActivity(_travelActivites, _travelActivitiesCount, _spot->TravelActivity, sign);
 		break;
 	}
 	}
 
-	if (_currentProperty == SpotSetting::Position)
+	if (_currentProperty == SpotProperty::Position)
 	{
 		_motor->MoveToWithSpeed(_spot->Position, SpotPropertyValueMenu_ButtonSyncMotorSpeed);
 	}

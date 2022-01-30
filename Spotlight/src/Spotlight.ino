@@ -8,67 +8,31 @@
 #include <math.h>
 
 #include "DiagLed.h"
-#include "Messenger.h"
-#include "SpotManager.h"
 #include "SpotCollection.h"
+#include "Messenger.h"
 #include "AudioSampler.h"
 #include "AudioSpectrumCalculator.h"
 #include "AudioTrigger.h"
+#include "Display.h"
 #include "Motor.h"
 #include "Light.h"
-//#include "Controller.h"
-#include "Display.h"
-#include "MasterMenu.h"
 #include "Runner.h"
+#include "MasterMenu.h"
 
-Messenger _messenger(33334);
-SpotManager _spotManager;
 SpotCollection _spots;
+Messenger _messenger(33334);
 AudioSampler _audioSampler(A4);
 AudioSpectrumCalculator _audioSpectrumCalculator(&_audioSampler);
 AudioTrigger _audioTrigger(&_audioSpectrumCalculator, &_messenger);
+Display _display;
 Motor _motor(A2, A3);
 Light _light(D2);
-// Controller _controller(A0, A1, D3, D4, D5, D6, &_spotManager, &_audioTrigger, &_motor, &_light);
-Display _display(&_spotManager);
-MasterMenu _masterMenu(A0, A1, D3, D4, D5, D6, &_display, &_motor, &_spots);
-Runner _runner(&_spotManager, &_motor, &_light);
+Runner _runner(&_spots, &_motor, &_light);
+MasterMenu _masterMenu(A0, A1, D3, D4, D5, D6, &_audioTrigger, &_display, &_motor, &_light, &_runner, &_spots);
 
 void setup()
 {
     pinMode(D7, OUTPUT);
-
-    // _controller.ModeChanged.Subscribe(
-    //     [](ControllerMode mode)
-    //     { _display.OnControllerModeChanged(mode); });
-
-    // _controller.StartRequested.Subscribe(
-    //     []()
-    //     { _display.OnStartRequested(); });
-
-    // _controller.StartRequested.Subscribe(
-    //     []()
-    //     { _runner.OnStartRequested(); });
-
-    // _controller.StopRequested.Subscribe(
-    //     []()
-    //     { _runner.OnStopRequested(); });
-
-    _spotManager.NumberOfSpotsChanged.Subscribe(
-        []()
-        { _display.OnNumberOfSpotsChanged(); });
-
-    _spotManager.SpotChanged.Subscribe(
-        []()
-        { _display.OnSpotChanged(); });
-
-    _spotManager.SettingChanged.Subscribe(
-        [](SpotSetting setting)
-        { _display.OnSettingChanged(setting); });
-
-    _spotManager.SettingValueChanged.Subscribe(
-        []()
-        { _display.OnSettingValueChanged(); });
 
     _messenger.Setup();
     _audioSampler.Setup();
@@ -76,7 +40,6 @@ void setup()
     _audioTrigger.Setup();
     _motor.Setup();
     _light.Setup();
-    //_controller.Setup();
     _display.Setup();
     _masterMenu.Setup();
     _runner.Setup();
@@ -92,7 +55,6 @@ void loop()
     _audioTrigger.Loop();
     _motor.Loop();
     _light.Loop();
-    //_controller.Loop();
     _display.Loop();
     _masterMenu.Loop();
     _runner.Loop();

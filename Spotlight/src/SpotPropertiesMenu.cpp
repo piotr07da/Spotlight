@@ -19,26 +19,26 @@ void SpotPropertiesMenu::Loop()
 
 	if (_prevPropertyButton->IsClicked())
 	{
-		if (_currentProperty > SpotSetting::FIRST)
+		if (_currentProperty > SpotProperty::FIRST)
 		{
-			_currentProperty = (SpotSetting)((int)_currentProperty - 1);
+			_currentProperty = (SpotProperty)((int)_currentProperty - 1);
 		}
 		else
 		{
-			_currentProperty = SpotSetting::LAST;
+			_currentProperty = SpotProperty::LAST;
 		}
 
 		_display->ShowSpotProperties(*_spot, _currentProperty);
 	}
 	else if (_nextPropertyButton->IsClicked())
 	{
-		if (_currentProperty < SpotSetting::LAST)
+		if (_currentProperty < SpotProperty::LAST)
 		{
-			_currentProperty = (SpotSetting)((int)_currentProperty + 1);
+			_currentProperty = (SpotProperty)((int)_currentProperty + 1);
 		}
 		else
 		{
-			_currentProperty = SpotSetting::FIRST;
+			_currentProperty = SpotProperty::FIRST;
 		}
 
 		_display->ShowSpotProperties(*_spot, _currentProperty);
@@ -55,7 +55,7 @@ bool SpotPropertiesMenu::IsActive()
 	return _isActive;
 }
 
-SpotSetting SpotPropertiesMenu::GetCurrentProperty()
+SpotProperty SpotPropertiesMenu::GetCurrentProperty()
 {
 	return _currentProperty;
 }
@@ -65,7 +65,7 @@ void SpotPropertiesMenu::AssignSpotPropertyValueMenu(SpotPropertyValueMenu *spot
 	_spotPropertyValueMenu = spotPropertyValueMenu;
 }
 
-void SpotPropertiesMenu::Activate(Spot *spot, SpotSetting currentProperty)
+void SpotPropertiesMenu::Activate(Spot *spot, SpotProperty currentProperty)
 {
 	_spot = spot;
 	_currentProperty = currentProperty;

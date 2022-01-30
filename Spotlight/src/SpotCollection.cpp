@@ -32,3 +32,13 @@ Spot *SpotCollection::GetByIndex(int index)
 {
 	return _spots + index;
 }
+
+Spot *SpotCollection::GetFirst()
+{
+	return _spots;
+}
+
+Spot *SpotCollection::GetLast()
+{
+	return _spots + _spotCount - 1;
+}

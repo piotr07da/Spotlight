@@ -17,6 +17,8 @@ public:
 	void RemoveLast();
 	int GetCount();
 	Spot *GetByIndex(int index);
+	Spot *GetFirst();
+	Spot *GetLast();
 };
 
 #endif // SPOT_COLLECTION_H
