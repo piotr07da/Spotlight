@@ -30,8 +30,6 @@ void Controller::Setup()
 	_increaseSettingValueBtn.Setup();
 
 	_settingValueDelta = 0;
-
-	analogWrite(D2, 0, 3000);
 }
 
 void Controller::Loop()
