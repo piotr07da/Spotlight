@@ -5,6 +5,7 @@
 
 struct Spot
 {
+	int Index;
 	int Position;
 	int SpotTime;
 	LightActivity SpotActivity;

@@ -23,6 +23,62 @@ void Display::Loop()
 	}
 }
 
+void Display::ShowSpotProperties(Spot spot, SpotSetting currentProperty)
+{
+	_oled.clearDisplay();
+	_oled.setTextColor(WHITE);
+	_oled.setTextSize(1);
+	_oled.setCursor(0, 0);
+
+	_oled.print(currentProperty == SpotSetting::Position ? "-> " : "   ");
+	_oled.print("Position: ");
+	_oled.println(spot.Position);
+
+	_oled.print(currentProperty == SpotSetting::SpotTime ? "-> " : "   ");
+	_oled.print("SpotTime: ");
+	_oled.println(spot.SpotTime);
+
+	_oled.print(currentProperty == SpotSetting::SpotActivity ? "-> " : "   ");
+	_oled.print("SpotActv: ");
+	_oled.println(FormatLightActivityShort(spot.SpotActivity));
+
+	_oled.print(currentProperty == SpotSetting::TravelTime ? "-> " : "   ");
+	_oled.print("TravTime: ");
+	_oled.println(spot.TravelTime);
+
+	_oled.print(currentProperty == SpotSetting::TravelActivity ? "-> " : "   ");
+	_oled.print("TravActv: ");
+	_oled.println(FormatLightActivityShort(spot.TravelActivity));
+
+	_needsRefresh = true;
+}
+
+void Display::ShowSpotProperty(Spot spot, SpotSetting currentProperty)
+{
+	switch (currentProperty)
+	{
+	case SpotSetting::Position:
+		ShowSpotSetting(spot.Index, "Position:", String(spot.Position));
+		break;
+
+	case SpotSetting::SpotTime:
+		ShowSpotSetting(spot.Index, "Spot Time:", String(spot.SpotTime));
+		break;
+
+	case SpotSetting::SpotActivity:
+		ShowSpotSetting(spot.Index, "Spot Activity:", FormatLightActivity(spot.SpotActivity));
+		break;
+
+	case SpotSetting::TravelTime:
+		ShowSpotSetting(spot.Index, "Travel Time:", String(spot.TravelTime));
+		break;
+
+	case SpotSetting::TravelActivity:
+		ShowSpotSetting(spot.Index, "Travel Activity:", FormatLightActivity(spot.TravelActivity));
+		break;
+	}
+}
+
 void Display::OnControllerModeChanged(ControllerMode mode)
 {
 	switch (mode)
@@ -188,6 +244,29 @@ String Display::FormatLightActivity(LightActivity activity)
 		return "Off-On-Off";
 	case LightActivity::A_101:
 		return "On-Off-On";
+	case LightActivity::A_Strobe:
+		return "Strobe";
+	}
+
+	return "Unknown";
+}
+
+String Display::FormatLightActivityShort(LightActivity activity)
+{
+	switch (activity)
+	{
+	case LightActivity::A_0:
+		return "Off";
+	case LightActivity::A_1:
+		return "On";
+	case LightActivity::A_01:
+		return "OffOn";
+	case LightActivity::A_10:
+		return "OnOff";
+	case LightActivity::A_010:
+		return "OffOnOff";
+	case LightActivity::A_101:
+		return "OnOffOn";
 	case LightActivity::A_Strobe:
 		return "Strobe";
 	}

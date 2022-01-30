@@ -26,6 +26,7 @@ private:
 	void ShowStandby();
 	void ShowRunning();
 	String FormatLightActivity(LightActivity activity);
+	String FormatLightActivityShort(LightActivity activity);
 
 public:
 	Display(SpotManager *spotManager);
@@ -33,6 +34,8 @@ public:
 	void Setup();
 	void Loop();
 
+	void ShowSpotProperties(Spot spot, SpotSetting currentProperty);
+	void ShowSpotProperty(Spot spot, SpotSetting currentProperty);
 	void OnControllerModeChanged(ControllerMode mode);
 	void OnNumberOfSpotsChanged();
 	void OnSpotChanged();
