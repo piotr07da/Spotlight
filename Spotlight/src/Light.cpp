@@ -101,7 +101,7 @@ void Light::LoopForStrobe()
 {
 	auto ms = millis();
 	auto t = ms - _t0;
-	if (t > (ulong)_duration || t % 100 < 5)
+	if (t > (ulong)_duration || t % 77 < 38) // 13Hz, 50% pulse width
 	{
 		_value = 255;
 	}
