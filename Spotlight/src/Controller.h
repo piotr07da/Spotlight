@@ -5,6 +5,7 @@
 
 #include "Button.h"
 #include "SpotManager.h"
+#include "AudioTrigger.h"
 #include "Motor.h"
 #include "Light.h"
 #include "Event.h"
@@ -28,6 +29,7 @@ private:
 	Button _decreaseSettingValueBtn;
 	Button _increaseSettingValueBtn;
 	SpotManager *_spotManager;
+	AudioTrigger *_audioTrigger;
 	Motor *_motor;
 	Light *_light;
 	ControllerMode _mode;
@@ -45,7 +47,7 @@ private:
 	void ReconfigureButtons();
 
 public:
-	Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager, Motor *motor, Light *light);
+	Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager, AudioTrigger *audioTrigger, Motor *motor, Light *light);
 
 	Event1<ControllerMode> ModeChanged;
 	Event0 StartRequested;

@@ -9,6 +9,7 @@ class AudioSpectrumCalculator
 {
 private:
 	AudioSampler *_sampler;
+	bool _enabled;
 	float _spectrum[AudioSampler_SingleHalfBufferSize * 2];
 	bool _spectrumReady;
 
@@ -18,6 +19,8 @@ public:
 	void Setup();
 	void Loop();
 
+	void Enable();
+	void Disable();
 	float *Spectrum();
 	bool SpectrumReady();
 };

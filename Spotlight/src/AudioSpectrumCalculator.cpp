@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include "FastFourierTransform.h"
+#include "DiagLed.h"
 
 AudioSpectrumCalculator::AudioSpectrumCalculator(AudioSampler *sampler)
 	: _sampler(sampler)
@@ -15,6 +16,11 @@ void AudioSpectrumCalculator::Setup()
 
 void AudioSpectrumCalculator::Loop()
 {
+	if (!_enabled)
+	{
+		return;
+	}
+
 	_spectrumReady = false;
 
 	if (_sampler->DoubleHalfBufferReady())
@@ -40,6 +46,18 @@ void AudioSpectrumCalculator::Loop()
 
 		_spectrumReady = true;
 	}
+}
+
+void AudioSpectrumCalculator::Enable()
+{
+	_enabled = true;
+	DiagLed::Toggle();
+}
+
+void AudioSpectrumCalculator::Disable()
+{
+	_enabled = false;
+	DiagLed::Toggle();
 }
 
 float *AudioSpectrumCalculator::Spectrum()

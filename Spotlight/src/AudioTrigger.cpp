@@ -19,6 +19,11 @@ void AudioTrigger::Setup()
 
 void AudioTrigger::Loop()
 {
+	if (!_enabled)
+	{
+		return;
+	}
+
 	if (_spectrumCalculator->SpectrumReady())
 	{
 		float *spectrum = _spectrumCalculator->Spectrum();
@@ -64,9 +69,10 @@ void AudioTrigger::Loop()
 			}
 
 			if (bandsSpectrumAvg > _latestWholeAverages[oldestAverageIndex] &&
-				bandsSpectrumAvg > 500 * _latestBandsAverages[oldestAverageIndex])
+				bandsSpectrumAvg > 400 * _latestBandsAverages[oldestAverageIndex])
 			{
-				_messenger->SendAudioTriggerInfo(&_bandSelector, bandsSpectrumAvg, _latestWholeAverages[oldestAverageIndex], _latestBandsAverages[oldestAverageIndex], _amplitudeSpectrumSquared, AudioTrigger_AmplitudeSpectrumSize);
+				//_messenger->SendAudioTriggerInfo(&_bandSelector, bandsSpectrumAvg, _latestWholeAverages[oldestAverageIndex], _latestBandsAverages[oldestAverageIndex], _amplitudeSpectrumSquared, AudioTrigger_AmplitudeSpectrumSize);
+				_isTriggered = true;
 				DiagLed::Toggle();
 			}
 		}
@@ -78,4 +84,26 @@ void AudioTrigger::Loop()
 			_averagesFilled = true;
 		}
 	}
+}
+
+void AudioTrigger::Enable()
+{
+	_spectrumCalculator->Enable();
+	_enabled = true;
+}
+
+void AudioTrigger::Disable()
+{
+	_spectrumCalculator->Disable();
+	_enabled = false;
+}
+
+bool AudioTrigger::IsTriggered()
+{
+	auto isTriggered = _isTriggered;
+	if (_isTriggered)
+	{
+		_isTriggered = false;
+	}
+	return isTriggered;
 }

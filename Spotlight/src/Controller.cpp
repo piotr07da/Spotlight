@@ -3,7 +3,7 @@
 #include <Particle.h>
 #include "DiagLed.h"
 
-Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager, Motor *motor, Light *light)
+Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSettingPin, int nextSettingPin, int decreaseSettingValuePin, int increaseSettingValuePin, SpotManager *spotManager, AudioTrigger *audioTrigger, Motor *motor, Light *light)
 	: _previousSpotBtn("prev-spot", previousSpotPin, Button_DebounceDelay_SlowButton),
 	  _nextSpotBtn("next-spot", nextSpotPin, Button_DebounceDelay_SlowButton),
 	  _previousSettingBtn("prev-sett", previousSettingPin, Button_DebounceDelay_SlowButton),
@@ -11,6 +11,7 @@ Controller::Controller(int previousSpotPin, int nextSpotPin, int previousSetting
 	  _decreaseSettingValueBtn("decr-val", decreaseSettingValuePin, Button_DebounceDelay_SlowButton),
 	  _increaseSettingValueBtn("incr-val", increaseSettingValuePin, Button_DebounceDelay_SlowButton),
 	  _spotManager(spotManager),
+	  _audioTrigger(audioTrigger),
 	  _motor(motor),
 	  _light(light)
 {
@@ -29,6 +30,8 @@ void Controller::Setup()
 	_increaseSettingValueBtn.Setup();
 
 	_settingValueDelta = 0;
+
+	analogWrite(D2, 0, 3000);
 }
 
 void Controller::Loop()
@@ -87,6 +90,7 @@ void Controller::Loop()
 			else
 			{
 				ChangeMode(ControllerMode::Standby);
+				_audioTrigger->Enable();
 				PositionMotorOnFirstSpot(Motor_MaxSpeed);
 				LightDown();
 			}
@@ -126,12 +130,19 @@ void Controller::Loop()
 		{
 			StopRequested.Raise();
 			_spotManager->LastSpot();
+			_audioTrigger->Disable();
 			PositionMotorOnCurrentSpot(Motor_MaxSpeed);
 			LightUp();
 			ChangeMode(ControllerMode::SpotSettings);
 		}
 		else if (_nextSpotBtn.IsClicked())
 		{
+			_audioTrigger->Disable();
+			StartRequested.Raise();
+		}
+		else if (_audioTrigger->IsTriggered())
+		{
+			_audioTrigger->Disable();
 			StartRequested.Raise();
 		}
 		break;

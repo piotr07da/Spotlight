@@ -21,20 +21,18 @@
 
 Messenger _messenger(33334);
 SpotManager _spotManager;
-Motor _motor(A2, A3);
-Light _light(D2);
-Controller _controller(A0, A1, D3, D4, D5, D6, &_spotManager, &_motor, &_light);
-Display _display(&_spotManager);
-Runner _runner(&_spotManager, &_motor, &_light);
-AudioSampler _audioSampler(A5);
+AudioSampler _audioSampler(A4);
 AudioSpectrumCalculator _audioSpectrumCalculator(&_audioSampler);
 AudioTrigger _audioTrigger(&_audioSpectrumCalculator, &_messenger);
+Motor _motor(A2, A3);
+Light _light(D2);
+Controller _controller(A0, A1, D3, D4, D5, D6, &_spotManager, &_audioTrigger, &_motor, &_light);
+Display _display(&_spotManager);
+Runner _runner(&_spotManager, &_motor, &_light);
 
 void setup()
 {
     pinMode(D7, OUTPUT);
-
-    pinMode(A5, INPUT);
 
     _controller.ModeChanged.Subscribe(
         [](ControllerMode mode)
@@ -69,29 +67,29 @@ void setup()
         { _display.OnSettingValueChanged(); });
 
     _messenger.Setup();
+    _audioSampler.Setup();
+    _audioSpectrumCalculator.Setup();
+    _audioTrigger.Setup();
     _motor.Setup();
     _light.Setup();
     _controller.Setup();
     _display.Setup();
     _runner.Setup();
-    _audioSampler.Setup();
-    _audioSpectrumCalculator.Setup();
-    _audioTrigger.Setup();
 
-    DiagLed::Toggle();
+    // DiagLed::Toggle();
 }
 
 void loop()
 {
     _messenger.Loop();
+    _audioSampler.Loop();
+    _audioSpectrumCalculator.Loop();
+    _audioTrigger.Loop();
     _motor.Loop();
     _light.Loop();
     _controller.Loop();
     _display.Loop();
     _runner.Loop();
-    _audioSampler.Loop();
-    _audioSpectrumCalculator.Loop();
-    _audioTrigger.Loop();
 
     if (_audioSampler.DoubleHalfBufferReady())
     {

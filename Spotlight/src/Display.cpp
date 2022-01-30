@@ -168,10 +168,7 @@ void Display::ShowStandby()
 void Display::ShowRunning()
 {
 	_oled.clearDisplay();
-	_oled.setTextColor(WHITE);
-	_oled.setTextSize(1);
-	_oled.setCursor(0, 0);
-	_oled.print("RUNNING");
+	_oled.drawBitmap(15, 0, DisplayLogo, 96, 64, 1);
 	_needsRefresh = true;
 }
 

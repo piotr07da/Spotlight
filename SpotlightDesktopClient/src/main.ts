@@ -28,11 +28,29 @@ function supplyData(webContents: WebContents) {
 			}
 		}
 	});
-	const client = net.connect(33334, "192.168.0.45");
-	client.on("data", (data) => {
-		const sData = data.toString();
-		dataProcesseor.process(sData);
-	});
+
+	const connect = function () {
+		const port = 33334;
+		const ip = "192.168.0.45";
+		const client = new net.Socket();
+		client.setKeepAlive(true, 1000);
+		client.connect(port, ip);
+		client.on("data", (data) => {
+			const sData = data.toString();
+			dataProcesseor.process(sData);
+		});
+		client.on("error", () => reconnect(client));
+		client.on("close", () => reconnect(client));
+		client.on("end", () => reconnect(client));
+	};
+
+	const reconnect = function (client: net.Socket) {
+		client.removeAllListeners();
+		client.destroy();
+		connect();
+	};
+
+	connect();
 }
 
 function supplyFakeData(webContents: WebContents) {
@@ -62,7 +80,7 @@ function createWindow() {
 
 	setTimeout(() => {
 		supplyData(mainWindow.webContents);
-	}, 3000);
+	}, 1000);
 }
 
 // This method will be called when Electron has finished
