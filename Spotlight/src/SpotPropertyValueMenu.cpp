@@ -147,26 +147,7 @@ void SpotPropertyValueMenu::ChangePropertyValue(int direction)
 
 	if (_currentProperty == SpotProperty::SpotTime || _currentProperty == SpotProperty::TravelTime)
 	{
-		if (_valueChangeCounter == 0)
-		{
-			_valueDelta = 1;
-		}
-		else if (_valueChangeCounter == 10)
-		{
-			_valueDelta = 2;
-		}
-		else if (_valueChangeCounter == 15)
-		{
-			_valueDelta = 5;
-		}
-		else if (_valueChangeCounter == 19)
-		{
-			_valueDelta = 10;
-		}
-		else if (_valueChangeCounter == 25)
-		{
-			_valueDelta = 100;
-		}
+		_valueDelta = 1 + _valueChangeCounter / 1.9;
 	}
 
 	auto spot = _spotsNavigator->GetCurrent();
