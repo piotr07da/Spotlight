@@ -121,5 +121,5 @@ void SpotPropertiesMenu::ChangeProperty(int direction)
 
 void SpotPropertiesMenu::Show()
 {
-	_display->ShowSpotProperties(*_spotsNavigator->GetCurrent(), _currentProperty);
+	_display->ShowSpotProperties(*_spotsNavigator->GetCurrent(), _spotsNavigator->GetCount(), _currentProperty);
 }

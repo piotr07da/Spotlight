@@ -37,19 +37,13 @@ void Display::ShowMasterMenu(MasterMenuSubmenu currentSubmenu)
 	_oled.setTextSize(1);
 	_oled.setCursor(0, 0);
 
-	_oled.println();
+	_oled.println("  Global");
+	_oled.println("  Spots");
+	_oled.println("  Standby");
+	_oled.println("  Help");
 
-	_oled.print(currentSubmenu == MasterMenuSubmenu::GlobalPropertiesMenu ? "-> " : "   ");
-	_oled.println("Global");
-
-	_oled.print(currentSubmenu == MasterMenuSubmenu::SpotPropertiesMenu ? "-> " : "   ");
-	_oled.println("Spots");
-
-	_oled.print(currentSubmenu == MasterMenuSubmenu::StandbyMenu ? "-> " : "   ");
-	_oled.println("Standby");
-
-	_oled.print(currentSubmenu == MasterMenuSubmenu::HelpMenu ? "-> " : "   ");
-	_oled.println("Help");
+	int rowIx = (int)currentSubmenu;
+	_oled.drawBitmap(0, rowIx * 8, ArrowBitmap, 8, 8, 1);
 
 	_needsRefresh = true;
 }
@@ -66,7 +60,7 @@ void Display::ShowGlobalProperties(SpotCollection *spots)
 	_needsRefresh = true;
 }
 
-void Display::ShowSpotProperties(Spot spot, SpotProperty currentProperty)
+void Display::ShowSpotProperties(Spot spot, int spotCount, SpotProperty currentProperty)
 {
 	_oled.clearDisplay();
 	_oled.setTextColor(WHITE);
@@ -74,55 +68,55 @@ void Display::ShowSpotProperties(Spot spot, SpotProperty currentProperty)
 	_oled.setCursor(0, 0);
 
 	_oled.print("SPOT: ");
-	_oled.println(spot.Index);
+	_oled.print(spot.Index + 1);
+	_oled.print("/");
+	_oled.println(spotCount);
 
 	_oled.println();
 
-	_oled.print(currentProperty == SpotProperty::Position ? "-> " : "   ");
-	_oled.print("Position: ");
+	_oled.print("  Position: ");
 	_oled.println(spot.Position);
 
-	_oled.print(currentProperty == SpotProperty::SpotTime ? "-> " : "   ");
-	_oled.print("SpotTime: ");
+	_oled.print("  SpotTime: ");
 	_oled.println(spot.SpotTime);
 
-	_oled.print(currentProperty == SpotProperty::SpotActivity ? "-> " : "   ");
-	_oled.print("SpotActv: ");
+	_oled.print("  SpotActv: ");
 	_oled.println(FormatLightActivityShort(spot.SpotActivity));
 
-	_oled.print(currentProperty == SpotProperty::TravelTime ? "-> " : "   ");
-	_oled.print("TravTime: ");
+	_oled.print("  TravTime: ");
 	_oled.println(spot.TravelTime);
 
-	_oled.print(currentProperty == SpotProperty::TravelActivity ? "-> " : "   ");
-	_oled.print("TravActv: ");
+	_oled.print("  TravActv: ");
 	_oled.println(FormatLightActivityShort(spot.TravelActivity));
+
+	int rowIx = (int)currentProperty + 2;
+	_oled.drawBitmap(0, rowIx * 8, ArrowBitmap, 8, 8, 1);
 
 	_needsRefresh = true;
 }
 
-void Display::ShowSpotProperty(Spot spot, SpotProperty property)
+void Display::ShowSpotProperty(Spot spot, int spotCount, SpotProperty property)
 {
 	switch (property)
 	{
 	case SpotProperty::Position:
-		ShowSpotProperty(spot.Index, "Position:", String(spot.Position));
+		ShowSpotProperty(spot.Index, spotCount, "Position:", String(spot.Position));
 		break;
 
 	case SpotProperty::SpotTime:
-		ShowSpotProperty(spot.Index, "Spot Time:", String(spot.SpotTime));
+		ShowSpotProperty(spot.Index, spotCount, "Spot Time:", String(spot.SpotTime));
 		break;
 
 	case SpotProperty::SpotActivity:
-		ShowSpotProperty(spot.Index, "Spot Activity:", FormatLightActivity(spot.SpotActivity));
+		ShowSpotProperty(spot.Index, spotCount, "Spot Activity:", FormatLightActivity(spot.SpotActivity));
 		break;
 
 	case SpotProperty::TravelTime:
-		ShowSpotProperty(spot.Index, "Travel Time:", String(spot.TravelTime));
+		ShowSpotProperty(spot.Index, spotCount, "Travel Time:", String(spot.TravelTime));
 		break;
 
 	case SpotProperty::TravelActivity:
-		ShowSpotProperty(spot.Index, "Travel Activity:", FormatLightActivity(spot.TravelActivity));
+		ShowSpotProperty(spot.Index, spotCount, "Travel Activity:", FormatLightActivity(spot.TravelActivity));
 		break;
 	}
 }
@@ -172,33 +166,7 @@ void Display::ShowDiag(String diag)
 	_needsRefresh = true;
 }
 
-void Display::ShowSpotProperty(int spotIndex, Spot spot, SpotProperty property)
-{
-	switch (property)
-	{
-	case SpotProperty::Position:
-		ShowSpotProperty(spotIndex, "Position:", String(spot.Position));
-		break;
-
-	case SpotProperty::SpotTime:
-		ShowSpotProperty(spotIndex, "Spot Time:", String(spot.SpotTime));
-		break;
-
-	case SpotProperty::SpotActivity:
-		ShowSpotProperty(spotIndex, "Spot Activity:", FormatLightActivity(spot.SpotActivity));
-		break;
-
-	case SpotProperty::TravelTime:
-		ShowSpotProperty(spotIndex, "Travel Time:", String(spot.TravelTime));
-		break;
-
-	case SpotProperty::TravelActivity:
-		ShowSpotProperty(spotIndex, "Travel Activity:", FormatLightActivity(spot.TravelActivity));
-		break;
-	}
-}
-
-void Display::ShowSpotProperty(int spotIndex, const char *label, String value)
+void Display::ShowSpotProperty(int spotIndex, int spotCount, const char *label, String value)
 {
 	int sl = value.length();
 	char buff[sl + 1];
@@ -213,7 +181,9 @@ void Display::ShowSpotProperty(int spotIndex, const char *label, String value)
 	_oled.setTextSize(1);
 	_oled.setCursor(0, 0);
 	_oled.print("SPOT: ");
-	_oled.println(spotIndex);
+	_oled.print(spotIndex + 1);
+	_oled.print("/");
+	_oled.println(spotCount);
 	_oled.println();
 	_oled.println(label);
 	_oled.println();

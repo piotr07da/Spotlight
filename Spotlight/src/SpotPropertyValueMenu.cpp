@@ -258,5 +258,5 @@ LightActivity SpotPropertyValueMenu::FindActivity(LightActivity *activities, int
 
 void SpotPropertyValueMenu::Show()
 {
-	_display->ShowSpotProperty(*_spotsNavigator->GetCurrent(), _currentProperty);
+	_display->ShowSpotProperty(*_spotsNavigator->GetCurrent(), _spotsNavigator->GetCount(), _currentProperty);
 }
