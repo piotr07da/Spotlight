@@ -5,7 +5,7 @@ enum class MasterMenuSubmenu
 {
 	FIRST = 0,
 	GlobalPropertiesMenu = 0,
-	SpotsMenu = 1,
+	SpotPropertiesMenu = 1,
 	StandbyMenu = 2,
 	HelpMenu = 3,
 	LAST = 3,

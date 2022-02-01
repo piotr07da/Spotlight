@@ -30,7 +30,6 @@ public:
 	void ShowWelcome();
 	void ShowMasterMenu(MasterMenuSubmenu currentSubmenu);
 	void ShowGlobalProperties(SpotCollection *spots);
-	void ShowSpots(SpotCollection *spots, int currentSpotIndex);
 	void ShowSpotProperties(Spot spot, SpotProperty currentProperty);
 	void ShowSpotProperty(Spot spot, SpotProperty property);
 	void ShowStandby(SpotCollection *spots);

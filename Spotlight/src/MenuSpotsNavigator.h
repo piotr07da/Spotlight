@@ -18,8 +18,10 @@ public:
 	int GetCount();
 	Spot *GetCurrent();
 	int GetCurrentIndex();
+	void EnsureCurrentIndexInRange();
 	void Prev();
 	void Next();
+	void RepositionToCurrent();
 };
 
 #endif // MENU_SPOT_NAVIGATOR_H

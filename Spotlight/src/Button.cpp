@@ -82,7 +82,7 @@ bool Button::IsClicked(bool reset)
 	int isClicked = _isClicked;
 	if (_isClicked && reset)
 	{
-		DiagLed::Toggle();
+		// DiagLed::Toggle();
 		_isClicked = false;
 	}
 	// if (isClicked)

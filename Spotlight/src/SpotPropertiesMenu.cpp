@@ -2,7 +2,7 @@
 
 #include "DiagLed.h"
 
-SpotPropertiesMenu::SpotPropertiesMenu(Button *prevSpotButton, Button *nextSpotButton, Button *prevPropertyButton, Button *nextPropertyButton, Button *escapeButton, Button *enterButton, Display *display, MenuSpotsNavigator *spotsNavigator)
+SpotPropertiesMenu::SpotPropertiesMenu(Button *prevSpotButton, Button *nextSpotButton, Button *prevPropertyButton, Button *nextPropertyButton, Button *escapeButton, Button *enterButton, Display *display, Light *light, MenuSpotsNavigator *spotsNavigator)
 	: _prevSpotButton(prevSpotButton),
 	  _nextSpotButton(nextSpotButton),
 	  _prevPropertyButton(prevPropertyButton),
@@ -10,6 +10,7 @@ SpotPropertiesMenu::SpotPropertiesMenu(Button *prevSpotButton, Button *nextSpotB
 	  _escapeButton(escapeButton),
 	  _enterButton(enterButton),
 	  _display(display),
+	  _light(light),
 	  _spotsNavigator(spotsNavigator)
 {
 }
@@ -42,7 +43,7 @@ void SpotPropertiesMenu::Loop()
 	else if (_escapeButton->IsClicked())
 	{
 		Deactivate();
-		_spotsMenu->Activate();
+		_masterMenuActivator->Activate();
 	}
 	else if (_enterButton->IsClicked())
 	{
@@ -51,9 +52,9 @@ void SpotPropertiesMenu::Loop()
 	}
 }
 
-void SpotPropertiesMenu::AssignSpotsMenu(SpotsMenu *spotsMenu)
+void SpotPropertiesMenu::AssignMasterMenuActivator(MasterMenuActivator *masterMenuActivator)
 {
-	_spotsMenu = spotsMenu;
+	_masterMenuActivator = masterMenuActivator;
 }
 
 void SpotPropertiesMenu::AssignSpotPropertyValueMenu(SpotPropertyValueMenu *spotPropertyValueMenu)
@@ -83,6 +84,10 @@ void SpotPropertiesMenu::Activate(SpotProperty currentProperty)
 	_enterButton->ResetEnabled(Button_DebounceDelay_SlowButton);
 
 	Show();
+
+	_light->LightUpGentle();
+
+	_spotsNavigator->RepositionToCurrent();
 
 	_isActive = true;
 }

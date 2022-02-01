@@ -2,11 +2,12 @@
 
 #include "DiagLed.h"
 
-GlobalPropertiesMenu::GlobalPropertiesMenu(Button *remSpotButton, Button *addSpotButton, Button *escapeButton, Display *display, SpotCollection *spots)
+GlobalPropertiesMenu::GlobalPropertiesMenu(Button *remSpotButton, Button *addSpotButton, Button *escapeButton, Display *display, MenuSpotsNavigator *spostsNavigator, SpotCollection *spots)
 	: _remSpotButton(remSpotButton),
 	  _addSpotButton(addSpotButton),
 	  _escapeButton(escapeButton),
 	  _display(display),
+	  _spotsNavigator(spostsNavigator),
 	  _spots(spots)
 {
 	// At least two spots.
@@ -28,12 +29,14 @@ void GlobalPropertiesMenu::Loop()
 		{
 			_spots->RemoveLast();
 			_display->ShowGlobalProperties(_spots);
+			_spotsNavigator->EnsureCurrentIndexInRange();
 		}
 	}
 	else if (_addSpotButton->IsClicked())
 	{
 		AddDefaultSpot();
 		_display->ShowGlobalProperties(_spots);
+		_spotsNavigator->EnsureCurrentIndexInRange();
 	}
 	else if (_escapeButton->IsClicked())
 	{

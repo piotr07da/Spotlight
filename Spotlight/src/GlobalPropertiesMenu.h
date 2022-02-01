@@ -3,6 +3,7 @@
 
 #include "Button.h"
 #include "Display.h"
+#include "MenuSpotsNavigator.h"
 #include "MasterMenuActivator.h"
 #include "SpotCollection.h"
 
@@ -15,12 +16,13 @@ private:
 	Button *_addSpotButton;
 	Button *_escapeButton;
 	Display *_display;
-	MasterMenuActivator *_masterMenuActivator;
+	MenuSpotsNavigator *_spotsNavigator;
 	SpotCollection *_spots;
+	MasterMenuActivator *_masterMenuActivator;
 	bool _isActive;
 
 public:
-	GlobalPropertiesMenu(Button *remSpotButton, Button *addSpotButton, Button *escapeButton, Display *display, SpotCollection *spots);
+	GlobalPropertiesMenu(Button *remSpotButton, Button *addSpotButton, Button *escapeButton, Display *display, MenuSpotsNavigator *spotsNavigator, SpotCollection *spots);
 
 	void Loop();
 

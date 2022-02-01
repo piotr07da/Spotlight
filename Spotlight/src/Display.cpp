@@ -42,7 +42,7 @@ void Display::ShowMasterMenu(MasterMenuSubmenu currentSubmenu)
 	_oled.print(currentSubmenu == MasterMenuSubmenu::GlobalPropertiesMenu ? "-> " : "   ");
 	_oled.println("Global");
 
-	_oled.print(currentSubmenu == MasterMenuSubmenu::SpotsMenu ? "-> " : "   ");
+	_oled.print(currentSubmenu == MasterMenuSubmenu::SpotPropertiesMenu ? "-> " : "   ");
 	_oled.println("Spots");
 
 	_oled.print(currentSubmenu == MasterMenuSubmenu::StandbyMenu ? "-> " : "   ");
@@ -63,42 +63,6 @@ void Display::ShowGlobalProperties(SpotCollection *spots)
 	_oled.println("Active spots:");
 	_oled.setTextSize(2);
 	_oled.println(spots->GetCount());
-	_needsRefresh = true;
-}
-
-void Display::ShowSpots(SpotCollection *spots, int currentSpotIndex)
-{
-	_oled.clearDisplay();
-	if (spots->GetCount() == 0)
-	{
-		_oled.setTextColor(WHITE);
-		_oled.setTextSize(2);
-		_oled.setCursor(20, 26);
-		_oled.println("EMPTY");
-	}
-	else
-	{
-		_oled.setTextColor(WHITE);
-		_oled.setTextSize(1);
-		_oled.setCursor(0, 0);
-		int lineCount = 8;
-		int start = 0;
-		if (currentSpotIndex > lineCount - 1)
-		{
-			start = currentSpotIndex - lineCount + 1;
-		}
-		int stop = start + lineCount;
-		if (stop > spots->GetCount())
-		{
-			stop = spots->GetCount();
-		}
-		for (int i = start; i < stop; ++i)
-		{
-			_oled.print(i == currentSpotIndex ? "-> " : "   ");
-			_oled.print("SPOT ");
-			_oled.println(i);
-		}
-	}
 	_needsRefresh = true;
 }
 

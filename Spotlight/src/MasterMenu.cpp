@@ -16,9 +16,8 @@ MasterMenu::MasterMenu(int ldPin, int luPin, int rdPin, int ruPin, int rlPin, in
 	  _runner(runner),
 	  _spots(spots),
 	  _spotsNavigator(_spots, _motor),
-	  _globalPropertiesMenu(&_rdButton, &_ruButton, &_rlButton, _display, _spots),
-	  _spotsMenu(&_ruButton, &_rdButton, &_rlButton, &_rrButton, _display, _light, &_spotsNavigator),
-	  _spotPropertiesMenu(&_ldButton, &_luButton, &_ruButton, &_rdButton, &_rlButton, &_rrButton, _display, &_spotsNavigator),
+	  _globalPropertiesMenu(&_rdButton, &_ruButton, &_rlButton, _display, &_spotsNavigator, _spots),
+	  _spotPropertiesMenu(&_ldButton, &_luButton, &_ruButton, &_rdButton, &_rlButton, &_rrButton, _display, _light, &_spotsNavigator),
 	  _spotPropertyValueMenu(&_ldButton, &_luButton, &_rdButton, &_ruButton, &_rlButton, &_rrButton, _display, _motor, &_spotsNavigator),
 	  _standbyMenu(&_rlButton, &_rrButton, _audioTrigger, _display, _motor, _light, _runner, _spots)
 {
@@ -27,10 +26,7 @@ MasterMenu::MasterMenu(int ldPin, int luPin, int rdPin, int ruPin, int rlPin, in
 void MasterMenu::Setup()
 {
 	_globalPropertiesMenu.AssingMasterMenuActivator(&_activator);
-	_spotsMenu.AssingMasterMenuActivator(&_activator);
-	_spotsMenu.AssingSpotPropertiesMenu(&_spotPropertiesMenu);
-	_spotsMenu.AssingSpotPropertyValueMenu(&_spotPropertyValueMenu);
-	_spotPropertiesMenu.AssignSpotsMenu(&_spotsMenu);
+	_spotPropertiesMenu.AssignMasterMenuActivator(&_activator);
 	_spotPropertiesMenu.AssignSpotPropertyValueMenu(&_spotPropertyValueMenu);
 	_spotPropertyValueMenu.AssingSpotPropertiesMenu(&_spotPropertiesMenu);
 	_standbyMenu.AssingMasterMenuActivator(&_activator);
@@ -50,7 +46,6 @@ void MasterMenu::Loop()
 	_rrButton.Loop();
 
 	_globalPropertiesMenu.Loop();
-	_spotsMenu.Loop();
 	_spotPropertiesMenu.Loop();
 	_spotPropertyValueMenu.Loop();
 	_standbyMenu.Loop();
@@ -95,8 +90,8 @@ void MasterMenu::Loop()
 			_globalPropertiesMenu.Activate();
 			break;
 
-		case MasterMenuSubmenu::SpotsMenu:
-			_spotsMenu.Activate();
+		case MasterMenuSubmenu::SpotPropertiesMenu:
+			_spotPropertiesMenu.Activate(SpotProperty::Position);
 			break;
 
 		case MasterMenuSubmenu::StandbyMenu:

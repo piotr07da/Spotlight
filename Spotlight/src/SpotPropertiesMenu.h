@@ -3,10 +3,10 @@
 
 #include "Button.h"
 #include "Display.h"
+#include "Light.h"
 #include "MenuSpotsNavigator.h"
-#include "SpotsMenu.h"
+#include "MasterMenuActivator.h"
 #include "SpotPropertyValueMenu.h"
-#include "Spot.h"
 #include "SpotProperty.h"
 
 class SpotsMenu;
@@ -22,8 +22,9 @@ private:
 	Button *_escapeButton;
 	Button *_enterButton;
 	Display *_display;
+	Light *_light;
 	MenuSpotsNavigator *_spotsNavigator;
-	SpotsMenu *_spotsMenu;
+	MasterMenuActivator *_masterMenuActivator;
 	SpotPropertyValueMenu *_spotPropertyValueMenu;
 
 	bool _isActive;
@@ -33,11 +34,11 @@ private:
 	void Show();
 
 public:
-	SpotPropertiesMenu(Button *prevSpotButton, Button *nextSpotButton, Button *prevPropertyButton, Button *nextPropertyButton, Button *escapeButton, Button *enterButton, Display *display, MenuSpotsNavigator *spotsNavigator);
+	SpotPropertiesMenu(Button *prevSpotButton, Button *nextSpotButton, Button *prevPropertyButton, Button *nextPropertyButton, Button *escapeButton, Button *enterButton, Display *display, Light *light, MenuSpotsNavigator *spotsNavigator);
 
 	void Loop();
 
-	void AssignSpotsMenu(SpotsMenu *spotsMenu);
+	void AssignMasterMenuActivator(MasterMenuActivator *masterMenuActivator);
 	void AssignSpotPropertyValueMenu(SpotPropertyValueMenu *spotPropertyValueMenu);
 	bool IsActive();
 	SpotProperty GetCurrentProperty();

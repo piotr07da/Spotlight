@@ -26,6 +26,13 @@ int MenuSpotsNavigator::GetCurrentIndex()
 	return _currentSpotIndex;
 }
 
+void MenuSpotsNavigator::EnsureCurrentIndexInRange()
+{
+	auto lastIndex = _spots->GetCount() - 1;
+	if (_currentSpotIndex > lastIndex)
+		_currentSpotIndex = lastIndex;
+}
+
 void MenuSpotsNavigator::Prev()
 {
 	--_currentSpotIndex;
@@ -43,5 +50,10 @@ void MenuSpotsNavigator::Next()
 	{
 		_currentSpotIndex = 0;
 	}
+	_motor->MoveToWithSpeed(GetCurrent()->Position, Motor_MaxSpeed);
+}
+
+void MenuSpotsNavigator::RepositionToCurrent()
+{
 	_motor->MoveToWithSpeed(GetCurrent()->Position, Motor_MaxSpeed);
 }

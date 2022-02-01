@@ -11,7 +11,6 @@
 #include "MenuSpotsNavigator.h"
 #include "MasterMenuActivator.h"
 #include "GlobalPropertiesMenu.h"
-#include "SpotsMenu.h"
 #include "SpotPropertiesMenu.h"
 #include "SpotPropertyValueMenu.h"
 #include "StandbyMenu.h"
@@ -37,7 +36,6 @@ private:
 	bool _welcome;
 	MasterMenuActivator _activator;
 	GlobalPropertiesMenu _globalPropertiesMenu;
-	SpotsMenu _spotsMenu;
 	SpotPropertiesMenu _spotPropertiesMenu;
 	SpotPropertyValueMenu _spotPropertyValueMenu;
 	StandbyMenu _standbyMenu;
