@@ -33,6 +33,7 @@ void AudioTrigger::Loop()
 		for (uint16_t i = 0; i < AudioTrigger_AmplitudeSpectrumSize; ++i)
 		{
 			auto a = spectrum[2 * i] * spectrum[2 * i] + spectrum[2 * i + 1] * spectrum[2 * i + 1];
+			a /= 1000; // To keep numbers smaller.
 			_amplitudeSpectrumSquared[i] = a;
 
 			wholeSpectrumSum += a;
@@ -40,48 +41,26 @@ void AudioTrigger::Loop()
 
 		auto wholeSpectrumAvg = wholeSpectrumSum / AudioTrigger_AmplitudeSpectrumSize;
 
-		double bandSpectrumSum = 0;
+		double bandsSpectrumSum = 0;
 
 		for (uint16_t i = _bandSelector.MinimumFrequencyValueIndex; i <= _bandSelector.MaximumFrequencyValueIndex; ++i)
 		{
-			bandSpectrumSum += _amplitudeSpectrumSquared[i];
+			bandsSpectrumSum += _amplitudeSpectrumSquared[i];
 		}
 
-		auto bandSpectrumAvg = bandSpectrumSum / (_bandSelector.MaximumFrequencyValueIndex - _bandSelector.MinimumFrequencyValueIndex + 1);
+		auto bandsSpectrumAvg = bandsSpectrumSum / (_bandSelector.MaximumFrequencyValueIndex - _bandSelector.MinimumFrequencyValueIndex + 1);
 
-		if (_amplitudeSpectrumSquared[_bandSelector.MinimumFrequencyValueIndex - 1] > bandSpectrumAvg ||
-			_amplitudeSpectrumSquared[_bandSelector.MaximumFrequencyValueIndex + 1] > bandSpectrumAvg)
+		if (_amplitudeSpectrumSquared[_bandSelector.MinimumFrequencyValueIndex - 1] > bandsSpectrumAvg ||
+			_amplitudeSpectrumSquared[_bandSelector.MaximumFrequencyValueIndex + 1] > bandsSpectrumAvg)
 		{
 			return;
 		}
 
-		auto bandsSpectrumAvg = bandSpectrumAvg;
-
-		_latestWholeAverages[_lastAverageIndex] = wholeSpectrumAvg;
-		_latestBandsAverages[_lastAverageIndex] = bandSpectrumAvg;
-
-		if (_averagesFilled)
+		if (bandsSpectrumAvg > wholeSpectrumAvg * 70)
 		{
-			auto oldestAverageIndex = _lastAverageIndex + 1;
-			if (oldestAverageIndex == AudioTrigger_NumberOfLatestAverages)
-			{
-				oldestAverageIndex = 0;
-			}
-
-			if (bandsSpectrumAvg > _latestWholeAverages[oldestAverageIndex] &&
-				bandsSpectrumAvg > 300 * _latestBandsAverages[oldestAverageIndex])
-			{
-				//_messenger->SendAudioTriggerInfo(&_bandSelector, bandsSpectrumAvg, _latestWholeAverages[oldestAverageIndex], _latestBandsAverages[oldestAverageIndex], _amplitudeSpectrumSquared, AudioTrigger_AmplitudeSpectrumSize);
-				_isTriggered = true;
-				DiagLed::Toggle();
-			}
-		}
-
-		++_lastAverageIndex;
-		if (_lastAverageIndex == AudioTrigger_NumberOfLatestAverages)
-		{
-			_lastAverageIndex = 0;
-			_averagesFilled = true;
+			_messenger->SendAudioTriggerInfo(&_bandSelector, wholeSpectrumAvg, bandsSpectrumAvg, _amplitudeSpectrumSquared, AudioTrigger_AmplitudeSpectrumSize);
+			_isTriggered = true;
+			DiagLed::Toggle();
 		}
 	}
 }

@@ -4,17 +4,20 @@
 #include <Particle.h>
 
 #include "AudioSampler.h"
+#include "Messenger.h"
 
 class AudioSpectrumCalculator
 {
 private:
 	AudioSampler *_sampler;
+	Messenger *_messenger;
 	bool _enabled;
 	float _spectrum[AudioSampler_SingleHalfBufferSize * 2];
 	bool _spectrumReady;
+	long _fftStart;
 
 public:
-	AudioSpectrumCalculator(AudioSampler *sampler);
+	AudioSpectrumCalculator(AudioSampler *sampler, Messenger *messenger);
 
 	void Setup();
 	void Loop();

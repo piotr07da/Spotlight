@@ -9,7 +9,6 @@
 #include "Messenger.h"
 
 const uint16_t AudioTrigger_AmplitudeSpectrumSize = AudioSampler_SingleHalfBufferSize / 2;
-const uint16_t AudioTrigger_NumberOfLatestAverages = 100;
 
 class AudioTrigger
 {
@@ -18,11 +17,7 @@ private:
 	Messenger *_messenger;
 	bool _enabled;
 	float _amplitudeSpectrumSquared[AudioTrigger_AmplitudeSpectrumSize];
-	float _latestWholeAverages[AudioTrigger_NumberOfLatestAverages];
-	float _latestBandsAverages[AudioTrigger_NumberOfLatestAverages];
-	uint16_t _lastAverageIndex;
 	AudioTriggerBandSelector _bandSelector;
-	bool _averagesFilled;
 	bool _isTriggered;
 
 public:

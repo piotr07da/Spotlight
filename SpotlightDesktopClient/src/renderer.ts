@@ -49,14 +49,7 @@ window.addEventListener("DOMContentLoaded", () => {
 	});
 
 	window.spotlightApi.onNextAudioTrigger(
-		(
-			bandMinFrequencyValueIndex: number,
-			bandMaxFrequencyValueIndex: number,
-			bandsSpectrumAverage: number,
-			oldestWholeAverage: number,
-			oldestBandsAverage: number,
-			amplitudeSpectrum: number[]
-		) => {
+		(bandMinFrequencyValueIndex: number, bandMaxFrequencyValueIndex: number, wholeSpectrumAvg: number, bandsSpectrumAvg: number, amplitudeSpectrum: number[]) => {
 			const max = Math.max(...amplitudeSpectrum);
 			amplitudeSpectrum = amplitudeSpectrum.map((s) => s / max);
 
@@ -102,25 +95,19 @@ window.addEventListener("DOMContentLoaded", () => {
 			}
 		}
 
-		if (maxValue > 80000) {
-			peaks.push({ v: Math.round(maxValue), ix: maxValueIx });
+		if (maxValue > 100000) {
+			peaks.unshift({ v: Math.round(maxValue), ix: maxValueIx });
 			const peaksElement = document.getElementById("spectrum-peaks");
 			peaksElement.innerText = peaks.map((p) => "ix:" + p.ix + " v:" + p.v).join("\n");
 		}
 	});
 
 	window.spotlightApi.onNextAudioTrigger(
-		(
-			bandMinFrequencyValueIndex: number,
-			bandMaxFrequencyValueIndex: number,
-			bandsSpectrumAverage: number,
-			oldestWholeAverage: number,
-			oldestBandsAverage: number,
-			amplitudeSpectrum: number[]
-		) => {
+		(bandMinFrequencyValueIndex: number, bandMaxFrequencyValueIndex: number, wholeSpectrumAvg: number, bandsSpectrumAvg: number, amplitudeSpectrum: number[]) => {
 			const dataElement = document.getElementById("audio-trigger-data");
 			let text = `bandMinFrequencyValueIndex:${bandMinFrequencyValueIndex}\nbandMaxFrequencyValueIndex${bandMaxFrequencyValueIndex}\n`;
-			text += `bandsSpectrumAverage:${bandsSpectrumAverage}\noldestWholeAverage:${oldestWholeAverage}\noldestBandsAverage:${oldestBandsAverage}\n`;
+			text += `wholeSpectrumAvg:${Math.round(wholeSpectrumAvg)}\nbandsSpectrumAvg:${Math.round(bandsSpectrumAvg)}\n'`;
+			text += `ratio:${Math.round(bandsSpectrumAvg / wholeSpectrumAvg)}\n`;
 			text += "DATA:\n";
 			text += amplitudeSpectrum.map((v, ix) => `${ix}: `.padStart(3) + Math.round(v)).join("\n");
 			dataElement.innerText = text;

@@ -190,7 +190,7 @@ void SpotPropertyValueMenu::ChangePropertyValue(int direction)
 	}
 	case SpotProperty::TravelTime:
 	{
-		spot->TravelTime -= _valueDelta;
+		spot->TravelTime += _valueDelta * direction;
 		break;
 	}
 	case SpotProperty::TravelActivity:

@@ -19,6 +19,16 @@ void Messenger::Loop()
 {
 }
 
+void Messenger::SendDiag(String message)
+{
+	if (EnsureConnected())
+	{
+		_client.write("BEGIN DIAG;t:" + String(millis()) + ";");
+		_client.write(message.replace(";", "_") + ";");
+		_client.write("END;");
+	}
+}
+
 void Messenger::SendSamplesBatch(uint16_t *data, uint16_t size)
 {
 	if (EnsureConnected())
@@ -57,12 +67,12 @@ void Messenger::SendAmplitudeSpectrum(float *data, uint16_t size)
 	}
 }
 
-void Messenger::SendAudioTriggerInfo(AudioTriggerBandSelector *bandSelector, float bandsSpectrumAverage, float oldestWholeAverage, float oldestBandsAverage, float *amplitudeSpectrumSquared, uint16_t amplitudeSpectrumSize)
+void Messenger::SendAudioTriggerInfo(AudioTriggerBandSelector *bandSelector, double wholeSpectrumAvg, double bandsSpectrumAvg, float *amplitudeSpectrumSquared, uint16_t amplitudeSpectrumSize)
 {
 	if (EnsureConnected())
 	{
 		_client.write("BEGIN AUDIO_TRIGGER;t:" + String(millis()) + ";bandSelector;" + String(bandSelector->MinimumFrequencyValueIndex) + ";" + String(bandSelector->MaximumFrequencyValueIndex) + ";");
-		_client.write("bandsSpectrumAverage;" + String(bandsSpectrumAverage) + ";oldestWholeAverage;" + String(oldestWholeAverage) + ";oldestBandsAverage;" + String(oldestBandsAverage) + ";");
+		_client.write("wholeSpectrumAvg;" + String(wholeSpectrumAvg) + ";bandsSpectrumAvg;" + String(bandsSpectrumAvg) + ";");
 		String s = "amplitudeSpectrum;";
 		for (int i = 0; i < amplitudeSpectrumSize; ++i)
 		{

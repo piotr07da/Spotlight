@@ -22,7 +22,7 @@
 SpotCollection _spots;
 Messenger _messenger(33334);
 AudioSampler _audioSampler(A4);
-AudioSpectrumCalculator _audioSpectrumCalculator(&_audioSampler);
+AudioSpectrumCalculator _audioSpectrumCalculator(&_audioSampler, &_messenger);
 AudioTrigger _audioTrigger(&_audioSpectrumCalculator, &_messenger);
 Display _display;
 Motor _motor(A2, A3);
@@ -45,6 +45,8 @@ void setup()
     _runner.Setup();
 
     // DiagLed::Toggle();
+
+    //_audioTrigger.Enable();
 }
 
 void loop()

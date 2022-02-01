@@ -5,8 +5,9 @@
 #include "FastFourierTransform.h"
 #include "DiagLed.h"
 
-AudioSpectrumCalculator::AudioSpectrumCalculator(AudioSampler *sampler)
-	: _sampler(sampler)
+AudioSpectrumCalculator::AudioSpectrumCalculator(AudioSampler *sampler, Messenger *messenger)
+	: _sampler(sampler),
+	  _messenger(messenger)
 {
 }
 
@@ -42,7 +43,18 @@ void AudioSpectrumCalculator::Loop()
 			_spectrum[i * 2 + 1] = 0;
 		}
 
+		if (_fftStart == 0)
+		{
+			_fftStart = micros();
+		}
+
 		FastFourierTransform::FFT(_spectrum, AudioSampler_SingleHalfBufferSize);
+
+		if (_fftStart > 0)
+		{
+			_messenger->SendDiag("FFT Microseconds: " + String(micros() - _fftStart));
+			_fftStart = -1;
+		}
 
 		_spectrumReady = true;
 	}

@@ -15,8 +15,8 @@ void FastFourierTransform::IFFT(float *data, uint16_t size)
 void FastFourierTransform::_FFT(float *data, uint16_t nn, int8_t isign)
 {
 	uint16_t n, mmax, m, j, istep, i;
-	double wtemp, wr, wpr, wpi, wi, theta;
-	double tempr, tempi;
+	float wtemp, wr, wpr, wpi, wi, theta;
+	float tempr, tempi;
 
 	n = nn << 1;
 	j = 1;

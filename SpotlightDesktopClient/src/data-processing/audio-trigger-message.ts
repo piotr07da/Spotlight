@@ -2,9 +2,8 @@ export class AudioTriggerMessage {
 	private constructor(
 		public bandMinFrequencyValueIndex: number = 0,
 		public bandMaxFrequencyValueIndex: number = 0,
-		public bandsSpectrumAverage: number = 0,
-		public oldestWholeAverage: number = 0,
-		public oldestBandsAverage: number = 0,
+		public wholeSpectrumAvg: number = 0,
+		public bandsSpectrumAvg: number = 0,
 		public amplitudeSpectrum: number[] = []
 	) {}
 
@@ -17,16 +16,12 @@ export class AudioTriggerMessage {
 				m.bandMaxFrequencyValueIndex = parseInt(rawDataEntries[i + 2]);
 				i += 2;
 			}
-			if (rawDataEntries[i] == "bandsSpectrumAverage") {
-				m.bandsSpectrumAverage = parseFloat(rawDataEntries[i + 1]);
+			if (rawDataEntries[i] == "wholeSpectrumAvg") {
+				m.wholeSpectrumAvg = parseFloat(rawDataEntries[i + 1]);
 				i += 1;
 			}
-			if (rawDataEntries[i] == "oldestWholeAverage") {
-				m.oldestWholeAverage = parseFloat(rawDataEntries[i + 1]);
-				i += 1;
-			}
-			if (rawDataEntries[i] == "oldestBandsAverage") {
-				m.oldestBandsAverage = parseFloat(rawDataEntries[i + 1]);
+			if (rawDataEntries[i] == "bandsSpectrumAvg") {
+				m.bandsSpectrumAvg = parseFloat(rawDataEntries[i + 1]);
 				i += 1;
 			}
 			if (rawDataEntries[i] == "amplitudeSpectrum") {
