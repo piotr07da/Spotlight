@@ -29,6 +29,8 @@ public:
 	void Setup();
 	void Loop();
 	void SetActivity(LightActivity activity, int duration);
+	void LightUpGentle();
+	void LightDownGentle();
 };
 
 #endif // LIGHT_H

@@ -55,6 +55,20 @@ void Light::SetActivity(LightActivity activity, int duration)
 	_value = -1;
 }
 
+void Light::LightUpGentle()
+{
+	// TODO
+	SetActivity(LightActivity::A_1, 380);
+}
+
+void Light::LightDownGentle()
+{
+	// TODO
+	SetActivity(LightActivity::A_0, 380);
+}
+
+// PRIVATE METHODS
+
 void Light::LoopForOff()
 {
 	if (_value == -1)

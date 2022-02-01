@@ -21,16 +21,32 @@ void StandbyMenu::Loop()
 
 	if (_stopButton->IsClicked())
 	{
-		Stop();
+		if (_runner->IsRunning())
+		{
+			Stop();
+		}
+		else
+		{
+			Deactivate();
+			_masterMenuActivator->Activate();
+		}
 	}
-	else if (_startButton->IsClicked())
+	else if (_spots->GetCount() > 0)
 	{
-		Start();
+		if (_startButton->IsClicked())
+		{
+			Start();
+		}
+		else if (_audioTrigger->IsTriggered())
+		{
+			Start();
+		}
 	}
-	else if (_audioTrigger->IsTriggered())
-	{
-		Start();
-	}
+}
+
+void StandbyMenu::AssingMasterMenuActivator(MasterMenuActivator *masterMenuActivator)
+{
+	_masterMenuActivator = masterMenuActivator;
 }
 
 bool StandbyMenu::IsActive()
@@ -40,13 +56,12 @@ bool StandbyMenu::IsActive()
 
 void StandbyMenu::Activate()
 {
-	_stopButton->ResetEnabled();
-	_startButton->ResetEnabled();
-
-	_stopButton->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
-	_startButton->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
+	_stopButton->ResetEnabled(Button_DebounceDelay_SlowButton);
+	_startButton->ResetEnabled(Button_DebounceDelay_SlowButton);
 
 	Standby();
+
+	_light->LightDownGentle();
 
 	_isActive = true;
 }
@@ -58,6 +73,8 @@ void StandbyMenu::Deactivate()
 
 	_isActive = false;
 }
+
+// PRIVATE METHODS
 
 void StandbyMenu::Start()
 {
@@ -74,7 +91,10 @@ void StandbyMenu::Stop()
 
 void StandbyMenu::Standby()
 {
-	_audioTrigger->Enable();
-	_display->ShowStandby();
-	_motor->MoveToWithSpeed(_spots->GetFirst()->Position, Motor_MaxSpeed);
+	_display->ShowStandby(_spots);
+	if (_spots->GetCount() > 0)
+	{
+		_audioTrigger->Enable();
+		_motor->MoveToWithSpeed(_spots->GetFirst()->Position, Motor_MaxSpeed);
+	}
 }

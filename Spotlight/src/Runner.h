@@ -33,6 +33,7 @@ public:
 	void Setup();
 	void Loop();
 
+	bool IsRunning();
 	void Start();
 	void Stop();
 };

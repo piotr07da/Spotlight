@@ -2,6 +2,7 @@
 #define DISPLAY_H
 
 #include "Adafruit_SH1106_headers.h"
+#include "MasterMenuSubmenu.h"
 #include "Spot.h"
 #include "SpotCollection.h"
 #include "SpotProperty.h"
@@ -27,10 +28,12 @@ public:
 	void Loop();
 
 	void ShowWelcome();
+	void ShowMasterMenu(MasterMenuSubmenu currentSubmenu);
 	void ShowGlobalProperties(SpotCollection *spots);
+	void ShowSpots(SpotCollection *spots, int currentSpotIndex);
 	void ShowSpotProperties(Spot spot, SpotProperty currentProperty);
 	void ShowSpotProperty(Spot spot, SpotProperty property);
-	void ShowStandby();
+	void ShowStandby(SpotCollection *spots);
 	void ShowRunning();
 	void ShowDiag(String diag);
 };

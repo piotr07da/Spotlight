@@ -3,33 +3,45 @@
 
 #include "Button.h"
 #include "Display.h"
+#include "MenuSpotsNavigator.h"
+#include "SpotsMenu.h"
 #include "SpotPropertyValueMenu.h"
 #include "Spot.h"
 #include "SpotProperty.h"
 
+class SpotsMenu;
 class SpotPropertyValueMenu;
 
 class SpotPropertiesMenu
 {
 private:
+	Button *_prevSpotButton;
+	Button *_nextSpotButton;
 	Button *_prevPropertyButton;
 	Button *_nextPropertyButton;
+	Button *_escapeButton;
 	Button *_enterButton;
-	SpotPropertyValueMenu *_spotPropertyValueMenu;
 	Display *_display;
+	MenuSpotsNavigator *_spotsNavigator;
+	SpotsMenu *_spotsMenu;
+	SpotPropertyValueMenu *_spotPropertyValueMenu;
+
 	bool _isActive;
-	Spot *_spot;
 	SpotProperty _currentProperty;
 
+	void ChangeProperty(int direction);
+	void Show();
+
 public:
-	SpotPropertiesMenu(Button *prevPropertyButton, Button *nextPropertyButton, Button *enterButton, Display *display);
+	SpotPropertiesMenu(Button *prevSpotButton, Button *nextSpotButton, Button *prevPropertyButton, Button *nextPropertyButton, Button *escapeButton, Button *enterButton, Display *display, MenuSpotsNavigator *spotsNavigator);
 
 	void Loop();
 
+	void AssignSpotsMenu(SpotsMenu *spotsMenu);
+	void AssignSpotPropertyValueMenu(SpotPropertyValueMenu *spotPropertyValueMenu);
 	bool IsActive();
 	SpotProperty GetCurrentProperty();
-	void AssignSpotPropertyValueMenu(SpotPropertyValueMenu *spotPropertyValueMenu);
-	void Activate(Spot *spot, SpotProperty currentProperty);
+	void Activate(SpotProperty currentProperty);
 	void Deactivate();
 };
 

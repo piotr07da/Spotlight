@@ -30,6 +30,30 @@ void Display::ShowWelcome()
 	_needsRefresh = true;
 }
 
+void Display::ShowMasterMenu(MasterMenuSubmenu currentSubmenu)
+{
+	_oled.clearDisplay();
+	_oled.setTextColor(WHITE);
+	_oled.setTextSize(1);
+	_oled.setCursor(0, 0);
+
+	_oled.println();
+
+	_oled.print(currentSubmenu == MasterMenuSubmenu::GlobalPropertiesMenu ? "-> " : "   ");
+	_oled.println("Global");
+
+	_oled.print(currentSubmenu == MasterMenuSubmenu::SpotsMenu ? "-> " : "   ");
+	_oled.println("Spots");
+
+	_oled.print(currentSubmenu == MasterMenuSubmenu::StandbyMenu ? "-> " : "   ");
+	_oled.println("Standby");
+
+	_oled.print(currentSubmenu == MasterMenuSubmenu::HelpMenu ? "-> " : "   ");
+	_oled.println("Help");
+
+	_needsRefresh = true;
+}
+
 void Display::ShowGlobalProperties(SpotCollection *spots)
 {
 	_oled.clearDisplay();
@@ -42,6 +66,42 @@ void Display::ShowGlobalProperties(SpotCollection *spots)
 	_needsRefresh = true;
 }
 
+void Display::ShowSpots(SpotCollection *spots, int currentSpotIndex)
+{
+	_oled.clearDisplay();
+	if (spots->GetCount() == 0)
+	{
+		_oled.setTextColor(WHITE);
+		_oled.setTextSize(2);
+		_oled.setCursor(20, 26);
+		_oled.println("EMPTY");
+	}
+	else
+	{
+		_oled.setTextColor(WHITE);
+		_oled.setTextSize(1);
+		_oled.setCursor(0, 0);
+		int lineCount = 8;
+		int start = 0;
+		if (currentSpotIndex > lineCount - 1)
+		{
+			start = currentSpotIndex - lineCount + 1;
+		}
+		int stop = start + lineCount;
+		if (stop > spots->GetCount())
+		{
+			stop = spots->GetCount();
+		}
+		for (int i = start; i < stop; ++i)
+		{
+			_oled.print(i == currentSpotIndex ? "-> " : "   ");
+			_oled.print("SPOT ");
+			_oled.println(i);
+		}
+	}
+	_needsRefresh = true;
+}
+
 void Display::ShowSpotProperties(Spot spot, SpotProperty currentProperty)
 {
 	_oled.clearDisplay();
@@ -51,6 +111,8 @@ void Display::ShowSpotProperties(Spot spot, SpotProperty currentProperty)
 
 	_oled.print("SPOT: ");
 	_oled.println(spot.Index);
+
+	_oled.println();
 
 	_oled.print(currentProperty == SpotProperty::Position ? "-> " : "   ");
 	_oled.print("Position: ");
@@ -101,13 +163,23 @@ void Display::ShowSpotProperty(Spot spot, SpotProperty property)
 	}
 }
 
-void Display::ShowStandby()
+void Display::ShowStandby(SpotCollection *spots)
 {
 	_oled.clearDisplay();
-	_oled.setTextColor(WHITE);
-	_oled.setTextSize(1);
-	_oled.setCursor(0, 0);
-	_oled.print("STANDBY");
+	if (spots->GetCount() == 0)
+	{
+		_oled.setTextColor(WHITE);
+		_oled.setTextSize(2);
+		_oled.setCursor(20, 26);
+		_oled.println("EMPTY");
+	}
+	else
+	{
+		_oled.setTextColor(WHITE);
+		_oled.setTextSize(1);
+		_oled.setCursor(0, 0);
+		_oled.print("STANDBY");
+	}
 	_needsRefresh = true;
 }
 
@@ -177,12 +249,10 @@ void Display::ShowSpotProperty(int spotIndex, const char *label, String value)
 	_oled.setTextSize(1);
 	_oled.setCursor(0, 0);
 	_oled.print("SPOT: ");
-	_oled.setTextSize(2);
 	_oled.println(spotIndex);
-	_oled.setTextSize(1);
-	_oled.println("");
+	_oled.println();
 	_oled.println(label);
-	_oled.println("");
+	_oled.println();
 	_oled.setTextSize(2);
 	_oled.println(buff);
 	_needsRefresh = true;

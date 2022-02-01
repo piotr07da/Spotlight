@@ -52,14 +52,14 @@ void AudioSpectrumCalculator::Enable()
 {
 	_enabled = true;
 	_spectrumReady = false;
-	DiagLed::Toggle();
+	// DiagLed::Toggle();
 }
 
 void AudioSpectrumCalculator::Disable()
 {
 	_enabled = false;
 	_spectrumReady = false;
-	DiagLed::Toggle();
+	// DiagLed::Toggle();
 }
 
 float *AudioSpectrumCalculator::Spectrum()

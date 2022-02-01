@@ -73,6 +73,11 @@ void Runner::Loop()
 	}
 }
 
+bool Runner::IsRunning()
+{
+	return _isRunning;
+}
+
 void Runner::Start()
 {
 	_isRunning = true;

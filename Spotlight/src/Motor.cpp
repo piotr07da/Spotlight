@@ -47,7 +47,7 @@ void Motor::Loop()
 		if (t - _lastStepTime >= _stepInterval)
 		{
 			// DIAG
-			DiagLed::Toggle();
+			// DiagLed::Toggle();
 			_lastStepTime += _stepInterval * (double)(long)((t - _lastStepTime) / _stepInterval);
 			_lastStepTime = t;
 		}

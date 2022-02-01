@@ -15,23 +15,29 @@ MasterMenu::MasterMenu(int ldPin, int luPin, int rdPin, int ruPin, int rlPin, in
 	  _light(light),
 	  _runner(runner),
 	  _spots(spots),
-	  _globalPropertiesMenu(&_rdButton, &_ruButton, _display, _spots),
-	  _spotPropertiesMenu(&_ruButton, &_rdButton, &_rrButton, _display),
-	  _spotPropertyValueMenu(&_rdButton, &_ruButton, &_rlButton, &_rrButton, _display, _motor),
+	  _spotsNavigator(_spots, _motor),
+	  _globalPropertiesMenu(&_rdButton, &_ruButton, &_rlButton, _display, _spots),
+	  _spotsMenu(&_ruButton, &_rdButton, &_rlButton, &_rrButton, _display, _light, &_spotsNavigator),
+	  _spotPropertiesMenu(&_ldButton, &_luButton, &_ruButton, &_rdButton, &_rlButton, &_rrButton, _display, &_spotsNavigator),
+	  _spotPropertyValueMenu(&_ldButton, &_luButton, &_rdButton, &_ruButton, &_rlButton, &_rrButton, _display, _motor, &_spotsNavigator),
 	  _standbyMenu(&_rlButton, &_rrButton, _audioTrigger, _display, _motor, _light, _runner, _spots)
 {
 }
 
 void MasterMenu::Setup()
 {
+	_globalPropertiesMenu.AssingMasterMenuActivator(&_activator);
+	_spotsMenu.AssingMasterMenuActivator(&_activator);
+	_spotsMenu.AssingSpotPropertiesMenu(&_spotPropertiesMenu);
+	_spotsMenu.AssingSpotPropertyValueMenu(&_spotPropertyValueMenu);
+	_spotPropertiesMenu.AssignSpotsMenu(&_spotsMenu);
 	_spotPropertiesMenu.AssignSpotPropertyValueMenu(&_spotPropertyValueMenu);
 	_spotPropertyValueMenu.AssingSpotPropertiesMenu(&_spotPropertiesMenu);
+	_standbyMenu.AssingMasterMenuActivator(&_activator);
 
-	_globalPropertiesMenu.Activate(false);
-
+	_welcome = true;
 	_display->ShowWelcome();
-
-	_currentSpotIndex = -1;
+	_currentSubmenu = MasterMenuSubmenu::GlobalPropertiesMenu;
 }
 
 void MasterMenu::Loop()
@@ -43,111 +49,111 @@ void MasterMenu::Loop()
 	_rlButton.Loop();
 	_rrButton.Loop();
 
-	if (_ldButton.IsClicked())
-	{
-		if (_standbyMenu.IsActive())
-		{
-			_standbyMenu.Deactivate();
-			ActivateSpotMenuForCurrentSpotAndPositionMotor();
-			LightUp();
-		}
-		else if (AnySpotMenuIsActive())
-		{
-			if (_currentSpotIndex > 0)
-			{
-				--_currentSpotIndex;
-				ActivateSpotMenuForCurrentSpotAndPositionMotor();
-			}
-			else if (_currentSpotIndex == 0)
-			{
-				DeactivateAllSpotMenus();
-				_globalPropertiesMenu.Activate(true);
-				PositionMotorOnZero();
-				LightDown();
-			}
-		}
-	}
-	else if (_luButton.IsClicked())
-	{
-		if (_globalPropertiesMenu.IsActive() && _spots->GetCount() > 0)
-		{
-			_currentSpotIndex = 0;
-			_globalPropertiesMenu.Deactivate();
-			_spotPropertiesMenu.Activate(_spots->GetByIndex(0), SpotProperty::Position);
-			PositionMotorOnCurrentSpot();
-			LightUp();
-		}
-		else if (AnySpotMenuIsActive())
-		{
-			if (_currentSpotIndex < _spots->GetCount() - 1)
-			{
-				++_currentSpotIndex;
-				ActivateSpotMenuForCurrentSpotAndPositionMotor();
-			}
-			else
-			{
-				DeactivateAllSpotMenus();
-				_standbyMenu.Activate();
-				LightDown();
-			}
-		}
-	}
-
 	_globalPropertiesMenu.Loop();
+	_spotsMenu.Loop();
 	_spotPropertiesMenu.Loop();
 	_spotPropertyValueMenu.Loop();
 	_standbyMenu.Loop();
-}
 
-bool MasterMenu::AnySpotMenuIsActive()
-{
-	return _spotPropertiesMenu.IsActive() || _spotPropertyValueMenu.IsActive();
-}
-
-void MasterMenu::ActivateSpotMenuForCurrentSpotAndPositionMotor()
-{
-	ActivateSpotMenuForCurrentSpot();
-	PositionMotorOnCurrentSpot();
-}
-
-void MasterMenu::ActivateSpotMenuForCurrentSpot()
-{
-	if (_spotPropertiesMenu.IsActive())
+	if (_welcome)
 	{
-		_spotPropertiesMenu.Activate(_spots->GetByIndex(_currentSpotIndex), _spotPropertiesMenu.GetCurrentProperty());
+		if (_ldButton.IsClicked() || _luButton.IsClicked() || _rdButton.IsClicked() || _ruButton.IsClicked() || _rlButton.IsClicked() || _rrButton.IsClicked())
+		{
+			Activate();
+		}
+		return;
 	}
-	else if (_spotPropertyValueMenu.IsActive())
+
+	if (_activator.ActivateRequested())
 	{
-		_spotPropertyValueMenu.Activate(_spots->GetByIndex(_currentSpotIndex), _spotPropertyValueMenu.GetCurrentProperty());
+		Activate();
 	}
-	else
+
+	if (!_isActive)
 	{
-		_spotPropertiesMenu.Activate(_spots->GetByIndex(_currentSpotIndex), SpotProperty::Position);
+		return;
+	}
+
+	auto prevMenuButton = &_ruButton;
+	auto nextMenuButton = &_rdButton;
+	auto enterMenuButton = &_rrButton;
+
+	if (prevMenuButton->IsClicked())
+	{
+		ChangeSubmenu(-1);
+	}
+	else if (nextMenuButton->IsClicked())
+	{
+		ChangeSubmenu(1);
+	}
+	else if (enterMenuButton->IsClicked())
+	{
+		Deactivate();
+		switch (_currentSubmenu)
+		{
+		case MasterMenuSubmenu::GlobalPropertiesMenu:
+			_globalPropertiesMenu.Activate();
+			break;
+
+		case MasterMenuSubmenu::SpotsMenu:
+			_spotsMenu.Activate();
+			break;
+
+		case MasterMenuSubmenu::StandbyMenu:
+			_standbyMenu.Activate();
+			break;
+
+		case MasterMenuSubmenu::HelpMenu:
+			Activate(); // TODO
+			break;
+		}
 	}
 }
 
-void MasterMenu::DeactivateAllSpotMenus()
+void MasterMenu::Activate()
 {
-	_spotPropertiesMenu.Deactivate();
-	_spotPropertyValueMenu.Deactivate();
+	_ldButton.ResetDisabled();
+	_luButton.ResetDisabled();
+	_rdButton.ResetEnabled();
+	_ruButton.ResetEnabled();
+	_rlButton.ResetDisabled();
+	_rrButton.ResetEnabled();
+
+	_rdButton.ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
+	_ruButton.ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
+	_rrButton.ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
+
+	_display->ShowMasterMenu(_currentSubmenu);
+
+	_light->LightDownGentle();
+
+	_welcome = false;
+	_isActive = true;
 }
 
-void MasterMenu::PositionMotorOnCurrentSpot()
+void MasterMenu::Deactivate()
 {
-	_motor->MoveToWithSpeed(_spots->GetByIndex(_currentSpotIndex)->Position, Motor_MaxSpeed);
+	_isActive = false;
 }
 
-void MasterMenu::PositionMotorOnZero()
-{
-	_motor->MoveToWithSpeed(0, Motor_MaxSpeed);
-}
+// PRIVATE METHODS
 
-void MasterMenu::LightUp()
+void MasterMenu::ChangeSubmenu(int direction)
 {
-	_light->SetActivity(LightActivity::A_01, 400);
-}
+	if (direction != -1 && direction != 1)
+	{
+		return;
+	}
 
-void MasterMenu::LightDown()
-{
-	_light->SetActivity(LightActivity::A_10, 400);
+	_currentSubmenu = (MasterMenuSubmenu)((int)_currentSubmenu + direction);
+	if (_currentSubmenu < MasterMenuSubmenu::FIRST)
+	{
+		_currentSubmenu = MasterMenuSubmenu::LAST;
+	}
+	else if (_currentSubmenu > MasterMenuSubmenu::LAST)
+	{
+		_currentSubmenu = MasterMenuSubmenu::FIRST;
+	}
+
+	_display->ShowMasterMenu(_currentSubmenu);
 }

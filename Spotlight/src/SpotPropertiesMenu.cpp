@@ -2,11 +2,15 @@
 
 #include "DiagLed.h"
 
-SpotPropertiesMenu::SpotPropertiesMenu(Button *prevPropertyButton, Button *nextPropertyButton, Button *enterButton, Display *display)
-	: _prevPropertyButton(prevPropertyButton),
+SpotPropertiesMenu::SpotPropertiesMenu(Button *prevSpotButton, Button *nextSpotButton, Button *prevPropertyButton, Button *nextPropertyButton, Button *escapeButton, Button *enterButton, Display *display, MenuSpotsNavigator *spotsNavigator)
+	: _prevSpotButton(prevSpotButton),
+	  _nextSpotButton(nextSpotButton),
+	  _prevPropertyButton(prevPropertyButton),
 	  _nextPropertyButton(nextPropertyButton),
+	  _escapeButton(escapeButton),
 	  _enterButton(enterButton),
-	  _display(display)
+	  _display(display),
+	  _spotsNavigator(spotsNavigator)
 {
 }
 
@@ -17,37 +21,44 @@ void SpotPropertiesMenu::Loop()
 		return;
 	}
 
-	if (_prevPropertyButton->IsClicked())
+	if (_prevSpotButton->IsClicked())
 	{
-		if (_currentProperty > SpotProperty::FIRST)
-		{
-			_currentProperty = (SpotProperty)((int)_currentProperty - 1);
-		}
-		else
-		{
-			_currentProperty = SpotProperty::LAST;
-		}
-
-		_display->ShowSpotProperties(*_spot, _currentProperty);
+		_spotsNavigator->Prev();
+		Show();
+	}
+	else if (_nextSpotButton->IsClicked())
+	{
+		_spotsNavigator->Next();
+		Show();
+	}
+	else if (_prevPropertyButton->IsClicked())
+	{
+		ChangeProperty(-1);
 	}
 	else if (_nextPropertyButton->IsClicked())
 	{
-		if (_currentProperty < SpotProperty::LAST)
-		{
-			_currentProperty = (SpotProperty)((int)_currentProperty + 1);
-		}
-		else
-		{
-			_currentProperty = SpotProperty::FIRST;
-		}
-
-		_display->ShowSpotProperties(*_spot, _currentProperty);
+		ChangeProperty(1);
+	}
+	else if (_escapeButton->IsClicked())
+	{
+		Deactivate();
+		_spotsMenu->Activate();
 	}
 	else if (_enterButton->IsClicked())
 	{
 		Deactivate();
-		_spotPropertyValueMenu->Activate(_spot, _currentProperty);
+		_spotPropertyValueMenu->Activate(_currentProperty);
 	}
+}
+
+void SpotPropertiesMenu::AssignSpotsMenu(SpotsMenu *spotsMenu)
+{
+	_spotsMenu = spotsMenu;
+}
+
+void SpotPropertiesMenu::AssignSpotPropertyValueMenu(SpotPropertyValueMenu *spotPropertyValueMenu)
+{
+	_spotPropertyValueMenu = spotPropertyValueMenu;
 }
 
 bool SpotPropertiesMenu::IsActive()
@@ -60,25 +71,18 @@ SpotProperty SpotPropertiesMenu::GetCurrentProperty()
 	return _currentProperty;
 }
 
-void SpotPropertiesMenu::AssignSpotPropertyValueMenu(SpotPropertyValueMenu *spotPropertyValueMenu)
+void SpotPropertiesMenu::Activate(SpotProperty currentProperty)
 {
-	_spotPropertyValueMenu = spotPropertyValueMenu;
-}
-
-void SpotPropertiesMenu::Activate(Spot *spot, SpotProperty currentProperty)
-{
-	_spot = spot;
 	_currentProperty = currentProperty;
 
-	_prevPropertyButton->ResetEnabled();
-	_nextPropertyButton->ResetEnabled();
-	_enterButton->ResetEnabled();
+	_prevSpotButton->ResetEnabled(Button_DebounceDelay_SlowButton);
+	_nextSpotButton->ResetEnabled(Button_DebounceDelay_SlowButton);
+	_prevPropertyButton->ResetEnabled(Button_DebounceDelay_SlowButton);
+	_nextPropertyButton->ResetEnabled(Button_DebounceDelay_SlowButton);
+	_escapeButton->ResetEnabled(Button_DebounceDelay_SlowButton);
+	_enterButton->ResetEnabled(Button_DebounceDelay_SlowButton);
 
-	_prevPropertyButton->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
-	_nextPropertyButton->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
-	_enterButton->ChangeDebounceDelay(Button_DebounceDelay_SlowButton);
-
-	_display->ShowSpotProperties(*_spot, _currentProperty);
+	Show();
 
 	_isActive = true;
 }
@@ -86,4 +90,31 @@ void SpotPropertiesMenu::Activate(Spot *spot, SpotProperty currentProperty)
 void SpotPropertiesMenu::Deactivate()
 {
 	_isActive = false;
+}
+
+// PRIVATE METHODS
+
+void SpotPropertiesMenu::ChangeProperty(int direction)
+{
+	if (direction != -1 && direction != 1)
+	{
+		return;
+	}
+
+	_currentProperty = (SpotProperty)((int)_currentProperty + direction);
+	if (_currentProperty < SpotProperty::FIRST)
+	{
+		_currentProperty = SpotProperty::LAST;
+	}
+	else if (_currentProperty > SpotProperty::LAST)
+	{
+		_currentProperty = SpotProperty::FIRST;
+	}
+
+	Show();
+}
+
+void SpotPropertiesMenu::Show()
+{
+	_display->ShowSpotProperties(*_spotsNavigator->GetCurrent(), _currentProperty);
 }

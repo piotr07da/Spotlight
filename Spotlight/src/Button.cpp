@@ -2,6 +2,8 @@
 
 #include <Particle.h>
 
+#include "DiagLed.h"
+
 Button::Button(String name, int pin, int debounceDelay)
 {
 	_name = name;
@@ -56,6 +58,12 @@ void Button::ResetDisabled()
 	_isReleased = false;
 }
 
+void Button::ResetEnabled(int debounceDelay)
+{
+	ResetEnabled();
+	ChangeDebounceDelay(debounceDelay);
+}
+
 void Button::ResetEnabled()
 {
 	_isEnabled = true;
@@ -74,6 +82,7 @@ bool Button::IsClicked(bool reset)
 	int isClicked = _isClicked;
 	if (_isClicked && reset)
 	{
+		DiagLed::Toggle();
 		_isClicked = false;
 	}
 	// if (isClicked)

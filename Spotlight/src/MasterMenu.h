@@ -2,15 +2,20 @@
 #define MASTER_MENU_H
 
 #include "Button.h"
+#include "AudioTrigger.h"
 #include "Display.h"
 #include "Motor.h"
 #include "Light.h"
 #include "Runner.h"
 #include "SpotCollection.h"
+#include "MenuSpotsNavigator.h"
+#include "MasterMenuActivator.h"
 #include "GlobalPropertiesMenu.h"
+#include "SpotsMenu.h"
 #include "SpotPropertiesMenu.h"
 #include "SpotPropertyValueMenu.h"
 #include "StandbyMenu.h"
+#include "MasterMenuSubmenu.h"
 
 class MasterMenu
 {
@@ -27,26 +32,27 @@ private:
 	Light *_light;
 	Runner *_runner;
 	SpotCollection *_spots;
+	MenuSpotsNavigator _spotsNavigator;
+	bool _isActive;
+	bool _welcome;
+	MasterMenuActivator _activator;
 	GlobalPropertiesMenu _globalPropertiesMenu;
+	SpotsMenu _spotsMenu;
 	SpotPropertiesMenu _spotPropertiesMenu;
 	SpotPropertyValueMenu _spotPropertyValueMenu;
 	StandbyMenu _standbyMenu;
-	int _currentSpotIndex;
+	MasterMenuSubmenu _currentSubmenu;
 
-	bool AnySpotMenuIsActive();
-	void ActivateSpotMenuForCurrentSpotAndPositionMotor();
-	void ActivateSpotMenuForCurrentSpot();
-	void DeactivateAllSpotMenus();
-	void PositionMotorOnCurrentSpot();
-	void PositionMotorOnZero();
-	void LightUp();
-	void LightDown();
+	void ChangeSubmenu(int direction);
 
 public:
 	MasterMenu(int ldPin, int luPin, int rdPin, int ruPin, int rlPin, int rrPin, AudioTrigger *audioTrigger, Display *display, Motor *motor, Light *light, Runner *runner, SpotCollection *spots);
 
 	void Setup();
 	void Loop();
+
+	void Activate();
+	void Deactivate();
 };
 
 #endif // MASTER_MENU_H

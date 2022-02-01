@@ -27,6 +27,7 @@ public:
 	void Loop();
 
 	void ResetDisabled();
+	void ResetEnabled(int debounceDelay);
 	void ResetEnabled();
 	bool IsPressed();
 	bool IsClicked(bool reset = true);

@@ -1,5 +1,7 @@
 #include "SpotPropertyValueMenu.h"
 
+#include "DiagLed.h"
+
 LightActivity SpotPropertyValueMenu::_spotActivites[7] = {
 	LightActivity::A_1,
 	LightActivity::A_010,
@@ -21,14 +23,16 @@ LightActivity SpotPropertyValueMenu::_travelActivites[7] = {
 };
 int SpotPropertyValueMenu::_travelActivitiesCount = 7;
 
-SpotPropertyValueMenu::SpotPropertyValueMenu(Button *decreasePropertyValueButton, Button *increasePropertyValueButton, Button *escapeButton, Button *enterButton, Display *display, Motor *motor)
-	: _decreasePropertyValueButton(decreasePropertyValueButton),
+SpotPropertyValueMenu::SpotPropertyValueMenu(Button *prevSpotButton, Button *nextSpotButton, Button *decreasePropertyValueButton, Button *increasePropertyValueButton, Button *escapeButton, Button *enterButton, Display *display, Motor *motor, MenuSpotsNavigator *spotsNavigator)
+	: _prevSpotButton(prevSpotButton),
+	  _nextSpotButton(nextSpotButton),
+	  _decreasePropertyValueButton(decreasePropertyValueButton),
 	  _increasePropertyValueButton(increasePropertyValueButton),
 	  _escapeButton(escapeButton),
 	  _enterButton(enterButton),
 	  _display(display),
-	  _motor(motor)
-
+	  _motor(motor),
+	  _spotsNavigator(spotsNavigator)
 {
 }
 
@@ -39,7 +43,17 @@ void SpotPropertyValueMenu::Loop()
 		return;
 	}
 
-	if (_decreasePropertyValueButton->IsClicked())
+	if (_prevSpotButton->IsClicked())
+	{
+		_spotsNavigator->Prev();
+		Show();
+	}
+	else if (_nextSpotButton->IsClicked())
+	{
+		_spotsNavigator->Next();
+		Show();
+	}
+	else if (_decreasePropertyValueButton->IsClicked())
 	{
 		ChangePropertyValue(-1);
 	}
@@ -50,7 +64,7 @@ void SpotPropertyValueMenu::Loop()
 	else if (_escapeButton->IsClicked())
 	{
 		Deactivate();
-		_spotPropertiesMenu->Activate(_spot, _currentProperty);
+		_spotPropertiesMenu->Activate(_currentProperty);
 	}
 	else if (_enterButton->IsClicked())
 	{
@@ -63,10 +77,15 @@ void SpotPropertyValueMenu::Loop()
 
 		if (_currentProperty == SpotProperty::Position)
 		{
-			_display->ShowSpotProperty(*_spot, _currentProperty);
-			_motor->MoveToWithSpeed(_spot->Position, Motor_MaxSpeed);
+			Show();
+			_motor->MoveToWithSpeed(_spotsNavigator->GetCurrent()->Position, Motor_MaxSpeed);
 		}
 	}
+}
+
+void SpotPropertyValueMenu::AssingSpotPropertiesMenu(SpotPropertiesMenu *spotPropertiesMenu)
+{
+	_spotPropertiesMenu = spotPropertiesMenu;
 }
 
 bool SpotPropertyValueMenu::IsActive()
@@ -79,20 +98,16 @@ SpotProperty SpotPropertyValueMenu::GetCurrentProperty()
 	return _currentProperty;
 }
 
-void SpotPropertyValueMenu::AssingSpotPropertiesMenu(SpotPropertiesMenu *spotPropertiesMenu)
+void SpotPropertyValueMenu::Activate(SpotProperty currentProperty)
 {
-	_spotPropertiesMenu = spotPropertiesMenu;
-}
-
-void SpotPropertyValueMenu::Activate(Spot *spot, SpotProperty currentProperty)
-{
-	_spot = spot;
 	_currentProperty = currentProperty;
 
+	_prevSpotButton->ResetEnabled(Button_DebounceDelay_SlowButton);
+	_nextSpotButton->ResetEnabled(Button_DebounceDelay_SlowButton);
 	_decreasePropertyValueButton->ResetEnabled();
 	_increasePropertyValueButton->ResetEnabled();
-	_escapeButton->ResetEnabled();
-	_enterButton->ResetEnabled();
+	_escapeButton->ResetEnabled(Button_DebounceDelay_SlowButton);
+	_enterButton->ResetEnabled(Button_DebounceDelay_SlowButton);
 
 	switch (currentProperty)
 	{
@@ -111,7 +126,7 @@ void SpotPropertyValueMenu::Activate(Spot *spot, SpotProperty currentProperty)
 		break;
 	}
 
-	_display->ShowSpotProperty(*_spot, _currentProperty);
+	Show();
 
 	_isActive = true;
 }
@@ -121,17 +136,11 @@ void SpotPropertyValueMenu::Deactivate()
 	_isActive = false;
 }
 
-void SpotPropertyValueMenu::ChangePropertyValue(int sign)
+// PRIVATE METHODS
+
+void SpotPropertyValueMenu::ChangePropertyValue(int direction)
 {
-	if (sign > 0)
-	{
-		sign = 1;
-	}
-	else if (sign < 0)
-	{
-		sign = -1;
-	}
-	else
+	if (direction != -1 && direction != 1)
 	{
 		return;
 	}
@@ -160,42 +169,44 @@ void SpotPropertyValueMenu::ChangePropertyValue(int sign)
 		}
 	}
 
+	auto spot = _spotsNavigator->GetCurrent();
+
 	switch (_currentProperty)
 	{
 	case SpotProperty::Position:
 	{
-		_spot->Position += 1 * sign;
+		spot->Position += direction;
 		break;
 	}
 	case SpotProperty::SpotTime:
 	{
-		_spot->SpotTime += _valueDelta * sign;
+		spot->SpotTime += _valueDelta * direction;
 		break;
 	}
 	case SpotProperty::SpotActivity:
 	{
-		_spot->SpotActivity = FindActivity(_spotActivites, _spotActivitiesCount, _spot->SpotActivity, sign);
+		spot->SpotActivity = FindActivity(_spotActivites, _spotActivitiesCount, spot->SpotActivity, direction);
 		break;
 	}
 	case SpotProperty::TravelTime:
 	{
-		_spot->TravelTime -= _valueDelta;
+		spot->TravelTime -= _valueDelta;
 		break;
 	}
 	case SpotProperty::TravelActivity:
 	{
-		_spot->TravelActivity = FindActivity(_travelActivites, _travelActivitiesCount, _spot->TravelActivity, sign);
+		spot->TravelActivity = FindActivity(_travelActivites, _travelActivitiesCount, spot->TravelActivity, direction);
 		break;
 	}
 	}
 
 	if (_currentProperty == SpotProperty::Position)
 	{
-		_motor->MoveToWithSpeed(_spot->Position, SpotPropertyValueMenu_ButtonSyncMotorSpeed);
+		_motor->MoveToWithSpeed(spot->Position, SpotPropertyValueMenu_ButtonSyncMotorSpeed);
 	}
 	else
 	{
-		_display->ShowSpotProperty(*_spot, _currentProperty);
+		Show();
 	}
 
 	++_valueChangeCounter;
@@ -243,4 +254,9 @@ LightActivity SpotPropertyValueMenu::FindActivity(LightActivity *activities, int
 	}
 
 	return activities[currentActivityIndex];
+}
+
+void SpotPropertyValueMenu::Show()
+{
+	_display->ShowSpotProperty(*_spotsNavigator->GetCurrent(), _currentProperty);
 }
