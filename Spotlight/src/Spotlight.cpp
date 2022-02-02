@@ -11,6 +11,12 @@
  * Date: 2021-12-27
  */
 
+void setup();
+void loop();
+#line 8 "c:/_git/Spotlight/Spotlight/src/Spotlight.ino"
+SYSTEM_MODE(SEMI_AUTOMATIC);
+SYSTEM_THREAD(ENABLED);
+
 #include <math.h>
 
 #include "DiagLed.h"
@@ -25,9 +31,6 @@
 #include "Runner.h"
 #include "MasterMenu.h"
 
-void setup();
-void loop();
-#line 22 "c:/_git/Spotlight/Spotlight/src/Spotlight.ino"
 SpotCollection _spots;
 Messenger _messenger(33334);
 AudioSampler _audioSampler(A4);

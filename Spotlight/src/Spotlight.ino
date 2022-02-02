@@ -5,6 +5,9 @@
  * Date: 2021-12-27
  */
 
+SYSTEM_MODE(SEMI_AUTOMATIC);
+SYSTEM_THREAD(ENABLED);
+
 #include <math.h>
 
 #include "DiagLed.h"
