@@ -25,6 +25,13 @@ MasterMenu::MasterMenu(int ldPin, int luPin, int rdPin, int ruPin, int rlPin, in
 
 void MasterMenu::Setup()
 {
+	_ldButton.Setup();
+	_luButton.Setup();
+	_rdButton.Setup();
+	_ruButton.Setup();
+	_rlButton.Setup();
+	_rrButton.Setup();
+
 	_globalPropertiesMenu.AssingMasterMenuActivator(&_activator);
 	_spotPropertiesMenu.AssignMasterMenuActivator(&_activator);
 	_spotPropertiesMenu.AssignSpotPropertyValueMenu(&_spotPropertyValueMenu);

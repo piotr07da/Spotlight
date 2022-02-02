@@ -28,7 +28,7 @@ Display _display;
 Motor _motor(A2, A3);
 Light _light(D2);
 Runner _runner(&_spots, &_motor, &_light);
-MasterMenu _MasterMenu(A0, A1, D3, D4, D5, D6, &_audioTrigger, &_display, &_motor, &_light, &_runner, &_spots);
+MasterMenu _masterMenu(A0, A1, D3, D4, D5, D6, &_audioTrigger, &_display, &_motor, &_light, &_runner, &_spots);
 
 void setup()
 {
@@ -41,11 +41,10 @@ void setup()
     _motor.Setup();
     _light.Setup();
     _display.Setup();
-    _MasterMenu.Setup();
+    _masterMenu.Setup();
     _runner.Setup();
 
     // DiagLed::Toggle();
-
     //_audioTrigger.Enable();
 }
 
@@ -58,7 +57,7 @@ void loop()
     _motor.Loop();
     _light.Loop();
     _display.Loop();
-    _MasterMenu.Loop();
+    _masterMenu.Loop();
     _runner.Loop();
 
     // if (_audioSampler.DoubleHalfBufferReady())

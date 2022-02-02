@@ -10,7 +10,7 @@ Button::Button(String name, int pin, int debounceDelay)
 	_pin = pin;
 	_debounceDelay = debounceDelay;
 
-	_isEnabled = true;
+	_isEnabled = false;
 	_isPressed = false;
 	_isClicked = false;
 	_isReleased = false;
@@ -21,6 +21,7 @@ Button::Button(String name, int pin, int debounceDelay)
 void Button::Setup()
 {
 	pinMode(_pin, INPUT_PULLDOWN);
+	_isEnabled = true;
 }
 
 void Button::Loop()
