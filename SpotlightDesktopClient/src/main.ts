@@ -30,6 +30,7 @@ function supplyData(webContents: WebContents) {
 	});
 
 	const connect = function () {
+		// TURN OFF VPN !
 		const port = 33334;
 		const ip = "192.168.0.45";
 		const client = new net.Socket();

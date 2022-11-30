@@ -1,5 +1,7 @@
 #include "StandbyMenu.h"
 
+#include "DiagLed.h"
+
 StandbyMenu::StandbyMenu(Button *stopButton, Button *startButton, AudioTrigger *audioTrigger, Display *display, Motor *motor, Light *light, Runner *runner, SpotCollection *spots)
 	: _stopButton(stopButton),
 	  _startButton(startButton),

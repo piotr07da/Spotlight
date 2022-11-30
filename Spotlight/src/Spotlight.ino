@@ -5,8 +5,10 @@
  * Date: 2021-12-27
  */
 
+// <WIFI OFF>
 SYSTEM_MODE(SEMI_AUTOMATIC);
 SYSTEM_THREAD(ENABLED);
+// </WIFI OFF>
 
 #include <math.h>
 

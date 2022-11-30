@@ -11,11 +11,13 @@
  * Date: 2021-12-27
  */
 
+// <WIFI OFF>
 void setup();
 void loop();
-#line 8 "c:/_git/Spotlight/Spotlight/src/Spotlight.ino"
+#line 9 "c:/_git/Spotlight/Spotlight/src/Spotlight.ino"
 SYSTEM_MODE(SEMI_AUTOMATIC);
 SYSTEM_THREAD(ENABLED);
+// </WIFI OFF>
 
 #include <math.h>
 
