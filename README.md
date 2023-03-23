@@ -1,5 +1,5 @@
 # Spotlight
-Spotlight is a project of a device used to highlight targets on a shooting range. This is achieved by using a beam of light that cycles between different targets. The device can turn the light off or on but on only - it has other different modes.
+Spotlight is a project of a device used to highlight targets on a shooting range. This is achieved by using a beam of light that cycles between different targets. The light can be turned on and off, ramped up or down, or turned to strobe mode.
 
 # Projects
 There are three projects in this repository.
@@ -25,21 +25,25 @@ The Spotlight is build of:
 
 ### Controller
 To configure the device we use controller unit.
+```
  _____________________________________________
 |                                             |
 |         __________________                  |
 |   /\   |                  |       /\        |
 |   ||   |                  |       ||        |
-|        |                  |   <--    -->    |
+|        |                  |   <==    ==>    |
 |   ||   |                  |       ||        |
 |   \/   |__________________|       \/        |
 |                                             |
 |_____________________________________________|
+```
 
 There is a display in the middle of the controller.
+
 There are two buttons on the left:
 - UP - if applicable it directly jumps to the previous spot (target), staying in the same setting (for example direction of light)
 - DOWN - if applicable it directly jumps to the next spot (target), staying in the same setting
+
 There are four buttons on the right:
 - UP - used to select the previous position in the menu
 - DOWN - used to select the next position in the menu
