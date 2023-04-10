@@ -47,7 +47,7 @@ There are two buttons on the left:
 There are four buttons on the right:
 - UP - used to select the previous position in the menu
 - DOWN - used to select the next position in the menu
-- LEFT - exists from the current menu option
+- LEFT - exits from the current menu option
 - RIGHT - enters the selected menu position
 
 ### How to configure
